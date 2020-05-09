@@ -638,14 +638,27 @@ namespace AutoDeskLine_ToPlant
             //检查Plant 是否已经启动
             //Console.Clear();
             Process[] PS = Process.GetProcesses();
-            Console.WriteLine() ;
+            Console.WriteLine();
             for (int i = 0; i < PS.Length; i++)
             {
-                if (PS[i].ProcessName.ToString()== "PlantSimulation15_1")
+                if (PS[i].ProcessName.ToString() == "PlantSimulation15_1")
                 {
-                    //OnlineModel.Checked = true;
-                    MessageBox.Show("已检测到PlantSimulation 15! 并完成连接！");
-                    return;
+                    RemoteControl Plant = new RemoteControl();
+                    if (Plant.IsSimulationRunning())
+                    {
+                        MessageBox.Show("已检测到PlantSimulation 15! 并完成连接！");
+                        return;
+                    }
+                    else
+                    {
+                        PlantValue PV = new PlantValue();
+                        PV.ModelPath = "C:\\Users\\Administrator\\Desktop\\aaa.spp";
+                        object NewModel = new object();
+                        Plant.LoadModel(PV.ModelPath, NewModel);
+                        Plant.SetVisible(1);
+                        Plant.CloseModel();
+                        return;
+                    }
                 }
                 else
                 {
@@ -660,9 +673,9 @@ namespace AutoDeskLine_ToPlant
             }
         }
 
-    private void OutToPlant_Click(object sender, EventArgs e)
-    {
+        private void OutToPlant_Click(object sender, EventArgs e)
+        {
 
+        }
     }
-}
 }

@@ -68,12 +68,11 @@ namespace AutoDeskLine_ToPlant
         /// <summary>
         /// Plant Simulation 成员变量集合
         /// </summary>
-        public class Plant
-        {
-            public virtual string ModelPath { get; set; }
-            public virtual bool ModelOppend { get; set; }
-        }
-
+    }
+    public class PlantValue
+    {
+        public virtual string ModelPath { get; set; }
+        public virtual bool ModelOppend { get; set; }
     }
 
 }
