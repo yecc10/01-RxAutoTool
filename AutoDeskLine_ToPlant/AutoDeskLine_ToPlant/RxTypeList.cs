@@ -65,6 +65,14 @@ namespace AutoDeskLine_ToPlant
             public virtual double[] EndAngle { get; set; }
             public virtual double[] Radius { get; set; }
         }
+        /// <summary>
+        /// Plant Simulation 成员变量集合
+        /// </summary>
+        public class Plant
+        {
+            public virtual string ModelPath { get; set; }
+            public virtual bool ModelOppend { get; set; }
+        }
 
     }
 

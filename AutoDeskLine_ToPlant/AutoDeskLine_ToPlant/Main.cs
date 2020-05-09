@@ -16,5 +16,17 @@ namespace AutoDeskLine_ToPlant
         {
             InitializeComponent();
         }
+
+        private void CreateFence_Click(object sender, EventArgs e)
+        {
+            DrawFence DF = new DrawFence();
+            DF.ShowDialog();
+        }
+
+        private void CreateTrack_Click(object sender, EventArgs e)
+        {
+            AutoDesKToPlant ATP = new AutoDesKToPlant();
+            ATP.ShowDialog();
+        }
     }
 }

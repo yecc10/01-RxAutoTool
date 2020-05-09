@@ -57,7 +57,7 @@ namespace AutoDeskLine_ToPlant
             {
                 MessageBox.Show("检测到您尚未运行AutoCAD 2018软件 必备运行库可能未成功加载,若此软件出现异常请先打开软件后再打开该软件！", "安徽瑞祥工业软件运行检测报告！");
             }
-            System.Windows.Forms.Application.Run(new AutoDesKToPlant());
+            System.Windows.Forms.Application.Run(new Main());
         }
     }
 }

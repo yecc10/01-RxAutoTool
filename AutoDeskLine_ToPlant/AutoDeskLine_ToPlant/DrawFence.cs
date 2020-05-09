@@ -22,6 +22,8 @@ using Autodesk.AutoCAD.Interop.Common;
 using eMPlantLib;
 using System.Data.SQLite;
 using System.Security.Principal;
+using System.IO.MemoryMappedFiles;
+using System.IO;
 
 namespace AutoDeskLine_ToPlant
 {
@@ -29,11 +31,11 @@ namespace AutoDeskLine_ToPlant
     {
         [DllImportAttribute("kernel32.dll", EntryPoint = "OpenProcess")]
         public static extern IntPtr OpenProcess
-(
- int dwDesiredAccess,
- bool bInheritHandle,
- int dwProcessId
-);
+            (
+             int dwDesiredAccess,
+             bool bInheritHandle,
+             int dwProcessId
+            );
         /// <summary>
         /// 已打开的CAD图纸
         /// </summary>
@@ -58,8 +60,6 @@ namespace AutoDeskLine_ToPlant
         public DrawFence()  //Init Global data
         {
             InitializeComponent();
-            //检查Plant 是否已经启动
-
             timer.Enabled = true;
             dataColum = new System.Data.DataColumn();
             dataColum.ColumnName = "序号";
@@ -635,12 +635,34 @@ namespace AutoDeskLine_ToPlant
 
         private void OnlineModel_CheckedChanged(object sender, EventArgs e)
         {
-
+            //检查Plant 是否已经启动
+            //Console.Clear();
+            Process[] PS = Process.GetProcesses();
+            Console.WriteLine() ;
+            for (int i = 0; i < PS.Length; i++)
+            {
+                if (PS[i].ProcessName.ToString()== "PlantSimulation15_1")
+                {
+                    //OnlineModel.Checked = true;
+                    MessageBox.Show("已检测到PlantSimulation 15! 并完成连接！");
+                    return;
+                }
+                else
+                {
+                    if (i == PS.Length - 1)
+                    {
+                        MessageBox.Show("未检测到您打开PlantSimulation! 在线模式启动失败！");
+                    }
+                    Console.Write(i.ToString());
+                    Console.Write(PS[i].ProcessName.ToString());
+                    Console.WriteLine();
+                }
+            }
         }
 
-        private void OutToPlant_Click(object sender, EventArgs e)
-        {
+    private void OutToPlant_Click(object sender, EventArgs e)
+    {
 
-        }
     }
+}
 }

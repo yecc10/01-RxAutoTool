@@ -59,6 +59,7 @@
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.Sscale = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.OnlineModel = new System.Windows.Forms.CheckBox();
             this.KeepValue = new System.Windows.Forms.TextBox();
             this.ApplyPlantAix = new System.Windows.Forms.CheckBox();
             this.ChangeXY = new System.Windows.Forms.CheckBox();
@@ -72,7 +73,6 @@
             this.SX_AIX = new System.Windows.Forms.TextBox();
             this.SetRefPoint = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.OnlineModel = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -352,6 +352,17 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "基本设置";
             // 
+            // OnlineModel
+            // 
+            this.OnlineModel.AutoSize = true;
+            this.OnlineModel.Location = new System.Drawing.Point(119, 51);
+            this.OnlineModel.Name = "OnlineModel";
+            this.OnlineModel.Size = new System.Drawing.Size(72, 16);
+            this.OnlineModel.TabIndex = 6;
+            this.OnlineModel.Text = "在线模式";
+            this.OnlineModel.UseVisualStyleBackColor = true;
+            this.OnlineModel.CheckedChanged += new System.EventHandler(this.OnlineModel_CheckedChanged);
+            // 
             // KeepValue
             // 
             this.KeepValue.Location = new System.Drawing.Point(193, 20);
@@ -477,17 +488,6 @@
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "拾取对象";
-            // 
-            // OnlineModel
-            // 
-            this.OnlineModel.AutoSize = true;
-            this.OnlineModel.Location = new System.Drawing.Point(119, 51);
-            this.OnlineModel.Name = "OnlineModel";
-            this.OnlineModel.Size = new System.Drawing.Size(72, 16);
-            this.OnlineModel.TabIndex = 6;
-            this.OnlineModel.Text = "在线模式";
-            this.OnlineModel.UseVisualStyleBackColor = true;
-            this.OnlineModel.CheckedChanged += new System.EventHandler(this.OnlineModel_CheckedChanged);
             // 
             // DrawFence
             // 
