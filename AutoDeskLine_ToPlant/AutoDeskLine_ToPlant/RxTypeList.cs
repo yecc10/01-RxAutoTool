@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Win32;
 
 namespace AutoDeskLine_ToPlant
 {
@@ -11,7 +12,7 @@ namespace AutoDeskLine_ToPlant
         /// <summary>
         /// CadLine数据
         /// </summary>
-       public class AcadLine
+        public class AcadLine
         {
             public virtual string Name { get; set; }
             public virtual string ID { get; set; }
@@ -55,7 +56,7 @@ namespace AutoDeskLine_ToPlant
         /// <summary>
         /// 暂不使用
         /// </summary>
-        public  class AcDbRec
+        public class AcDbRec
         {
             public virtual string Name { get; set; }
             public virtual string ID { get; set; }
@@ -65,14 +66,33 @@ namespace AutoDeskLine_ToPlant
             public virtual double[] EndAngle { get; set; }
             public virtual double[] Radius { get; set; }
         }
-        /// <summary>
-        /// Plant Simulation 成员变量集合
-        /// </summary>
+
     }
+    /// <summary>
+    /// Plant Simulation 成员变量集合
+    /// </summary>
+    ///  
     public class PlantValue
     {
         public virtual string ModelPath { get; set; }
         public virtual bool ModelOppend { get; set; }
+    }
+    public class UserClass
+    {
+        private static bool IsRegeditExit(string name)
+        {
+            bool _exit = false;
+            string[] subkeyNames;
+            RegistryKey hkml = Registry.LocalMachine;
+            RegistryKey software = hkml.OpenSubKey("SOFTWARE", true);
+            RegistryKey Tecnomatix = software.OpenSubKey("Tecnomatix", true);
+            subkeyNames = Tecnomatix.GetSubKeyNames();
+            foreach (string keyName in subkeyNames)
+            {
+                if (keyName == name) { _exit = true; return _exit; }
+            }
+            return _exit;
+        }
     }
 
 }

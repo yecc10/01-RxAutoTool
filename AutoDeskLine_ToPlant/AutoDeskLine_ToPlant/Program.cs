@@ -17,7 +17,8 @@ namespace AutoDeskLine_ToPlant
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
-        [STAThread]
+        [STAThread] //单线程设置
+        //[MTAThread] //多线程设置
         [DllImportAttribute("kernel32.dll", EntryPoint = "OpenProcess")]
         public static extern IntPtr OpenProcess
      (

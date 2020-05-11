@@ -29,6 +29,7 @@ namespace AutoDeskLine_ToPlant
 {
     public partial class DrawFence : Form
     {
+        [STAThread]
         [DllImportAttribute("kernel32.dll", EntryPoint = "OpenProcess")]
         public static extern IntPtr OpenProcess
             (
@@ -59,7 +60,9 @@ namespace AutoDeskLine_ToPlant
         string CBEP = string.Empty;
         public DrawFence()  //Init Global data
         {
+
             InitializeComponent();
+
             timer.Enabled = true;
             dataColum = new System.Data.DataColumn();
             dataColum.ColumnName = "序号";
@@ -652,7 +655,15 @@ namespace AutoDeskLine_ToPlant
                     else
                     {
                         PlantValue PV = new PlantValue();
-                        PV.ModelPath = "C:\\Users\\Administrator\\Desktop\\aaa.spp";
+                        System.Windows.Forms.OpenFileDialog FD = new System.Windows.Forms.OpenFileDialog();
+                        FD.InitialDirectory = "C:\\Users\\Administrator\\Desktop\\";
+                        FD.Filter = "PlantSimulationFiles(*.spp)|*.spp";
+                        FD.FilterIndex = 1;
+                        //FD.RestoreDirectory = true;
+                        if (FD.ShowDialog() == DialogResult.OK)
+                        {
+                            PV.ModelPath = FD.FileName;
+                        }
                         object NewModel = new object();
                         Plant.LoadModel(PV.ModelPath, NewModel);
                         Plant.SetVisible(1);
