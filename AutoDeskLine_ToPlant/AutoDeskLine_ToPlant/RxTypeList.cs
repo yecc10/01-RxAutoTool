@@ -17,8 +17,10 @@ namespace AutoDeskLine_ToPlant
             public virtual string Name { get; set; }
             public virtual string ID { get; set; }
             public virtual double[] StartPoint { get; set; }
+            public virtual double[] CenterPoint { get; set; }
             public virtual double[] EndPoint { get; set; }
             public virtual double FwAngle { get; set; }
+            public virtual double Length { get; set; }
         }
         /// <summary>
         /// 圆角类
@@ -79,17 +81,17 @@ namespace AutoDeskLine_ToPlant
     }
     public class UserClass
     {
-        private static bool IsRegeditExit(string name)
+        public static bool IsRegeditExit()
         {
             bool _exit = false;
             string[] subkeyNames;
             RegistryKey hkml = Registry.LocalMachine;
             RegistryKey software = hkml.OpenSubKey("SOFTWARE", true);
-            RegistryKey Tecnomatix = software.OpenSubKey("Tecnomatix", true);
-            subkeyNames = Tecnomatix.GetSubKeyNames();
-            foreach (string keyName in subkeyNames)
+            RegistryKey Tecnomatix = software.OpenSubKey("Tecnomatix\\eM-Plant\\15.1", true);
+            if (Tecnomatix!=null)
             {
-                if (keyName == name) { _exit = true; return _exit; }
+                subkeyNames = Tecnomatix.GetValueNames();
+                _exit = true;
             }
             return _exit;
         }

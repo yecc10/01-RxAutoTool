@@ -19,12 +19,14 @@ namespace AutoDeskLine_ToPlant
 
         private void CreateFence_Click(object sender, EventArgs e)
         {
+            this.Hide();
             DrawFence DF = new DrawFence();
             DF.ShowDialog();
         }
 
         private void CreateTrack_Click(object sender, EventArgs e)
         {
+            this.Hide();
             AutoDesKToPlant ATP = new AutoDesKToPlant();
             ATP.ShowDialog();
         }

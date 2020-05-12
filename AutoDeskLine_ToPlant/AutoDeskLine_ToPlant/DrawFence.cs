@@ -24,12 +24,15 @@ using System.Data.SQLite;
 using System.Security.Principal;
 using System.IO.MemoryMappedFiles;
 using System.IO;
+using System.Net.Sockets;
+using System.Threading;
+using System.Net;
 
 namespace AutoDeskLine_ToPlant
 {
     public partial class DrawFence : Form
     {
-        [STAThread]
+        [STAThreadAttribute]
         [DllImportAttribute("kernel32.dll", EntryPoint = "OpenProcess")]
         public static extern IntPtr OpenProcess
             (
@@ -45,6 +48,7 @@ namespace AutoDeskLine_ToPlant
         System.Data.DataColumn dataColum;
         DataRow DataRow;
         DataView dataview;
+        RemoteControl PlantRC = new RemoteControl();
         /// <summary>
         /// 全局变量 保存上一个读取的Cad对象
         /// </summary>
@@ -58,11 +62,19 @@ namespace AutoDeskLine_ToPlant
         /// 当前点十分为线头/尾点"A/B"
         /// </summary>
         string CBEP = string.Empty;
+        Thread ThreadClient = null;
+        Socket SocketClient = null;
+
+
+
+
         public DrawFence()  //Init Global data
         {
-
             InitializeComponent();
-
+            CheckForIllegalCrossThreadCalls = false;
+            SocketLogs.Text = string.Empty;
+            ServerIP.Text = "127.0.0.1";
+            ServerPort.Text = "30000";
             timer.Enabled = true;
             dataColum = new System.Data.DataColumn();
             dataColum.ColumnName = "序号";
@@ -230,7 +242,6 @@ namespace AutoDeskLine_ToPlant
                 //MessageBox.Show("请先打开AutoCad!");
             }
         }
-
         private void ClearData_Click(object sender, EventArgs e)
         {
             datatable.Clear();
@@ -266,6 +277,11 @@ namespace AutoDeskLine_ToPlant
 
         private void ManulInputLine_Click(object sender, EventArgs e)
         {
+            if (OnlineModel.Checked != true)
+            {
+                MessageBox.Show("当前未切换到在线设计模式，无法继续后续操作！请选择在线模式!");
+                return;
+            }
             Reset:
             AcadDocument caddocument = null;
             try
@@ -312,9 +328,16 @@ namespace AutoDeskLine_ToPlant
                                 RT.StartPoint = ((dynamic)obj).StartPoint;
                                 RT.EndPoint = ((dynamic)obj).EndPoint;
                                 RT.FwAngle = ((dynamic)obj).Angle;
+                                RT.Length = ((dynamic)obj).length;
+                                double[] LineCenter = new double[3] { 0, 0, 0 };
+                                LineCenter[0] = RT.StartPoint[0]+(RT.StartPoint[0] - RT.EndPoint[0]) / 2;
+                                LineCenter[1] = RT.StartPoint[1]+(RT.StartPoint[1] - RT.EndPoint[1]) / 2;
+                                LineCenter[2] = RT.StartPoint[2]+(RT.StartPoint[2] - RT.EndPoint[2]) / 2;
+                                RT.CenterPoint = LineCenter;
                                 double Tangle = (180 / Math.PI) * RT.FwAngle;
                                 RT.FwAngle = Math.Round(Tangle, 1);
                                 OprateFormData(RT);
+                                PlantOnline.WriteFence(PlantRC, RT.Length, RT.CenterPoint, RT.FwAngle, RefPoint);
                                 break;
                             }
                         case "AcDbArc":
@@ -638,55 +661,102 @@ namespace AutoDeskLine_ToPlant
 
         private void OnlineModel_CheckedChanged(object sender, EventArgs e)
         {
-            //检查Plant 是否已经启动
-            //Console.Clear();
-            Process[] PS = Process.GetProcesses();
-            Console.WriteLine();
-            for (int i = 0; i < PS.Length; i++)
+            SocketLogs.Text = string.Empty;
+            if (UserClass.IsRegeditExit())
             {
-                if (PS[i].ProcessName.ToString() == "PlantSimulation15_1")
+                if (OnlineModel.Checked)
                 {
-                    RemoteControl Plant = new RemoteControl();
-                    if (Plant.IsSimulationRunning())
+                    SocketClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    IPAddress address = IPAddress.Parse(ServerIP.Text);
+                    IPEndPoint Point = new IPEndPoint(address,Convert.ToInt16(ServerPort.Text));
+                    try
                     {
-                        MessageBox.Show("已检测到PlantSimulation 15! 并完成连接！");
-                        return;
+                        SocketClient.Connect(Point);
+                        OnlineModel.Checked = true;
+                        SocketLogs.AppendText("服务器："+ ServerIP.Text+":"+ ServerPort.Text + "连接成功！" + DateTime.Now.ToString()  + "\r\n\n");
                     }
-                    else
+                    catch (System.Exception)
                     {
-                        PlantValue PV = new PlantValue();
-                        System.Windows.Forms.OpenFileDialog FD = new System.Windows.Forms.OpenFileDialog();
-                        FD.InitialDirectory = "C:\\Users\\Administrator\\Desktop\\";
-                        FD.Filter = "PlantSimulationFiles(*.spp)|*.spp";
-                        FD.FilterIndex = 1;
-                        //FD.RestoreDirectory = true;
-                        if (FD.ShowDialog() == DialogResult.OK)
-                        {
-                            PV.ModelPath = FD.FileName;
-                        }
-                        object NewModel = new object();
-                        Plant.LoadModel(PV.ModelPath, NewModel);
-                        Plant.SetVisible(1);
-                        Plant.CloseModel();
-                        return;
+                        Debug.WriteLine("连接失败！");
+                        SocketLogs.AppendText("服务器：" + ServerIP.Text + ":" + ServerPort.Text + "连接失败！！！" + DateTime.Now.ToString() + "\r\n\n");
+                        OnlineModel.Checked = false;
+                        throw;
                     }
+                    String Str = string.Empty;
+                    ThreadClient = new Thread(SocketRecive);
+                    ThreadClient.IsBackground = true;
+                    ThreadClient.Start();
                 }
                 else
                 {
-                    if (i == PS.Length - 1)
+                    //OnlineModel.Checked = true;
+                    MessageBox.Show("您已断开和PlantSimulation链接，无法执行后续操作！");
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("未检测到您安装了PlantSimulation 15.1 无法执行后续操作！");
+            }
+
+        }
+
+        /// <summary>
+        /// 获取Socket 返回值
+        /// </summary>
+        public void SocketRecive()
+        {
+            int x = 0;
+            while (true)
+            {
+                try
+                {
+                    byte[] ArryRecvmsg = new byte[1024 * 1024];
+                    int length = SocketClient.Receive(ArryRecvmsg);
+                    string Strmsg = Encoding.UTF8.GetString(ArryRecvmsg, 0, length);
+                    if (x==1)
                     {
-                        MessageBox.Show("未检测到您打开PlantSimulation! 在线模式启动失败！");
+                        this.SocketLogs.AppendText("服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        Debug.WriteLine("服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
                     }
-                    Console.Write(i.ToString());
-                    Console.Write(PS[i].ProcessName.ToString());
-                    Console.WriteLine();
+                    else
+                    {
+                        this.SocketLogs.AppendText("服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        Debug.WriteLine("服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                    }
+                }
+                catch (System.Exception)
+                {
+                    this.SocketLogs.AppendText("服务器连接已中断 " + DateTime.Now.ToString()+ "\r\n\n");
+                    Debug.WriteLine("服务器连接已中断 " + DateTime.Now.ToString()+ "\r\n\n");
                 }
             }
         }
-
-        private void OutToPlant_Click(object sender, EventArgs e)
+       public void SendDataToSocket(string SendData)
         {
+            try
+            {
+                byte[] ArrClientMessage = Encoding.UTF8.GetBytes(SendData);
+                SocketClient.Send(ArrClientMessage);
+                Debug.WriteLine("数据： " + SendData + "已向服务器发送完成，" + DateTime.Now.ToString() + "\r\n" + "\r\n\n");
+                SocketLogs.AppendText("数据： " + SendData + "已向服务器发送完成，" + DateTime.Now.ToString() + "\r\n" + "\r\n\n");
 
+            }
+            catch (System.Exception)
+            {
+                SocketLogs.AppendText("服务器连接已中断,发送失败！ " + DateTime.Now.ToString() + "\r\n\n");
+                Debug.WriteLine("服务器连接已中断,发送失败！ " + DateTime.Now.ToString() + "\r\n\n");
+
+            }
+        }
+
+        private void TestSocket_Click(object sender, EventArgs e)
+        {
+            if (!OnlineModel.Checked)
+            {
+                SocketLogs.AppendText("服务器连接尚未启动，请先启动在线模式！ " + DateTime.Now.ToString() + "\r\n\n");
+            }
+            SendDataToSocket("TryConnect");
         }
     }
 }

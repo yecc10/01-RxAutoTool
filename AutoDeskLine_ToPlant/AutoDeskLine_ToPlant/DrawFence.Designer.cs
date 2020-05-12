@@ -59,12 +59,16 @@
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.Sscale = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.ServerPort = new System.Windows.Forms.TextBox();
+            this.ServerIP = new System.Windows.Forms.TextBox();
             this.OnlineModel = new System.Windows.Forms.CheckBox();
             this.KeepValue = new System.Windows.Forms.TextBox();
             this.ApplyPlantAix = new System.Windows.Forms.CheckBox();
             this.ChangeXY = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.OutToPlant = new System.Windows.Forms.Button();
+            this.TestSocket = new System.Windows.Forms.Button();
             this.AutoRead = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.ManulInputPoint = new System.Windows.Forms.Button();
@@ -73,6 +77,7 @@
             this.SX_AIX = new System.Windows.Forms.TextBox();
             this.SetRefPoint = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.SocketLogs = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -100,7 +105,7 @@
             this.DataGrid.Location = new System.Drawing.Point(12, 184);
             this.DataGrid.Name = "DataGrid";
             this.DataGrid.RowTemplate.Height = 23;
-            this.DataGrid.Size = new System.Drawing.Size(747, 449);
+            this.DataGrid.Size = new System.Drawing.Size(747, 208);
             this.DataGrid.TabIndex = 8;
             // 
             // mIndex
@@ -263,6 +268,7 @@
             this.OutExcel.TabIndex = 2;
             this.OutExcel.Text = "导出EXCEL";
             this.OutExcel.UseVisualStyleBackColor = true;
+            this.OutExcel.Click += new System.EventHandler(this.OutExcel_Click);
             // 
             // groupBox3
             // 
@@ -314,6 +320,7 @@
             this.ClearData.TabIndex = 4;
             this.ClearData.Text = "清空";
             this.ClearData.UseVisualStyleBackColor = true;
+            this.ClearData.Click += new System.EventHandler(this.DeleteData_Click);
             // 
             // label2
             // 
@@ -335,6 +342,10 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.ServerPort);
+            this.groupBox2.Controls.Add(this.ServerIP);
             this.groupBox2.Controls.Add(this.OnlineModel);
             this.groupBox2.Controls.Add(this.groupBox5);
             this.groupBox2.Controls.Add(this.groupBox4);
@@ -352,10 +363,42 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "基本设置";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(186, 80);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(35, 12);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "Port:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(186, 53);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(59, 12);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "ServerIP:";
+            // 
+            // ServerPort
+            // 
+            this.ServerPort.Location = new System.Drawing.Point(249, 76);
+            this.ServerPort.Name = "ServerPort";
+            this.ServerPort.Size = new System.Drawing.Size(171, 21);
+            this.ServerPort.TabIndex = 7;
+            // 
+            // ServerIP
+            // 
+            this.ServerIP.Location = new System.Drawing.Point(249, 49);
+            this.ServerIP.Name = "ServerIP";
+            this.ServerIP.Size = new System.Drawing.Size(171, 21);
+            this.ServerIP.TabIndex = 7;
+            // 
             // OnlineModel
             // 
             this.OnlineModel.AutoSize = true;
-            this.OnlineModel.Location = new System.Drawing.Point(119, 51);
+            this.OnlineModel.Location = new System.Drawing.Point(106, 51);
             this.OnlineModel.Name = "OnlineModel";
             this.OnlineModel.Size = new System.Drawing.Size(72, 16);
             this.OnlineModel.TabIndex = 6;
@@ -377,7 +420,7 @@
             this.ApplyPlantAix.AutoSize = true;
             this.ApplyPlantAix.Checked = true;
             this.ApplyPlantAix.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ApplyPlantAix.Location = new System.Drawing.Point(11, 82);
+            this.ApplyPlantAix.Location = new System.Drawing.Point(11, 78);
             this.ApplyPlantAix.Name = "ApplyPlantAix";
             this.ApplyPlantAix.Size = new System.Drawing.Size(126, 16);
             this.ApplyPlantAix.TabIndex = 0;
@@ -403,18 +446,19 @@
             this.label4.TabIndex = 3;
             this.label4.Text = "Y坐标";
             // 
-            // OutToPlant
+            // TestSocket
             // 
-            this.OutToPlant.Location = new System.Drawing.Point(657, 639);
-            this.OutToPlant.Name = "OutToPlant";
-            this.OutToPlant.Size = new System.Drawing.Size(90, 30);
-            this.OutToPlant.TabIndex = 6;
-            this.OutToPlant.Text = "输入到Plant";
-            this.OutToPlant.UseVisualStyleBackColor = true;
-            this.OutToPlant.Click += new System.EventHandler(this.OutToPlant_Click);
+            this.TestSocket.Location = new System.Drawing.Point(657, 639);
+            this.TestSocket.Name = "TestSocket";
+            this.TestSocket.Size = new System.Drawing.Size(90, 30);
+            this.TestSocket.TabIndex = 6;
+            this.TestSocket.Text = "测试连接";
+            this.TestSocket.UseVisualStyleBackColor = true;
+            this.TestSocket.Click += new System.EventHandler(this.TestSocket_Click);
             // 
             // AutoRead
             // 
+            this.AutoRead.Enabled = false;
             this.AutoRead.Location = new System.Drawing.Point(646, 20);
             this.AutoRead.Name = "AutoRead";
             this.AutoRead.Size = new System.Drawing.Size(90, 30);
@@ -433,12 +477,14 @@
             // 
             // ManulInputPoint
             // 
+            this.ManulInputPoint.Enabled = false;
             this.ManulInputPoint.Location = new System.Drawing.Point(432, 20);
             this.ManulInputPoint.Name = "ManulInputPoint";
             this.ManulInputPoint.Size = new System.Drawing.Size(90, 30);
             this.ManulInputPoint.TabIndex = 0;
             this.ManulInputPoint.Text = "读点模式";
             this.ManulInputPoint.UseVisualStyleBackColor = true;
+            this.ManulInputPoint.Click += new System.EventHandler(this.ManulInputPoint_Click);
             // 
             // ManulInputLine
             // 
@@ -448,6 +494,7 @@
             this.ManulInputLine.TabIndex = 0;
             this.ManulInputLine.Text = "读线模式";
             this.ManulInputLine.UseVisualStyleBackColor = true;
+            this.ManulInputLine.Click += new System.EventHandler(this.ManulInputLine_Click);
             // 
             // SY_AIX
             // 
@@ -471,6 +518,7 @@
             this.SetRefPoint.TabIndex = 0;
             this.SetRefPoint.Text = "设定参考点";
             this.SetRefPoint.UseVisualStyleBackColor = true;
+            this.SetRefPoint.Click += new System.EventHandler(this.SetRefPoint_Click);
             // 
             // groupBox1
             // 
@@ -489,19 +537,32 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "拾取对象";
             // 
+            // SocketLogs
+            // 
+            this.SocketLogs.ImeMode = System.Windows.Forms.ImeMode.Off;
+            this.SocketLogs.Location = new System.Drawing.Point(12, 398);
+            this.SocketLogs.Multiline = true;
+            this.SocketLogs.Name = "SocketLogs";
+            this.SocketLogs.Size = new System.Drawing.Size(747, 235);
+            this.SocketLogs.TabIndex = 9;
+            this.SocketLogs.Text = "SocketLogs:";
+            // 
             // DrawFence
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ClientSize = new System.Drawing.Size(777, 676);
+            this.ClientSize = new System.Drawing.Size(770, 690);
+            this.Controls.Add(this.SocketLogs);
             this.Controls.Add(this.DataGrid);
             this.Controls.Add(this.OutExcel);
             this.Controls.Add(this.DeleteData);
             this.Controls.Add(this.ClearData);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.OutToPlant);
+            this.Controls.Add(this.TestSocket);
             this.Controls.Add(this.groupBox1);
+            this.MaximumSize = new System.Drawing.Size(786, 729);
+            this.MinimumSize = new System.Drawing.Size(786, 729);
             this.Name = "DrawFence";
             this.Text = "围栏同步设计";
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).EndInit();
@@ -516,6 +577,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -555,7 +617,7 @@
         private System.Windows.Forms.CheckBox ApplyPlantAix;
         private System.Windows.Forms.CheckBox ChangeXY;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button OutToPlant;
+        private System.Windows.Forms.Button TestSocket;
         private System.Windows.Forms.Button AutoRead;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button ManulInputPoint;
@@ -565,5 +627,10 @@
         private System.Windows.Forms.Button SetRefPoint;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox OnlineModel;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox ServerIP;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox ServerPort;
+        private System.Windows.Forms.TextBox SocketLogs;
     }
 }
