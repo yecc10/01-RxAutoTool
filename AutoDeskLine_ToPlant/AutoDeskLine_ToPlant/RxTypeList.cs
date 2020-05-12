@@ -68,7 +68,16 @@ namespace AutoDeskLine_ToPlant
             public virtual double[] EndAngle { get; set; }
             public virtual double[] Radius { get; set; }
         }
+        public class AcDbPolyline
+        {
+            public virtual string Name { get; set; }
+            public virtual string ID { get; set; }
+            public virtual double[] Points { get; set; }
+            public virtual double With { get; set; }
+            public virtual int Color { get; set; }
+            public virtual string Layer { get; set; }
 
+        }
     }
     /// <summary>
     /// Plant Simulation 成员变量集合

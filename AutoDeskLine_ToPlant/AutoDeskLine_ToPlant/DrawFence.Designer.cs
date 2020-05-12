@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DrawFence));
             this.DataGrid = new System.Windows.Forms.DataGridView();
             this.mIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Xdata = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -53,7 +54,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.DoubleRoadSelected = new System.Windows.Forms.RadioButton();
             this.SingeRoadSelected = new System.Windows.Forms.RadioButton();
-            this.DeleteData = new System.Windows.Forms.Button();
+            this.DeleteLastFence = new System.Windows.Forms.Button();
             this.ClearData = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.timer = new System.Windows.Forms.Timer(this.components);
@@ -78,6 +79,9 @@
             this.SetRefPoint = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.SocketLogs = new System.Windows.Forms.TextBox();
+            this.ClearLogs = new System.Windows.Forms.Button();
+            this.ClearModel = new System.Windows.Forms.Button();
+            this.ExploreJT = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -262,7 +266,7 @@
             // 
             // OutExcel
             // 
-            this.OutExcel.Location = new System.Drawing.Point(18, 639);
+            this.OutExcel.Location = new System.Drawing.Point(12, 648);
             this.OutExcel.Name = "OutExcel";
             this.OutExcel.Size = new System.Drawing.Size(90, 30);
             this.OutExcel.TabIndex = 2;
@@ -303,18 +307,20 @@
             this.SingeRoadSelected.Text = "单向通道";
             this.SingeRoadSelected.UseVisualStyleBackColor = true;
             // 
-            // DeleteData
+            // DeleteLastFence
             // 
-            this.DeleteData.Location = new System.Drawing.Point(444, 639);
-            this.DeleteData.Name = "DeleteData";
-            this.DeleteData.Size = new System.Drawing.Size(90, 30);
-            this.DeleteData.TabIndex = 3;
-            this.DeleteData.Text = "删除最后输入";
-            this.DeleteData.UseVisualStyleBackColor = true;
+            this.DeleteLastFence.Location = new System.Drawing.Point(448, 648);
+            this.DeleteLastFence.Name = "DeleteLastFence";
+            this.DeleteLastFence.Size = new System.Drawing.Size(90, 30);
+            this.DeleteLastFence.TabIndex = 3;
+            this.DeleteLastFence.Text = "删除最后围栏";
+            this.DeleteLastFence.UseVisualStyleBackColor = true;
+            this.DeleteLastFence.Click += new System.EventHandler(this.DeleteLastFence_Click);
             // 
             // ClearData
             // 
-            this.ClearData.Location = new System.Drawing.Point(231, 639);
+            this.ClearData.Enabled = false;
+            this.ClearData.Location = new System.Drawing.Point(121, 648);
             this.ClearData.Name = "ClearData";
             this.ClearData.Size = new System.Drawing.Size(90, 30);
             this.ClearData.TabIndex = 4;
@@ -448,7 +454,7 @@
             // 
             // TestSocket
             // 
-            this.TestSocket.Location = new System.Drawing.Point(657, 639);
+            this.TestSocket.Location = new System.Drawing.Point(666, 648);
             this.TestSocket.Name = "TestSocket";
             this.TestSocket.Size = new System.Drawing.Size(90, 30);
             this.TestSocket.TabIndex = 6;
@@ -543,9 +549,40 @@
             this.SocketLogs.Location = new System.Drawing.Point(12, 398);
             this.SocketLogs.Multiline = true;
             this.SocketLogs.Name = "SocketLogs";
+            this.SocketLogs.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.SocketLogs.Size = new System.Drawing.Size(747, 235);
             this.SocketLogs.TabIndex = 9;
             this.SocketLogs.Text = "SocketLogs:";
+            // 
+            // ClearLogs
+            // 
+            this.ClearLogs.Location = new System.Drawing.Point(230, 648);
+            this.ClearLogs.Name = "ClearLogs";
+            this.ClearLogs.Size = new System.Drawing.Size(90, 30);
+            this.ClearLogs.TabIndex = 10;
+            this.ClearLogs.Text = "清空记录";
+            this.ClearLogs.UseVisualStyleBackColor = true;
+            this.ClearLogs.Click += new System.EventHandler(this.ClearLogs_Click);
+            // 
+            // ClearModel
+            // 
+            this.ClearModel.Location = new System.Drawing.Point(339, 648);
+            this.ClearModel.Name = "ClearModel";
+            this.ClearModel.Size = new System.Drawing.Size(90, 30);
+            this.ClearModel.TabIndex = 10;
+            this.ClearModel.Text = "清空模型";
+            this.ClearModel.UseVisualStyleBackColor = true;
+            this.ClearModel.Click += new System.EventHandler(this.ClearModel_Click);
+            // 
+            // ExploreJT
+            // 
+            this.ExploreJT.Location = new System.Drawing.Point(557, 648);
+            this.ExploreJT.Name = "ExploreJT";
+            this.ExploreJT.Size = new System.Drawing.Size(90, 30);
+            this.ExploreJT.TabIndex = 3;
+            this.ExploreJT.Text = "导出JT";
+            this.ExploreJT.UseVisualStyleBackColor = true;
+            this.ExploreJT.Click += new System.EventHandler(this.ExploreJT_Click);
             // 
             // DrawFence
             // 
@@ -553,14 +590,18 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.ClientSize = new System.Drawing.Size(770, 690);
+            this.Controls.Add(this.ClearModel);
+            this.Controls.Add(this.ClearLogs);
             this.Controls.Add(this.SocketLogs);
             this.Controls.Add(this.DataGrid);
             this.Controls.Add(this.OutExcel);
-            this.Controls.Add(this.DeleteData);
+            this.Controls.Add(this.ExploreJT);
+            this.Controls.Add(this.DeleteLastFence);
             this.Controls.Add(this.ClearData);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.TestSocket);
             this.Controls.Add(this.groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(786, 729);
             this.MinimumSize = new System.Drawing.Size(786, 729);
             this.Name = "DrawFence";
@@ -607,7 +648,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.RadioButton DoubleRoadSelected;
         private System.Windows.Forms.RadioButton SingeRoadSelected;
-        private System.Windows.Forms.Button DeleteData;
+        private System.Windows.Forms.Button DeleteLastFence;
         private System.Windows.Forms.Button ClearData;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Timer timer;
@@ -632,5 +673,8 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox ServerPort;
         private System.Windows.Forms.TextBox SocketLogs;
+        private System.Windows.Forms.Button ClearLogs;
+        private System.Windows.Forms.Button ClearModel;
+        private System.Windows.Forms.Button ExploreJT;
     }
 }

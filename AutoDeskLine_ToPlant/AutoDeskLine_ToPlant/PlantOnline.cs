@@ -36,23 +36,18 @@ namespace AutoDeskLine_ToPlant
         /// <param name="CenterPosition">围栏中心点</param>
         /// <param name="FenceAngle">围栏角度</param>
         /// <returns></returns>
-        public static bool WriteFence(RemoteControl PlantRC, Double FenceLength, Double[] CenterPosition, Double FenceAngle, double[] RefPoint)
+        public static  string WriteFence(RemoteControl PlantRC, Double FenceLength, Double[] CenterPosition, Double FenceAngle, double[] RefPoint)
         {
-            bool _exit = false;
+            string _exit = string.Empty;
             try
             {
                 CenterPosition = PlantOnline.TranslateDataToPlant(CenterPosition, RefPoint);
                 FenceLength = Math.Round(FenceLength/1000, 3);
-                string str = ".Models.Model.DrawFence([" + FenceLength + "," + 0 + "," + 2 + "],[" + CenterPosition[0] + "," + CenterPosition[1] + "," + CenterPosition[2] + "]," + FenceAngle.ToString() + ")";
-                object Data=null;
-                PlantRC.ExecuteSimTalk(str,Data);
-                
-                _exit = true;
+                string str = "DrawFence([" +Math.Abs(FenceLength) + "," + 0 + "," + 2 + "],[" + CenterPosition[0] + "," + CenterPosition[1] + "," + CenterPosition[2] + "]," + FenceAngle.ToString() + ")";
+                _exit=str;
             }
             catch (System.Exception)
             {
-                _exit = false;
-                //PlantRC.CloseModel();
                 throw;
             }
             return _exit;
@@ -73,9 +68,9 @@ namespace AutoDeskLine_ToPlant
                 x = CadData[0];
                 y = CadData[1];
                 z = CadData[2];
-                x = (CadData[0] - RefPoint[0]) / 1000 * 20;
-                y = (CadData[1] - RefPoint[1]) / 1000 * 20;
-                z = (CadData[2] - RefPoint[2]) / 1000 * 20;
+                x = (CadData[0] - RefPoint[0]) / 1000 ;
+                y = (CadData[1] - RefPoint[1]) / 1000;
+                z = (CadData[2] - RefPoint[2]) / 1000;
                 double[] Res = new double[3];
                 Res[0] =Math.Round(x, 3);
                 Res[1] =Math.Round(y, 3);

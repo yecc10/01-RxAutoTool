@@ -277,9 +277,9 @@ namespace AutoDeskLine_ToPlant
 
         private void ManulInputLine_Click(object sender, EventArgs e)
         {
-            if (OnlineModel.Checked != true)
+            if (OnlineModel.Checked != true | SX_AIX.Text==string.Empty | SX_AIX.Text =="")
             {
-                MessageBox.Show("当前未切换到在线设计模式，无法继续后续操作！请选择在线模式!");
+                MessageBox.Show("当前未切换到在线设计模式或未设置参考点坐标！，无法继续后续操作！请选择在线模式!");
                 return;
             }
             Reset:
@@ -330,14 +330,18 @@ namespace AutoDeskLine_ToPlant
                                 RT.FwAngle = ((dynamic)obj).Angle;
                                 RT.Length = ((dynamic)obj).length;
                                 double[] LineCenter = new double[3] { 0, 0, 0 };
-                                LineCenter[0] = RT.StartPoint[0]+(RT.StartPoint[0] - RT.EndPoint[0]) / 2;
-                                LineCenter[1] = RT.StartPoint[1]+(RT.StartPoint[1] - RT.EndPoint[1]) / 2;
-                                LineCenter[2] = RT.StartPoint[2]+(RT.StartPoint[2] - RT.EndPoint[2]) / 2;
+                                LineCenter[0] = RT.StartPoint[0] + (RT.EndPoint[0] - RT.StartPoint[0]) / 2;
+                                LineCenter[1] = RT.StartPoint[1] + (RT.EndPoint[1] - RT.StartPoint[1]) / 2;
+                                LineCenter[2] = RT.StartPoint[2] + (RT.EndPoint[2] - RT.StartPoint[2]) / 2;
                                 RT.CenterPoint = LineCenter;
                                 double Tangle = (180 / Math.PI) * RT.FwAngle;
                                 RT.FwAngle = Math.Round(Tangle, 1);
                                 OprateFormData(RT);
-                                PlantOnline.WriteFence(PlantRC, RT.Length, RT.CenterPoint, RT.FwAngle, RefPoint);
+                                string str = PlantOnline.WriteFence(PlantRC, RT.Length, RT.CenterPoint, RT.FwAngle, RefPoint);
+                                if (str != string.Empty)
+                                {
+                                    SendDataToSocket(str);
+                                }
                                 break;
                             }
                         case "AcDbArc":
@@ -354,6 +358,48 @@ namespace AutoDeskLine_ToPlant
                                 Arc.EndAngle = (180 / Math.PI) * Arc.EndAngle;
                                 Arc.Normal = ((dynamic)obj).Normal;
                                 OprateFormData(Arc);
+                                break;
+                            }
+                        case "AcDbPolyline":
+                            {
+                                RxTypeList.AcDbPolyline Pl = new RxTypeList.AcDbPolyline();
+                                Pl.Points = ((dynamic)obj).Coordinates;
+                                int NumberLine,NumberPoints;
+                                NumberPoints = Pl.Points.Count();//Total Polyline Point Number
+                                NumberLine = NumberPoints/2 - 1;//Total Polyline Number
+                                int Cline=0;
+                                for (int i = 0; i < NumberPoints; i++)
+                                {
+                                    RxTypeList.AcadLine Aline = new RxTypeList.AcadLine();
+                                    Aline.StartPoint=new double[3] { Pl.Points[i], Pl.Points[i + 1], 0 };
+                                    Aline.EndPoint = new double[3] { Pl.Points[i+2], Pl.Points[i + 3],0};
+                                    Aline.CenterPoint = new double[3];
+                                    Aline.CenterPoint[0] = Aline.StartPoint[0] + (Aline.EndPoint[0] - Aline.StartPoint[0]) / 2;
+                                    Aline.CenterPoint[1] = Aline.StartPoint[1] + (Aline.EndPoint[1] - Aline.StartPoint[1]) / 2;
+                                    Aline.CenterPoint[2] = Aline.StartPoint[2] + (Aline.EndPoint[2] - Aline.StartPoint[2]) / 2;
+                                    Aline.FwAngle = Math.Atan(Math.Abs(Aline.EndPoint[1] - Aline.StartPoint[1]) / Math.Abs(Aline.EndPoint[0] - Aline.StartPoint[0]));
+                                    Aline.FwAngle = (180 / Math.PI) * Aline.FwAngle;
+                                    if (Math.Abs(Aline.EndPoint[1] - Aline.StartPoint[1])==0)
+                                    {
+                                        Aline.Length = Math.Abs(Aline.EndPoint[0] - Aline.StartPoint[0]);
+                                    }
+                                    else
+                                    {
+                                        Aline.Length = Math.Abs(Aline.EndPoint[1] - Aline.StartPoint[1]) / Math.Sin(Aline.FwAngle);
+                                    }
+
+                                    Cline += 1;
+                                    string str = PlantOnline.WriteFence(PlantRC, Aline.Length, Aline.CenterPoint, Aline.FwAngle, RefPoint);
+                                    if (str != string.Empty)
+                                    {
+                                        SendDataToSocket(str);
+                                    }
+                                    if (Cline== NumberLine)
+                                    {
+                                        return;
+                                    }
+                                    i += 1;
+                                }
                                 break;
                             }
                         default:
@@ -661,26 +707,25 @@ namespace AutoDeskLine_ToPlant
 
         private void OnlineModel_CheckedChanged(object sender, EventArgs e)
         {
-            SocketLogs.Text = string.Empty;
             if (UserClass.IsRegeditExit())
             {
                 if (OnlineModel.Checked)
                 {
                     SocketClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     IPAddress address = IPAddress.Parse(ServerIP.Text);
-                    IPEndPoint Point = new IPEndPoint(address,Convert.ToInt16(ServerPort.Text));
+                    IPEndPoint Point = new IPEndPoint(address, Convert.ToInt32(ServerPort.Text));
                     try
                     {
                         SocketClient.Connect(Point);
                         OnlineModel.Checked = true;
-                        SocketLogs.AppendText("服务器："+ ServerIP.Text+":"+ ServerPort.Text + "连接成功！" + DateTime.Now.ToString()  + "\r\n\n");
+                        SocketLogs.AppendText("服务器：" + ServerIP.Text + ":" + ServerPort.Text + "连接成功！" + DateTime.Now.ToString() + "\r\n\n");
                     }
                     catch (System.Exception)
                     {
                         Debug.WriteLine("连接失败！");
                         SocketLogs.AppendText("服务器：" + ServerIP.Text + ":" + ServerPort.Text + "连接失败！！！" + DateTime.Now.ToString() + "\r\n\n");
                         OnlineModel.Checked = false;
-                        throw;
+                        //throw;
                     }
                     String Str = string.Empty;
                     ThreadClient = new Thread(SocketRecive);
@@ -689,10 +734,9 @@ namespace AutoDeskLine_ToPlant
                 }
                 else
                 {
-                    //OnlineModel.Checked = true;
+                    SocketClient.Close();
                     MessageBox.Show("您已断开和PlantSimulation链接，无法执行后续操作！");
                 }
-
             }
             else
             {
@@ -709,37 +753,41 @@ namespace AutoDeskLine_ToPlant
             int x = 0;
             while (true)
             {
+                if (!OnlineModel.Checked)
+                {
+                    return;
+                }
                 try
                 {
                     byte[] ArryRecvmsg = new byte[1024 * 1024];
                     int length = SocketClient.Receive(ArryRecvmsg);
                     string Strmsg = Encoding.UTF8.GetString(ArryRecvmsg, 0, length);
-                    if (x==1)
+                    if (x == 1)
                     {
-                        this.SocketLogs.AppendText("服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
-                        Debug.WriteLine("服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        this.SocketLogs.AppendText("\r\n" + "服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        Debug.WriteLine("\r\n" + "服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
                     }
                     else
                     {
-                        this.SocketLogs.AppendText("服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
-                        Debug.WriteLine("服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        this.SocketLogs.AppendText("\r\n" + "服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        Debug.WriteLine("\r\n" + "服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
                     }
                 }
                 catch (System.Exception)
                 {
-                    this.SocketLogs.AppendText("服务器连接已中断 " + DateTime.Now.ToString()+ "\r\n\n");
-                    Debug.WriteLine("服务器连接已中断 " + DateTime.Now.ToString()+ "\r\n\n");
+                    this.SocketLogs.AppendText("\r\n" + "服务器连接已中断 " + DateTime.Now.ToString() + "\r\n\n");
+                    Debug.WriteLine("\r\n" + "服务器连接已中断 " + DateTime.Now.ToString() + "\r\n\n");
                 }
             }
         }
-       public void SendDataToSocket(string SendData)
+        public void SendDataToSocket(string SendData)
         {
             try
             {
                 byte[] ArrClientMessage = Encoding.UTF8.GetBytes(SendData);
                 SocketClient.Send(ArrClientMessage);
-                Debug.WriteLine("数据： " + SendData + "已向服务器发送完成，" + DateTime.Now.ToString() + "\r\n" + "\r\n\n");
-                SocketLogs.AppendText("数据： " + SendData + "已向服务器发送完成，" + DateTime.Now.ToString() + "\r\n" + "\r\n\n");
+                Debug.WriteLine("\r\n" + "数据： " + SendData + "已向服务器发送完成，" + DateTime.Now.ToString() + "\r\n" + "\r\n\n");
+                SocketLogs.AppendText("\r\n" + "数据： " + SendData + "已向服务器发送完成，" + DateTime.Now.ToString() + "\r\n" + "\r\n\n");
 
             }
             catch (System.Exception)
@@ -757,6 +805,26 @@ namespace AutoDeskLine_ToPlant
                 SocketLogs.AppendText("服务器连接尚未启动，请先启动在线模式！ " + DateTime.Now.ToString() + "\r\n\n");
             }
             SendDataToSocket("TryConnect");
+        }
+
+        private void ClearLogs_Click(object sender, EventArgs e)
+        {
+            SocketLogs.Text = string.Empty;
+        }
+
+        private void DeleteLastFence_Click(object sender, EventArgs e)
+        {
+            SendDataToSocket("DeleteLastFence");
+        }
+
+        private void ExploreJT_Click(object sender, EventArgs e)
+        {
+            SendDataToSocket("SaveJt");
+        }
+
+        private void ClearModel_Click(object sender, EventArgs e)
+        {
+            SendDataToSocket("DeleteAllFence");
         }
     }
 }
