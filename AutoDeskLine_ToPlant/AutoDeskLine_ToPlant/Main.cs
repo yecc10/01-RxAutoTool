@@ -15,6 +15,8 @@ namespace AutoDeskLine_ToPlant
         public Main()
         {
             InitializeComponent();
+            this.WindowState = FormWindowState.Normal;
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         private void CreateFence_Click(object sender, EventArgs e)

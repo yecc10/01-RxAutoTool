@@ -606,6 +606,7 @@
             this.MinimumSize = new System.Drawing.Size(786, 729);
             this.Name = "DrawFence";
             this.Text = "围栏同步设计";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DrawFence_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();

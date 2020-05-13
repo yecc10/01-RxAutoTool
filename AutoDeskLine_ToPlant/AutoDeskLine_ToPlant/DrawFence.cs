@@ -72,6 +72,8 @@ namespace AutoDeskLine_ToPlant
         {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
+            this.WindowState = FormWindowState.Normal;
+            this.StartPosition = FormStartPosition.CenterScreen;
             SocketLogs.Text = string.Empty;
             ServerIP.Text = "127.0.0.1";
             ServerPort.Text = "30000";
@@ -277,13 +279,16 @@ namespace AutoDeskLine_ToPlant
 
         private void ManulInputLine_Click(object sender, EventArgs e)
         {
+            this.WindowState = FormWindowState.Minimized;
             if (OnlineModel.Checked != true | SX_AIX.Text==string.Empty | SX_AIX.Text =="")
             {
                 MessageBox.Show("当前未切换到在线设计模式或未设置参考点坐标！，无法继续后续操作！请选择在线模式!");
+                this.WindowState = FormWindowState.Maximized;
                 return;
             }
             Reset:
             AcadDocument caddocument = null;
+            tAcadApplication.Visible = true;
             try
             {
                 this.WindowState = FormWindowState.Minimized;
@@ -377,15 +382,22 @@ namespace AutoDeskLine_ToPlant
                                     Aline.CenterPoint[0] = Aline.StartPoint[0] + (Aline.EndPoint[0] - Aline.StartPoint[0]) / 2;
                                     Aline.CenterPoint[1] = Aline.StartPoint[1] + (Aline.EndPoint[1] - Aline.StartPoint[1]) / 2;
                                     Aline.CenterPoint[2] = Aline.StartPoint[2] + (Aline.EndPoint[2] - Aline.StartPoint[2]) / 2;
-                                    Aline.FwAngle = Math.Atan(Math.Abs(Aline.EndPoint[1] - Aline.StartPoint[1]) / Math.Abs(Aline.EndPoint[0] - Aline.StartPoint[0]));
-                                    Aline.FwAngle = (180 / Math.PI) * Aline.FwAngle;
-                                    if (Math.Abs(Aline.EndPoint[1] - Aline.StartPoint[1])==0)
+                                    //Aline.FwAngle = Math.Atan(Math.Abs(Aline.EndPoint[1] - Aline.StartPoint[1]) / Math.Abs(Aline.EndPoint[0] - Aline.StartPoint[0]));
+                                    Aline.FwAngle = Math.Atan((Aline.EndPoint[1] - Aline.StartPoint[1]) / (Aline.EndPoint[0] - Aline.StartPoint[0]));
+                                    double ASin = Aline.FwAngle;
+                                    Aline.FwAngle = Math.Round(180 * Aline.FwAngle / Math.PI, 2);
+                                    if (Aline.EndPoint[1] - Aline.StartPoint[1]==0)
                                     {
                                         Aline.Length = Math.Abs(Aline.EndPoint[0] - Aline.StartPoint[0]);
                                     }
+                                    else if (Aline.EndPoint[0] - Aline.StartPoint[0] == 0)
+                                    {
+                                        Aline.Length = Math.Abs(Aline.EndPoint[1] - Aline.StartPoint[1]);
+                                    }
                                     else
                                     {
-                                        Aline.Length = Math.Abs(Aline.EndPoint[1] - Aline.StartPoint[1]) / Math.Sin(Aline.FwAngle);
+                                        double dy = Math.Abs(Aline.EndPoint[1] - Aline.StartPoint[1]);
+                                        Aline.Length =Math.Round(dy / Math.Sin(ASin),4);
                                     }
 
                                     Cline += 1;
@@ -825,6 +837,21 @@ namespace AutoDeskLine_ToPlant
         private void ClearModel_Click(object sender, EventArgs e)
         {
             SendDataToSocket("DeleteAllFence");
+        }
+
+        private void DrawFence_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            try
+            {
+                SocketClient.Close();
+                Process.GetCurrentProcess().Kill();
+            }
+            catch (System.Exception)
+            {
+
+                Debug.WriteLine("Close Faild!");
+            }
+
         }
     }
 }

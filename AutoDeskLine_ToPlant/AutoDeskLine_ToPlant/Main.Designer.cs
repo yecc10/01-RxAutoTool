@@ -62,8 +62,12 @@
             this.Controls.Add(this.CreateFence);
             this.Controls.Add(this.CreateTrack);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(288, 115);
+            this.MinimumSize = new System.Drawing.Size(288, 115);
             this.Name = "Main";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "主入口";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.ResumeLayout(false);
 
         }
