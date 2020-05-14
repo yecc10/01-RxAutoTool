@@ -369,6 +369,7 @@ namespace AutoDeskLine_ToPlant
                             }
                         case "AcDbPolyline":
                             {
+                                ((dynamic)obj).color = caddocument.ActiveLayer.color;
                                 RxTypeList.AcDbPolyline Pl = new RxTypeList.AcDbPolyline();
                                 Pl.Points = ((dynamic)obj).Coordinates;
                                 int NumberLine,NumberPoints;
@@ -418,10 +419,10 @@ namespace AutoDeskLine_ToPlant
                                     {
                                         SendDataToSocket(str);
                                     }
-                                    if (Cline== NumberLine)
-                                    {
-                                        continue;
-                                    }
+                                    //if (Cline== NumberLine)
+                                    //{
+                                    //    continue;
+                                    //}
                                     i += 1;
                                 }
                                 break;
