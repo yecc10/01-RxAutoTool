@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -31,6 +32,12 @@ namespace AutoDeskLine_ToPlant
             this.Hide();
             AutoDesKToPlant ATP = new AutoDesKToPlant();
             ATP.ShowDialog();
+        }
+
+        private void Main_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Process.GetCurrentProcess().Kill();
+            System.Environment.Exit(0);
         }
     }
 }

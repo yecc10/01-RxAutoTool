@@ -19,7 +19,6 @@ using System.Reflection;
 using System.Security.Permissions;
 using System.Diagnostics;
 using Autodesk.AutoCAD.Interop.Common;
-using eMPlantLib;
 using System.Data.SQLite;
 using System.Security.Principal;
 using System.IO.MemoryMappedFiles;
@@ -48,7 +47,6 @@ namespace AutoDeskLine_ToPlant
         System.Data.DataColumn dataColum;
         DataRow DataRow;
         DataView dataview;
-        RemoteControl PlantRC = new RemoteControl();
         /// <summary>
         /// 全局变量 保存上一个读取的Cad对象
         /// </summary>
@@ -64,9 +62,6 @@ namespace AutoDeskLine_ToPlant
         string CBEP = string.Empty;
         Thread ThreadClient = null;
         Socket SocketClient = null;
-
-
-
 
         public DrawFence()  //Init Global data
         {
@@ -349,7 +344,7 @@ namespace AutoDeskLine_ToPlant
                                 double Tangle = (180 / Math.PI) * RT.FwAngle;
                                 RT.FwAngle = Math.Round(Tangle, 1);
                                 OprateFormData(RT);
-                                string str = PlantOnline.WriteFence(PlantRC, RT.Length, RT.CenterPoint, RT.FwAngle, RefPoint);
+                                string str = PlantOnline.WriteFence(RT.Length, RT.CenterPoint, RT.FwAngle, RefPoint);
                                 if (str != string.Empty)
                                 {
                                     SendDataToSocket(str);
@@ -390,7 +385,6 @@ namespace AutoDeskLine_ToPlant
                                     }
                                     catch (System.Exception)
                                     {
-
                                         continue;
                                     }
                                     Aline.CenterPoint = new double[3];
@@ -414,9 +408,12 @@ namespace AutoDeskLine_ToPlant
                                         double dy = Math.Abs(Aline.EndPoint[1] - Aline.StartPoint[1]);
                                         Aline.Length =Math.Round(dy / Math.Sin(ASin),4);
                                     }
-
+                                    if (Math.Round(Aline.Length,0)==0)
+                                    {
+                                        continue;
+                                    }
                                     Cline += 1;
-                                    string str = PlantOnline.WriteFence(PlantRC, Aline.Length, Aline.CenterPoint, Aline.FwAngle, RefPoint);
+                                    string str = PlantOnline.WriteFence(Aline.Length, Aline.CenterPoint, Aline.FwAngle, RefPoint);
                                     if (str != string.Empty)
                                     {
                                         SendDataToSocket(str);
@@ -779,7 +776,6 @@ namespace AutoDeskLine_ToPlant
         /// </summary>
         public void SocketRecive()
         {
-            int x = 0;
             while (true)
             {
                 if (!OnlineModel.Checked)
@@ -868,7 +864,9 @@ namespace AutoDeskLine_ToPlant
             try
             {
                 SocketClient.Close();
+                ThreadClient.DisableComObjectEagerCleanup();
                 Process.GetCurrentProcess().Kill();
+                System.Environment.Exit(0);
             }
             catch (System.Exception)
             {

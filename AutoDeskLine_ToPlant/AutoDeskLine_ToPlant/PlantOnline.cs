@@ -36,7 +36,7 @@ namespace AutoDeskLine_ToPlant
         /// <param name="CenterPosition">围栏中心点</param>
         /// <param name="FenceAngle">围栏角度</param>
         /// <returns></returns>
-        public static  string WriteFence(RemoteControl PlantRC, Double FenceLength, Double[] CenterPosition, Double FenceAngle, double[] RefPoint)
+        public static  string WriteFence(Double FenceLength, Double[] CenterPosition, Double FenceAngle, double[] RefPoint)
         {
             string _exit = string.Empty;
             try

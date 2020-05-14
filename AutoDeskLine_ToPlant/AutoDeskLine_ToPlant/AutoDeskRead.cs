@@ -627,5 +627,11 @@ namespace AutoDeskLine_ToPlant
             double[] d2 = new double[3] { 0, 0, 0 };
             var d = doc.Utility.GetPoint(d2, "Select a point:");
         }
+
+        private void AutoDesKToPlant_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Process.GetCurrentProcess().Kill();
+            System.Environment.Exit(0);
+        }
     }
 }
