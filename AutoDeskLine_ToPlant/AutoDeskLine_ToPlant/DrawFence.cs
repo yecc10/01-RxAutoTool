@@ -864,13 +864,13 @@ namespace AutoDeskLine_ToPlant
             try
             {
                 SocketClient.Close();
-                System.Environment.Exit(0);
+                //System.Environment.Exit(0);
                 ThreadClient.DisableComObjectEagerCleanup();
                 Process.GetCurrentProcess().Kill();
             }
             catch (System.Exception)
             {
-                System.Environment.Exit(0);
+                Process.GetCurrentProcess().Kill();
                 Debug.WriteLine("Close Faild!");
             }
 
