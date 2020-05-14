@@ -139,21 +139,26 @@ namespace AutoDeskLine_ToPlant
                     }
                     catch (System.Exception)
                     {
-                        this.WindowState = FormWindowState.Maximized;
+                        this.WindowState = FormWindowState.Normal;
+                        this.StartPosition = FormStartPosition.CenterScreen;
                         //MessageBox.Show("UCS创建失败！e02" + e);
                     }
                 }
                 else
                 {
-                    this.WindowState = FormWindowState.Maximized;
+                    this.WindowState = FormWindowState.Normal;
+                    this.StartPosition = FormStartPosition.CenterScreen;
                     //MessageBox.Show("请先打开AutoCad!+e00");
                 }
             }
             catch (System.Exception)
             {
-                this.WindowState = FormWindowState.Maximized;
+                this.WindowState = FormWindowState.Normal;
+                this.StartPosition = FormStartPosition.CenterScreen;
                 // MessageBox.Show("请先打开AutoCad!");
             }
+            this.WindowState = FormWindowState.Normal;
+            this.StartPosition = FormStartPosition.CenterScreen;
 
         }
 
@@ -283,7 +288,8 @@ namespace AutoDeskLine_ToPlant
             if (OnlineModel.Checked != true | SX_AIX.Text==string.Empty | SX_AIX.Text =="")
             {
                 MessageBox.Show("当前未切换到在线设计模式或未设置参考点坐标！，无法继续后续操作！请选择在线模式!");
-                this.WindowState = FormWindowState.Maximized;
+                this.WindowState = FormWindowState.Normal;
+                this.StartPosition = FormStartPosition.CenterScreen;
                 return;
             }
             Reset:
@@ -294,6 +300,7 @@ namespace AutoDeskLine_ToPlant
                 this.WindowState = FormWindowState.Minimized;
                 tAcadApplication = (AcadApplication)Marshal.GetActiveObject("AutoCAD.Application");
                 caddocument = tAcadApplication.ActiveDocument;
+                caddocument.Utility.Prompt("命令已初始化......!");
             }
             catch (COMException)
             {
@@ -376,8 +383,16 @@ namespace AutoDeskLine_ToPlant
                                 for (int i = 0; i < NumberPoints; i++)
                                 {
                                     RxTypeList.AcadLine Aline = new RxTypeList.AcadLine();
-                                    Aline.StartPoint=new double[3] { Pl.Points[i], Pl.Points[i + 1], 0 };
-                                    Aline.EndPoint = new double[3] { Pl.Points[i+2], Pl.Points[i + 3],0};
+                                    try
+                                    {
+                                        Aline.StartPoint = new double[3] { Pl.Points[i], Pl.Points[i + 1], 0 };
+                                        Aline.EndPoint = new double[3] { Pl.Points[i + 2], Pl.Points[i + 3], 0 };
+                                    }
+                                    catch (System.Exception)
+                                    {
+
+                                        continue;
+                                    }
                                     Aline.CenterPoint = new double[3];
                                     Aline.CenterPoint[0] = Aline.StartPoint[0] + (Aline.EndPoint[0] - Aline.StartPoint[0]) / 2;
                                     Aline.CenterPoint[1] = Aline.StartPoint[1] + (Aline.EndPoint[1] - Aline.StartPoint[1]) / 2;
@@ -408,7 +423,7 @@ namespace AutoDeskLine_ToPlant
                                     }
                                     if (Cline== NumberLine)
                                     {
-                                        return;
+                                        continue;
                                     }
                                     i += 1;
                                 }
@@ -416,7 +431,8 @@ namespace AutoDeskLine_ToPlant
                             }
                         default:
                             MessageBox.Show("您选择的不是一条直线无法获取起始点和结束点！");
-                            this.WindowState = FormWindowState.Maximized;
+                            this.WindowState = FormWindowState.Normal;
+                            this.StartPosition = FormStartPosition.CenterScreen;
                             break;
                     }
                 } while (JS < 99999);
@@ -426,7 +442,8 @@ namespace AutoDeskLine_ToPlant
                 if (((dynamic)E).HResult == -2147352567)
                 {
                     //Console.Write(((dynamic)e).Button);
-                    this.WindowState = FormWindowState.Maximized;
+                    this.WindowState = FormWindowState.Normal;
+                    this.StartPosition = FormStartPosition.CenterScreen;
                     return;
                 }
                 else
@@ -747,12 +764,12 @@ namespace AutoDeskLine_ToPlant
                 else
                 {
                     SocketClient.Close();
-                    MessageBox.Show("您已断开和PlantSimulation链接，无法执行后续操作！");
+                    SocketLogs.AppendText("您已断开和PlantSimulation链接，无法执行后续操作！" + DateTime.Now.ToString() + "\r\n\n");
                 }
             }
             else
             {
-                MessageBox.Show("未检测到您安装了PlantSimulation 15.1 无法执行后续操作！");
+                SocketLogs.AppendText("未检测到您安装了PlantSimulation 15.1 无法执行后续操作！" + DateTime.Now.ToString() + "\r\n\n");
             }
 
         }
@@ -774,22 +791,27 @@ namespace AutoDeskLine_ToPlant
                     byte[] ArryRecvmsg = new byte[1024 * 1024];
                     int length = SocketClient.Receive(ArryRecvmsg);
                     string Strmsg = Encoding.UTF8.GetString(ArryRecvmsg, 0, length);
-                    if (x == 1)
+                    if (length > 0)
                     {
                         this.SocketLogs.AppendText("\r\n" + "服务器01：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
                         Debug.WriteLine("\r\n" + "服务器01：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
                     }
                     else
                     {
-                        this.SocketLogs.AppendText("\r\n" + "服务器01：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
-                        Debug.WriteLine("\r\n" + "服务器01：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        this.SocketLogs.AppendText("\r\n" + "服务器01：服务器连接已中断,请重新连接......" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        Debug.WriteLine("\r\n" + "服务器01：服务器连接已中断,请重新连接......" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        OnlineModel.Checked = false;
+                        SocketClient.Close();
+                        return;
                     }
                 }
                 catch (System.Exception)
                 {
                     this.SocketLogs.AppendText("\r\n" + "服务器连接已中断,请重新连接......" + DateTime.Now.ToString() + "\r\n\n");
                     Debug.WriteLine("\r\n" + "服务器连接已中断,请重新连接...... " + DateTime.Now.ToString() + "\r\n\n");
+                    OnlineModel.Checked = false;
                     SocketClient.Close();
+                    return;
                 }
             }
         }
@@ -808,6 +830,7 @@ namespace AutoDeskLine_ToPlant
                 SocketLogs.AppendText("服务器连接已中断,发送失败！,请重新连接...... " + DateTime.Now.ToString() + "\r\n\n");
                 Debug.WriteLine("服务器连接已中断,发送失败！,请重新连接...... " + DateTime.Now.ToString() + "\r\n\n");
                 SocketClient.Close();
+                OnlineModel.Checked = false;
             }
         }
 
