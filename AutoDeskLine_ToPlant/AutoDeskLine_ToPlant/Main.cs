@@ -39,5 +39,12 @@ namespace AutoDeskLine_ToPlant
             Process.GetCurrentProcess().Kill();
             System.Environment.Exit(0);
         }
+
+        private void BollToAix_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            CatiaQuickTool CQT = new CatiaQuickTool();
+            CQT.Show();
+        }
     }
 }

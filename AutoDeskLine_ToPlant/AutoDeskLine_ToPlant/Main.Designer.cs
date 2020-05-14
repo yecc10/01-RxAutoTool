@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.CreateTrack = new System.Windows.Forms.Button();
             this.CreateFence = new System.Windows.Forms.Button();
+            this.BollToAix = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // CreateTrack
@@ -53,16 +54,26 @@
             this.CreateFence.UseVisualStyleBackColor = true;
             this.CreateFence.Click += new System.EventHandler(this.CreateFence_Click);
             // 
+            // BollToAix
+            // 
+            this.BollToAix.Location = new System.Drawing.Point(259, 12);
+            this.BollToAix.Name = "BollToAix";
+            this.BollToAix.Size = new System.Drawing.Size(121, 48);
+            this.BollToAix.TabIndex = 0;
+            this.BollToAix.Text = "球弧转坐标";
+            this.BollToAix.UseVisualStyleBackColor = true;
+            this.BollToAix.Click += new System.EventHandler(this.BollToAix_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ClientSize = new System.Drawing.Size(272, 76);
+            this.ClientSize = new System.Drawing.Size(389, 76);
+            this.Controls.Add(this.BollToAix);
             this.Controls.Add(this.CreateFence);
             this.Controls.Add(this.CreateTrack);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(288, 115);
             this.MinimumSize = new System.Drawing.Size(288, 115);
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -77,5 +88,6 @@
 
         private System.Windows.Forms.Button CreateTrack;
         private System.Windows.Forms.Button CreateFence;
+        private System.Windows.Forms.Button BollToAix;
     }
 }

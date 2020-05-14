@@ -330,7 +330,7 @@ namespace AutoDeskLine_ToPlant
                     {
                         case "AcDbLine":
                             {
-                                ((dynamic)obj).color = caddocument.ActiveLayer.color;
+                                //((dynamic)obj).color = caddocument.ActiveLayer.color;
                                 RxTypeList.AcadLine RT = new RxTypeList.AcadLine();
                                 RT.StartPoint = ((dynamic)obj).StartPoint;
                                 RT.EndPoint = ((dynamic)obj).EndPoint;
@@ -353,7 +353,7 @@ namespace AutoDeskLine_ToPlant
                             }
                         case "AcDbArc":
                             {
-                                ((dynamic)obj).color = caddocument.ActiveLayer.color;
+                                //((dynamic)obj).color = caddocument.ActiveLayer.color;
                                 RxTypeList.AcDbArc Arc = new RxTypeList.AcDbArc();
                                 Arc.StartPoint = ((dynamic)obj).StartPoint;
                                 Arc.EndPoint = ((dynamic)obj).EndPoint;
@@ -369,7 +369,7 @@ namespace AutoDeskLine_ToPlant
                             }
                         case "AcDbPolyline":
                             {
-                                ((dynamic)obj).color = caddocument.ActiveLayer.color;
+                                //((dynamic)obj).color = caddocument.ActiveLayer.color;
                                 RxTypeList.AcDbPolyline Pl = new RxTypeList.AcDbPolyline();
                                 Pl.Points = ((dynamic)obj).Coordinates;
                                 int NumberLine,NumberPoints;
@@ -433,7 +433,15 @@ namespace AutoDeskLine_ToPlant
                             this.StartPosition = FormStartPosition.CenterScreen;
                             break;
                     }
-                } while (JS < 99999);
+                    try
+                    {
+                        ((dynamic)obj).color = caddocument.ActiveLayer.color;
+                    }
+                    catch (System.Exception)
+                    {
+                        continue;
+                    }
+                }while (JS < 99999);
             }
             catch (COMException E)
             {
