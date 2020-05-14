@@ -193,6 +193,7 @@
             // 
             this.groupBox5.Controls.Add(this.MannuSetFW);
             this.groupBox5.Controls.Add(this.AutoSetFW);
+            this.groupBox5.Enabled = false;
             this.groupBox5.Location = new System.Drawing.Point(642, 5);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(98, 104);
@@ -235,6 +236,7 @@
             // 
             this.groupBox4.Controls.Add(this.LishanRoad);
             this.groupBox4.Controls.Add(this.ContinuRoad);
+            this.groupBox4.Enabled = false;
             this.groupBox4.Location = new System.Drawing.Point(533, 5);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(98, 104);
@@ -278,6 +280,7 @@
             // 
             this.groupBox3.Controls.Add(this.DoubleRoadSelected);
             this.groupBox3.Controls.Add(this.SingeRoadSelected);
+            this.groupBox3.Enabled = false;
             this.groupBox3.Location = new System.Drawing.Point(424, 5);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(98, 104);

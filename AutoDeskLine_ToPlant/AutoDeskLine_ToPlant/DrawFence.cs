@@ -776,19 +776,20 @@ namespace AutoDeskLine_ToPlant
                     string Strmsg = Encoding.UTF8.GetString(ArryRecvmsg, 0, length);
                     if (x == 1)
                     {
-                        this.SocketLogs.AppendText("\r\n" + "服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
-                        Debug.WriteLine("\r\n" + "服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        this.SocketLogs.AppendText("\r\n" + "服务器01：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        Debug.WriteLine("\r\n" + "服务器01：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
                     }
                     else
                     {
-                        this.SocketLogs.AppendText("\r\n" + "服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
-                        Debug.WriteLine("\r\n" + "服务器：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        this.SocketLogs.AppendText("\r\n" + "服务器01：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
+                        Debug.WriteLine("\r\n" + "服务器01：" + DateTime.Now.ToString() + "\r\n" + Strmsg + "\r\n\n");
                     }
                 }
                 catch (System.Exception)
                 {
-                    this.SocketLogs.AppendText("\r\n" + "服务器连接已中断 " + DateTime.Now.ToString() + "\r\n\n");
-                    Debug.WriteLine("\r\n" + "服务器连接已中断 " + DateTime.Now.ToString() + "\r\n\n");
+                    this.SocketLogs.AppendText("\r\n" + "服务器连接已中断,请重新连接......" + DateTime.Now.ToString() + "\r\n\n");
+                    Debug.WriteLine("\r\n" + "服务器连接已中断,请重新连接...... " + DateTime.Now.ToString() + "\r\n\n");
+                    SocketClient.Close();
                 }
             }
         }
@@ -804,9 +805,9 @@ namespace AutoDeskLine_ToPlant
             }
             catch (System.Exception)
             {
-                SocketLogs.AppendText("服务器连接已中断,发送失败！ " + DateTime.Now.ToString() + "\r\n\n");
-                Debug.WriteLine("服务器连接已中断,发送失败！ " + DateTime.Now.ToString() + "\r\n\n");
-
+                SocketLogs.AppendText("服务器连接已中断,发送失败！,请重新连接...... " + DateTime.Now.ToString() + "\r\n\n");
+                Debug.WriteLine("服务器连接已中断,发送失败！,请重新连接...... " + DateTime.Now.ToString() + "\r\n\n");
+                SocketClient.Close();
             }
         }
 
