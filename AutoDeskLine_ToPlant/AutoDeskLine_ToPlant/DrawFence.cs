@@ -381,11 +381,17 @@ namespace AutoDeskLine_ToPlant
                                     RxTypeList.AcadLine Aline = new RxTypeList.AcadLine();
                                     try
                                     {
-                                        Aline.StartPoint = new double[3] { Pl.Points[i], Pl.Points[i + 1], 0 };
-                                        Aline.EndPoint = new double[3] { Pl.Points[i + 2], Pl.Points[i + 3], 0 };
+                                        Aline.StartPoint = new double[3] { Math.Round(Pl.Points[i],0), Math.Round(Pl.Points[i + 1],0), 0 };
+                                        Aline.EndPoint = new double[3] { Math.Round(Pl.Points[i + 2],0), Math.Round(Pl.Points[i + 3],0), 0 };
+                                        if (Aline.StartPoint== Aline.EndPoint) //始点==末点 执行下个循环
+                                        {
+                                            i += 1;
+                                            continue;
+                                        }
                                     }
                                     catch (System.Exception)
                                     {
+                                        i += 1;
                                         continue;
                                     }
                                     Aline.CenterPoint = new double[3];
@@ -411,6 +417,7 @@ namespace AutoDeskLine_ToPlant
                                     }
                                     if (Math.Round(Aline.Length,0)==0)
                                     {
+                                        i += 1;
                                         continue;
                                     }
                                     Cline += 1;

@@ -14,24 +14,20 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Net;
 using System.Diagnostics;
+using INFITF;
+using MECMOD;
+using PARTITF;
+using ProductStructureTypeLib;
+using SPATypeLib;
+using NavigatorTypeLib;
+
 
 namespace AutoDeskLine_ToPlant
 {
     public partial class CatiaQuickTool : Form
     {
-        [DllImportAttribute("kernel32.dll", EntryPoint = "OpenProcess")]
-        public static extern IntPtr OpenProcess
-            (
-             int dwDesiredAccess,
-             bool bInheritHandle,
-             int dwProcessId
-            );
-        /// <summary>
-        /// 已打开的CAD图纸
-        /// </summary>
-        INFITF.Application TCatia;
-        INFITF.Document TDocument;
-        INFITF.Documents TDocuments;
+        INFITF.Application CatApplication;
+        ProductDocument CatDocument;
         public CatiaQuickTool()
         {
             InitializeComponent();
@@ -39,38 +35,17 @@ namespace AutoDeskLine_ToPlant
         }
         private void TryRead_Click(object sender, EventArgs e)
         {
-            if (SCATIA.Checked)
-            { //catia
-                try
-                {
-                    TCatia = (INFITF.Application)Marshal.GetActiveObject("CATIA.Application");
-                }
-                catch (Exception)
-                {
-
-                    Type oType = System.Type.GetTypeFromProgID("CATIA.Application");
-                    TCatia = (INFITF.Application)Activator.CreateInstance(oType);
-                    TCatia.Visible = true;
-                }
-            }
-            else //Delmia 
+            try
             {
-                try
-                {
-                    TCatia = (INFITF.Application)Marshal.GetActiveObject("DELMIA.Application");
-                }
-                catch (Exception)
-                {
-
-                    Type oType = System.Type.GetTypeFromProgID("DELMIA.Application");
-                    TCatia = (INFITF.Application)Activator.CreateInstance(oType);
-                    TCatia.Visible = true;
-                }
+               CatApplication = (INFITF.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Catia.Application");
             }
-            TDocument = TCatia.ActiveDocument;
-            TDocument.Activate();
-            //INFITF.AnyObject obj = TDocument.Cameras;
+            catch (Exception)
+            {
 
+                throw;
+            }
+            // 获取当前活动ProductDocument
+            CatDocument =(ProductDocument) CatApplication.ActiveDocument;
 
 
         }
