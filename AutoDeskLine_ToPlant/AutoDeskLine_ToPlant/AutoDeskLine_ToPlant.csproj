@@ -14,7 +14,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>F:\97 我的开发文档\00 DevLib\NewRepo\</PublishUrl>
+    <PublishUrl>F:\97 我的开发文档\00 DevLib\瑞祥快捷设计中心\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -27,7 +27,7 @@
     <ProductName>瑞祥快捷设计中心</ProductName>
     <PublisherName>安徽瑞祥工业_研发部_叶朝成_yecc10%40163.com</PublisherName>
     <SuiteName>安徽瑞祥工业工厂仿真组</SuiteName>
-    <ApplicationRevision>12</ApplicationRevision>
+    <ApplicationRevision>14</ApplicationRevision>
     <ApplicationVersion>1.1.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

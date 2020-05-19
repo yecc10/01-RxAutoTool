@@ -78,6 +78,10 @@ namespace AutoDeskLine_ToPlant
         {
             ReadType = 2;
             Selection SelectArc = GetSelect();
+            if (SelectArc == null || SelectArc.Count2 == 0)
+            {
+                return;
+            }
             int ERR = 0;
             object[] PointCoord = new object[] { -99, -99, -99 };
             for (int i = 1; i <= SelectArc.Count2; i++)
@@ -149,6 +153,10 @@ namespace AutoDeskLine_ToPlant
         {
             ReadType = 2;
             Selection SelectArc = GetSelect();
+            if (SelectArc == null || SelectArc.Count2==0)
+            {
+                return;
+            }
             int ERR = 0;
             object[] PointCoord = new object[] { -99, -99, -99 };
             for (int i = 1; i <= SelectArc.Count2; i++)
@@ -223,6 +231,10 @@ namespace AutoDeskLine_ToPlant
         {
             ReadType = 2;
             Selection SelectArc = GetSelect();
+            if (SelectArc == null || SelectArc.Count2 == 0)
+            {
+                return;
+            }
             int ERR = 0;
             object[] PointCoord = new object[] { -99, -99, -99, -99, -99, -99 };
             for (int i = 1; i <= SelectArc.Count2; i++)
@@ -231,8 +243,15 @@ namespace AutoDeskLine_ToPlant
                 SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatDocument.GetWorkbench("SPAWorkbench");
                 Reference referenceObject = SelectArc.Item(i).Reference;
                 Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
-                TheMeasurable.GetPoint(PointCoord); //读取选择的曲面坐标
                 var TName = referenceObject.get_Name(); //读取选择的曲面名称
+                try
+                {
+                    TheMeasurable.GetPoint(PointCoord); //读取选择的曲面坐标
+                }
+                catch (Exception)
+                {
+                    ERR += 1;
+                }
                 if (!KeepName.Checked)
                 {
                     TName = "Rx_" + (DataGrid.RowCount + 1);
@@ -262,6 +281,10 @@ namespace AutoDeskLine_ToPlant
         {
             ReadType = 1;
             Selection SelectArc = GetSelect();
+            if (SelectArc == null || SelectArc.Count2 == 0)
+            {
+                return;
+            }
             int ERR = 0;
             object[] PointCoord = new object[] { -99, -99, -99, -99, -99, -99 };
             for (int i = 1; i <= SelectArc.Count2; i++)
@@ -319,7 +342,7 @@ namespace AutoDeskLine_ToPlant
                 MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
             }
             // 添加一个新零件
-            string Name = "NewPoint";
+            string Name = "RXFastDesignTool";
             try
             {
                 PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
@@ -328,9 +351,29 @@ namespace AutoDeskLine_ToPlant
             {
                 CatDocument.Product.Products.AddNewComponent("Part", Name);
                 PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
-
+                OriginElements Tpart = PartID.OriginElements;
+                AnyObject dxy = Tpart.PlaneXY;
+                AnyObject dyz = Tpart.PlaneYZ;
+                AnyObject dzx = Tpart.PlaneZX;
+                Selection SelectT = CatDocument.Selection;
+                VisPropertySet VP = SelectT.VisProperties;
+                SelectT.Add(dxy);
+                SelectT.Add(dyz);
+                SelectT.Add(dzx);
+                VP =(VisPropertySet) VP.Parent;
+                VP.SetShow(CatVisPropertyShow.catVisPropertyNoShowAttr);
+                SelectT.Clear();
+            }
+            try
+            {
+                CatDocument.Product.ApplyWorkMode(CatWorkModeType.DESIGN_MODE);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Change Design Model Faild!");
             }
             Selection SelectArc = CatDocument.Selection;
+            SelectArc.Clear();
             var Result = SelectArc.SelectElement3(InputObjectType(), "请选择曲面", true, CATMultiSelectionMode.CATMultiSelTriggWhenSelPerf, false);
             if (Result == "Cancel")
             {
