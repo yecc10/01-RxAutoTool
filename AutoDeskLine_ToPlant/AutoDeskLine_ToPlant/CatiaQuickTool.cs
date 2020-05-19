@@ -79,7 +79,7 @@ namespace AutoDeskLine_ToPlant
             }
             Selection SelectArc = CatDocument.Selection;
             if (SelectArc.Count < 1)
-            {
+            {  
                 MessageBox.Show("请先选择对象后再点此命令！");
                 return;
             }
