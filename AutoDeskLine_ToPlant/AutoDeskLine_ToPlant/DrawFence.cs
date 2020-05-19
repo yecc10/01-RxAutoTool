@@ -280,7 +280,7 @@ namespace AutoDeskLine_ToPlant
         private void ManulInputLine_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
-            if (OnlineModel.Checked != true | SX_AIX.Text==string.Empty | SX_AIX.Text =="")
+            if (OnlineModel.Checked != true | SX_AIX.Text == string.Empty | SX_AIX.Text == "")
             {
                 MessageBox.Show("当前未切换到在线设计模式或未设置参考点坐标！，无法继续后续操作！请选择在线模式!");
                 this.WindowState = FormWindowState.Normal;
@@ -372,18 +372,18 @@ namespace AutoDeskLine_ToPlant
                                 //((dynamic)obj).color = caddocument.ActiveLayer.color;
                                 RxTypeList.AcDbPolyline Pl = new RxTypeList.AcDbPolyline();
                                 Pl.Points = ((dynamic)obj).Coordinates;
-                                int NumberLine,NumberPoints;
+                                int NumberLine, NumberPoints;
                                 NumberPoints = Pl.Points.Count();//Total Polyline Point Number
-                                NumberLine = NumberPoints/2 - 1;//Total Polyline Number
-                                int Cline=0;
+                                NumberLine = NumberPoints / 2 - 1;//Total Polyline Number
+                                int Cline = 0;
                                 for (int i = 0; i < NumberPoints; i++)
                                 {
                                     RxTypeList.AcadLine Aline = new RxTypeList.AcadLine();
                                     try
                                     {
-                                        Aline.StartPoint = new double[3] { Math.Round(Pl.Points[i],0), Math.Round(Pl.Points[i + 1],0), 0 };
-                                        Aline.EndPoint = new double[3] { Math.Round(Pl.Points[i + 2],0), Math.Round(Pl.Points[i + 3],0), 0 };
-                                        if (Aline.StartPoint== Aline.EndPoint) //始点==末点 执行下个循环
+                                        Aline.StartPoint = new double[3] { Math.Round(Pl.Points[i], 0), Math.Round(Pl.Points[i + 1], 0), 0 };
+                                        Aline.EndPoint = new double[3] { Math.Round(Pl.Points[i + 2], 0), Math.Round(Pl.Points[i + 3], 0), 0 };
+                                        if (Aline.StartPoint == Aline.EndPoint) //始点==末点 执行下个循环
                                         {
                                             i += 1;
                                             continue;
@@ -402,7 +402,7 @@ namespace AutoDeskLine_ToPlant
                                     Aline.FwAngle = Math.Atan((Aline.EndPoint[1] - Aline.StartPoint[1]) / (Aline.EndPoint[0] - Aline.StartPoint[0]));
                                     double ASin = Aline.FwAngle;
                                     Aline.FwAngle = Math.Round(180 * Aline.FwAngle / Math.PI, 2);
-                                    if (Aline.EndPoint[1] - Aline.StartPoint[1]==0)
+                                    if (Aline.EndPoint[1] - Aline.StartPoint[1] == 0)
                                     {
                                         Aline.Length = Math.Abs(Aline.EndPoint[0] - Aline.StartPoint[0]);
                                     }
@@ -413,9 +413,9 @@ namespace AutoDeskLine_ToPlant
                                     else
                                     {
                                         double dy = Math.Abs(Aline.EndPoint[1] - Aline.StartPoint[1]);
-                                        Aline.Length =Math.Round(dy / Math.Sin(ASin),4);
+                                        Aline.Length = Math.Round(dy / Math.Sin(ASin), 4);
                                     }
-                                    if (Math.Round(Aline.Length,0)==0)
+                                    if (Math.Round(Aline.Length, 0) == 0)
                                     {
                                         i += 1;
                                         continue;
@@ -448,7 +448,7 @@ namespace AutoDeskLine_ToPlant
                     {
                         continue;
                     }
-                }while (JS < 99999);
+                } while (JS < 99999);
             }
             catch (COMException E)
             {
@@ -889,6 +889,12 @@ namespace AutoDeskLine_ToPlant
                 Process.GetCurrentProcess().Kill();
                 Debug.WriteLine("Close Faild!");
             }
+
+        }
+
+        private void timer_Tick_1(object sender, EventArgs e)
+        {
+            this.FindForm().Text = "瑞祥快捷设计中心 BY_安徽瑞祥工业【工厂仿真组】叶朝成_当前时间: " + DateTime.Now.ToString();
 
         }
     }

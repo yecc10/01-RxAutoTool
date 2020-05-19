@@ -37,13 +37,13 @@ namespace AutoDeskLine_ToPlant
                     ICellStyle CST = wkb.CreateCellStyle();
                     CST.VerticalAlignment = VerticalAlignment.Center;
                     CST.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
-                    for (int i = 0; i < dataGridView.Rows[1].Cells.Count; i++) //初始化表头
+                    for (int i = 0; i <dataGridView.Rows[1].Cells.Count; i++) //初始化表头
                     {
                         ICell HeadCell = HeadRow.CreateCell(i);
                         HeadCell.SetCellValue(dataGridView.Columns[i].HeaderText);
                         HeadCell.CellStyle = CST;
                     }
-                    for (int i = 0; i < dataGridView.Rows.Count-1; i++) //依次遍历全部行
+                    for (int i = 0; i < dataGridView.Rows.Count; i++) //依次遍历全部行
                     {
                         IRow DataRow = sheet.CreateRow(i+1);
                         DataRow.RowStyle = CST;

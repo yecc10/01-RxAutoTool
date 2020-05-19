@@ -340,6 +340,10 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "比例";
             // 
+            // timer
+            // 
+            this.timer.Tick += new System.EventHandler(this.timer_Tick_1);
+            // 
             // Sscale
             // 
             this.Sscale.Location = new System.Drawing.Point(53, 20);
