@@ -293,9 +293,9 @@ namespace AutoDeskLine_ToPlant
                 DataRow["X坐标"] = Math.Round(Convert.ToDouble(PointData[0]), keepValuePoint);
                 DataRow["Y坐标"] = Math.Round(Convert.ToDouble(PointData[1]), keepValuePoint);
                 DataRow["Z坐标"] = Math.Round(Convert.ToDouble(PointData[2]), keepValuePoint);
-                DataRow["RX"] = 0;
-                DataRow["RY"] = 0;
-                DataRow["RZ"] = 0;
+                DataRow["RX"] = Math.Round(Convert.ToDouble(PointData[3]), keepValuePoint); ;
+                DataRow["RY"] = Math.Round(Convert.ToDouble(PointData[4]), keepValuePoint); ;
+                DataRow["RZ"] = Math.Round(Convert.ToDouble(PointData[5]), keepValuePoint); ;
                 datatable.Rows.Add(DataRow);
                 dataview = new DataView(datatable);
                 DataGrid.DataSource = dataview;
@@ -367,7 +367,7 @@ namespace AutoDeskLine_ToPlant
             this.WindowState = FormWindowState.Normal;
             this.StartPosition = FormStartPosition.CenterScreen;
             int ERR = 0;
-            object[] PointCoord = new object[] { -99, -99, -99 };
+            object[] PointCoord = new object[] { -99, -99, -99, -99, -99, -99 };
             for (int i = 1; i <= SelectArc.Count2; i++)
             {
                 HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
@@ -378,7 +378,7 @@ namespace AutoDeskLine_ToPlant
                 var TName = referenceObject.get_Name(); //读取选择的曲面名称
                 if (!KeepName.Checked)
                 {
-                    TName = "Rx_" + DataGrid.RowCount + 1;
+                    TName = "Rx_" + (DataGrid.RowCount + 1);
                 }
                 WriteObjectToDataGrid(TName, PointCoord);
             }
