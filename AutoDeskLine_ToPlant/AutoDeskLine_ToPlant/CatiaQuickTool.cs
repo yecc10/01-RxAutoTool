@@ -33,6 +33,11 @@ namespace AutoDeskLine_ToPlant
         System.Data.DataColumn dataColum;
         DataRow DataRow;
         DataView dataview;
+        Part PartID;
+        /// <summary>
+        /// Value=1->Read Point;Value=2->AnyPoint
+        /// </summary>
+        int ReadType = 0;
         public CatiaQuickTool()
         {
             InitializeComponent();
@@ -71,61 +76,8 @@ namespace AutoDeskLine_ToPlant
         }
         private void TryRead_Click(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Minimized;
-            try
-            {
-                CatApplication = (INFITF.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Catia.Application");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            CatApplication.set_Caption("正在运行瑞祥快速建模工具！");
-            // 获取当前活动ProductDocument
-            try
-            {
-                CatDocument = (ProductDocument)CatApplication.ActiveDocument;
-            }
-            catch (Exception)
-            {
-                CatDocument = (ProductDocument)CatApplication.Documents.Add("Product");
-                try
-                {
-                    CatDocument.set_Name("RxProduct");
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
-                    return;
-                }
-                MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
-            }
-            // 添加一个新零件
-            string Name = "NewPoint";
-            Part PartID;
-            try
-            {
-                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
-            }
-            catch (Exception)
-            {
-                CatDocument.Product.Products.AddNewComponent("Part", Name);
-                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
-
-            }
-            Selection SelectArc = CatDocument.Selection;
-            var Result = SelectArc.SelectElement3(InputObjectType(), "请选择曲面", true, CATMultiSelectionMode.CATMultiSelTriggWhenSelPerf, false);
-            if (Result == "Cancel")
-            {
-                return;
-            }
-            if (SelectArc.Count < 1)
-            {
-                MessageBox.Show("请先选择对象后再点此命令！");
-                return;
-            }
-            this.WindowState = FormWindowState.Normal;
-            this.StartPosition = FormStartPosition.CenterScreen;
+            ReadType = 2;
+            Selection SelectArc = GetSelect();
             int ERR = 0;
             object[] PointCoord = new object[] { -99, -99, -99 };
             for (int i = 1; i <= SelectArc.Count2; i++)
@@ -173,8 +125,19 @@ namespace AutoDeskLine_ToPlant
         [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)]
         public object[] InputObjectType()
         {
-            // return new object[] { "Point", "Symmetry", "Translate" };
-            return new object[] { "AnyObject" };
+            switch (ReadType)
+            {
+                case 1: //GetPoint
+                    {
+                        return new object[] { "Point", "Symmetry", "Translate" };
+                    }
+                case 2: //GetAnyObject
+                    {
+                     return new object[] { "AnyObject" };
+                    }
+                default:
+                    return new object[] { "AnyObject" };
+            }
         }
 
         private void OutToEXcel_Click(object sender, EventArgs e)
@@ -184,61 +147,8 @@ namespace AutoDeskLine_ToPlant
 
         private void BollToPoint_Click(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Minimized;
-            try
-            {
-                CatApplication = (INFITF.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Catia.Application");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            CatApplication.set_Caption("正在运行瑞祥快速建模工具！");
-            // 获取当前活动ProductDocument
-            try
-            {
-                CatDocument = (ProductDocument)CatApplication.ActiveDocument;
-            }
-            catch (Exception)
-            {
-                CatDocument = (ProductDocument)CatApplication.Documents.Add("Product");
-                try
-                {
-                    CatDocument.set_Name("RxProduct");
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
-                    return;
-                }
-                MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
-            }
-            // 添加一个新零件
-            string Name = "NewPoint";
-            Part PartID;
-            try
-            {
-                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
-            }
-            catch (Exception)
-            {
-                CatDocument.Product.Products.AddNewComponent("Part", Name);
-                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
-
-            }
-            Selection SelectArc = CatDocument.Selection;
-            var Result = SelectArc.SelectElement3(InputObjectType(), "请选择曲面", true, CATMultiSelectionMode.CATMultiSelTriggWhenSelPerf, false);
-            if (Result == "Cancel")
-            {
-                return;
-            }
-            if (SelectArc.Count < 1)
-            {
-                MessageBox.Show("请先选择对象后再点此命令！");
-                return;
-            }
-            this.WindowState = FormWindowState.Normal;
-            this.StartPosition = FormStartPosition.CenterScreen;
+            ReadType = 2;
+            Selection SelectArc = GetSelect();
             int ERR = 0;
             object[] PointCoord = new object[] { -99, -99, -99 };
             for (int i = 1; i <= SelectArc.Count2; i++)
@@ -256,7 +166,7 @@ namespace AutoDeskLine_ToPlant
                 }
                 else
                 {
-                    NewPoint.set_Name("YPoint_" + i);
+                    NewPoint.set_Name("Rx_" + i);
                 }
                 HybridBodies Hybs = PartID.HybridBodies;
                 HybridBody Hyb = Hybs.Item("几何图形集.1");
@@ -311,61 +221,8 @@ namespace AutoDeskLine_ToPlant
 
         private void ReadCoord_Click(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Minimized;
-            try
-            {
-                CatApplication = (INFITF.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Catia.Application");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            CatApplication.set_Caption("正在运行瑞祥快速建模工具！");
-            // 获取当前活动ProductDocument
-            try
-            {
-                CatDocument = (ProductDocument)CatApplication.ActiveDocument;
-            }
-            catch (Exception)
-            {
-                CatDocument = (ProductDocument)CatApplication.Documents.Add("Product");
-                try
-                {
-                    CatDocument.set_Name("RxProduct");
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
-                    return;
-                }
-                MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
-            }
-            // 添加一个新零件
-            string Name = "NewPoint";
-            Part PartID;
-            try
-            {
-                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
-            }
-            catch (Exception)
-            {
-                CatDocument.Product.Products.AddNewComponent("Part", Name);
-                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
-
-            }
-            Selection SelectArc = CatDocument.Selection;
-            var Result = SelectArc.SelectElement3(InputObjectType(), "请选择曲面", true, CATMultiSelectionMode.CATMultiSelTriggWhenSelPerf, false);
-            if (Result == "Cancel")
-            {
-                return;
-            }
-            if (SelectArc.Count < 1)
-            {
-                MessageBox.Show("请先选择对象后再点此命令！");
-                return;
-            }
-            this.WindowState = FormWindowState.Normal;
-            this.StartPosition = FormStartPosition.CenterScreen;
+            ReadType = 2;
+            Selection SelectArc = GetSelect();
             int ERR = 0;
             object[] PointCoord = new object[] { -99, -99, -99, -99, -99, -99 };
             for (int i = 1; i <= SelectArc.Count2; i++)
@@ -399,6 +256,94 @@ namespace AutoDeskLine_ToPlant
         private void timer_Tick(object sender, EventArgs e)
         {
             this.FindForm().Text = "瑞祥快捷设计中心 BY_安徽瑞祥工业【工厂仿真组】叶朝成_当前时间: " + DateTime.Now.ToString();
+        }
+
+        private void PointToCoord_Click(object sender, EventArgs e)
+        {
+            ReadType = 1;
+            Selection SelectArc = GetSelect();
+            int ERR = 0;
+            object[] PointCoord = new object[] { -99, -99, -99, -99, -99, -99 };
+            for (int i = 1; i <= SelectArc.Count2; i++)
+            {
+                HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
+                SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatDocument.GetWorkbench("SPAWorkbench");
+                Reference referenceObject = SelectArc.Item(i).Reference;
+                Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
+                TheMeasurable.GetPoint(PointCoord); //读取选择的曲面坐标
+                var TName = referenceObject.get_Name(); //读取选择的曲面名称
+                if (!KeepName.Checked)
+                {
+                    TName = "Rx_" + (DataGrid.RowCount + 1);
+                }
+                WriteObjectToDataGrid(TName, PointCoord);
+            }
+            if (ERR > 0)
+            {
+                MessageBox.Show("共计:" + ERR + "个点创建新参考点失败！");
+            }
+        }
+        /// <summary>
+        /// 连接CATIA COM 并获得选择集
+        /// </summary>
+        /// <returns></returns>
+        private Selection GetSelect()
+        {
+            this.WindowState = FormWindowState.Minimized;
+            try
+            {
+                CatApplication = (INFITF.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Catia.Application");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            CatApplication.set_Caption("正在运行瑞祥快速建模工具！");
+            // 获取当前活动ProductDocument
+            try
+            {
+                CatDocument = (ProductDocument)CatApplication.ActiveDocument;
+            }
+            catch (Exception)
+            {
+                CatDocument = (ProductDocument)CatApplication.Documents.Add("Product");
+                try
+                {
+                    CatDocument.set_Name("RxProduct");
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
+                    return null;
+                }
+                MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
+            }
+            // 添加一个新零件
+            string Name = "NewPoint";
+            try
+            {
+                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
+            }
+            catch (Exception)
+            {
+                CatDocument.Product.Products.AddNewComponent("Part", Name);
+                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
+
+            }
+            Selection SelectArc = CatDocument.Selection;
+            var Result = SelectArc.SelectElement3(InputObjectType(), "请选择曲面", true, CATMultiSelectionMode.CATMultiSelTriggWhenSelPerf, false);
+            if (Result == "Cancel")
+            {
+                return null;
+            }
+            if (SelectArc.Count < 1)
+            {
+                MessageBox.Show("请先选择对象后再点此命令！");
+                return null;
+            }
+            this.WindowState = FormWindowState.Normal;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            return SelectArc;
         }
     }
 }

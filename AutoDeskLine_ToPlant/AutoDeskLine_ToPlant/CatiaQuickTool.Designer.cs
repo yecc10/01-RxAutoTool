@@ -39,6 +39,7 @@
             this.ReadCoord = new System.Windows.Forms.Button();
             this.ClearAllData = new System.Windows.Forms.Button();
             this.timer = new System.Windows.Forms.Timer(this.components);
+            this.PointToCoord = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -106,11 +107,11 @@
             // 
             // ReadCoord
             // 
-            this.ReadCoord.Location = new System.Drawing.Point(12, 345);
+            this.ReadCoord.Location = new System.Drawing.Point(158, 390);
             this.ReadCoord.Name = "ReadCoord";
             this.ReadCoord.Size = new System.Drawing.Size(118, 44);
             this.ReadCoord.TabIndex = 2;
-            this.ReadCoord.Text = "仅读坐标";
+            this.ReadCoord.Text = "求解任意坐标";
             this.ReadCoord.UseVisualStyleBackColor = true;
             this.ReadCoord.Click += new System.EventHandler(this.ReadCoord_Click);
             // 
@@ -128,6 +129,16 @@
             // 
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
+            // PointToCoord
+            // 
+            this.PointToCoord.Location = new System.Drawing.Point(12, 345);
+            this.PointToCoord.Name = "PointToCoord";
+            this.PointToCoord.Size = new System.Drawing.Size(118, 44);
+            this.PointToCoord.TabIndex = 2;
+            this.PointToCoord.Text = "求解点坐标";
+            this.PointToCoord.UseVisualStyleBackColor = true;
+            this.PointToCoord.Click += new System.EventHandler(this.PointToCoord_Click);
+            // 
             // CatiaQuickTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -136,6 +147,7 @@
             this.ClientSize = new System.Drawing.Size(880, 440);
             this.Controls.Add(this.DataGrid);
             this.Controls.Add(this.AutoHole);
+            this.Controls.Add(this.PointToCoord);
             this.Controls.Add(this.ReadCoord);
             this.Controls.Add(this.ClearAllData);
             this.Controls.Add(this.BollToPoint);
@@ -165,5 +177,6 @@
         private System.Windows.Forms.Button ReadCoord;
         private System.Windows.Forms.Button ClearAllData;
         private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.Button PointToCoord;
     }
 }
