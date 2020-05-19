@@ -69,42 +69,58 @@ namespace AutoDeskLine_ToPlant
             Part PartID;
             try
             {
-                PartID=((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
+                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
             }
             catch (Exception)
             {
-               CatDocument.Product.Products.AddNewComponent("Part", Name);
-               PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
+                CatDocument.Product.Products.AddNewComponent("Part", Name);
+                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
 
             }
             Selection SelectArc = CatDocument.Selection;
-            var Result = SelectArc.SelectElement2(InputObjectType(), "请选择曲面", true);
+            var Result = SelectArc.SelectElement3(InputObjectType(), "请选择曲面", true, CATMultiSelectionMode.CATMultiSelTriggWhenSelPerf, false);
+            if (Result == "Cancel")
+            {
+                return;
+            }
             if (SelectArc.Count < 1)
-            {  
+            {
                 MessageBox.Show("请先选择对象后再点此命令！");
                 return;
             }
             int ERR = 0;
-            for (int i = 1; i < SelectArc.Count; i++)
+            object[] PointCoord = new object[] {-99,-99,-99};
+            for (int i = 1; i <= SelectArc.Count2; i++)
             {
-                    HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
-                    Reference PointRef = SelectArc.Item(i).Reference;
-                    HybridShapePointCenter NewPoint = PartHyb.AddNewPointCenter(PointRef);
+                HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
+                SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatDocument.GetWorkbench("SPAWorkbench");
+                Reference referenceObject = SelectArc.Item(i).Reference;
+                Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
+                TheMeasurable.GetPoint(PointCoord); //读取选择的曲面坐标
+                var TName = referenceObject.get_Name(); //读取选择的曲面名称
+                HybridShapePointCoord NewPoint = PartHyb.AddNewPointCoord(Convert.ToDouble(PointCoord[0]), Convert.ToDouble(PointCoord[1]), Convert.ToDouble(PointCoord[2]));
+                if (KeepName.Checked)
+                {
+                    NewPoint.set_Name(TName);
+                }
+                else
+                {
                     NewPoint.set_Name("YPoint_" + i);
-                    HybridBodies Hybs = PartID.HybridBodies;
-                    HybridBody Hyb = Hybs.Item("几何图形集.1");
-                    Hyb.AppendHybridShape(NewPoint);
-                    PartID.InWorkObject = NewPoint;
+                }
+                HybridBodies Hybs = PartID.HybridBodies;
+                HybridBody Hyb = Hybs.Item("几何图形集.1");
+                Hyb.AppendHybridShape(NewPoint);
+                PartID.InWorkObject = NewPoint;
                 try
                 {
                     PartID.Update();
                 }
                 catch (Exception)
                 {
-                    ERR+=1;
+                    ERR += 1;
                 }
             }
-            if (ERR>0)
+            if (ERR > 0)
             {
                 MessageBox.Show("共计:" + ERR + "个点创建新参考点失败！");
             }
@@ -117,9 +133,10 @@ namespace AutoDeskLine_ToPlant
         }
 
         [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)]
-        public string[] InputObjectType()
-        { 
-            return new string[] { "Point", "Symmetry", "Translate" };
+        public object[] InputObjectType()
+        {
+            // return new object[] { "Point", "Symmetry", "Translate" };
+            return new object[] { "AnyObject" };
         }
     }
 }
