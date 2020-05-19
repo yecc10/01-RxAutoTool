@@ -349,7 +349,15 @@ namespace AutoDeskLine_ToPlant
             }
             catch (Exception)
             {
-                CatDocument.Product.Products.AddNewComponent("Part", Name);
+                try
+                {
+                    CatDocument.Product.Products.AddNewComponent("Part", Name);
+                }
+                catch (Exception)
+                {
+                    return null;
+                    // throw;
+                }
                 PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
                 OriginElements Tpart = PartID.OriginElements;
                 AnyObject dxy = Tpart.PlaneXY;
