@@ -46,7 +46,24 @@ namespace AutoDeskLine_ToPlant
             }
             CatApplication.set_Caption("正在运行瑞祥快速建模工具！");
             // 获取当前活动ProductDocument
-            CatDocument = (ProductDocument)CatApplication.ActiveDocument;
+            try
+            {
+                CatDocument = (ProductDocument)CatApplication.ActiveDocument;
+            }
+            catch (Exception)
+            {
+                CatDocument = (ProductDocument)CatApplication.Documents.Add("Product");
+                try
+                {
+                    CatDocument.set_Name("RxProduct");
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
+                    return;
+                }
+                MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
+            }
             // 添加一个新零件
             string Name = "NewPoint";
             Part PartID;
@@ -69,7 +86,6 @@ namespace AutoDeskLine_ToPlant
             int ERR = 0;
             for (int i = 1; i < SelectArc.Count; i++)
             {
-
                     HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
                     Reference PointRef = SelectArc.Item(i).Reference;
                     HybridShapePointCenter NewPoint = PartHyb.AddNewPointCenter(PointRef);
