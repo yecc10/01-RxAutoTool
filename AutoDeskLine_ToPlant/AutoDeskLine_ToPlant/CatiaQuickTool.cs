@@ -78,6 +78,7 @@ namespace AutoDeskLine_ToPlant
 
             }
             Selection SelectArc = CatDocument.Selection;
+            var Result = SelectArc.SelectElement2(InputObjectType(), "请选择曲面", true);
             if (SelectArc.Count < 1)
             {  
                 MessageBox.Show("请先选择对象后再点此命令！");
@@ -113,6 +114,12 @@ namespace AutoDeskLine_ToPlant
         private void CatiaQuickTool_FormClosed(object sender, FormClosedEventArgs e)
         {
             Process.GetCurrentProcess().Kill();
+        }
+
+        [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)]
+        public string[] InputObjectType()
+        { 
+            return new string[] { "Point", "Symmetry", "Translate" };
         }
     }
 }
