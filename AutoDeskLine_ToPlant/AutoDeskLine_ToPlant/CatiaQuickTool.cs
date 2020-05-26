@@ -336,14 +336,14 @@ namespace AutoDeskLine_ToPlant
                 CatDocument = (ProductDocument)CatApplication.Documents.Add("Product");
                 try
                 {
-                    CatDocument.set_Name("RxProduct");
+                    CatDocument.Product.set_PartNumber("RxProduct");
                 }
                 catch (Exception)
                 {
                     MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
                     return null;
                 }
-                MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
+                //MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
             }
             // 添加一个新零件
             string Name = "RXFastDesignTool";
@@ -427,14 +427,14 @@ namespace AutoDeskLine_ToPlant
                 CatDocument = (ProductDocument)CatApplication.Documents.Add("Product");
                 try
                 {
-                    CatDocument.set_Name("RxProduct");
+                    CatDocument.Product.set_PartNumber("RxProduct");
                 }
                 catch (Exception)
                 {
                     MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
                     return false;
                 }
-                MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
+                //MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
             }
             // 添加一个新零件
             string Name = "RXFastDesignTool";
