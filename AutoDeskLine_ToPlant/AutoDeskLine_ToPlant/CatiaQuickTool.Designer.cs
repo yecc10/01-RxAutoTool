@@ -40,6 +40,9 @@
             this.ClearAllData = new System.Windows.Forms.Button();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.PointToCoord = new System.Windows.Forms.Button();
+            this.ReadAixPoint = new System.Windows.Forms.Button();
+            this.Creat3dPoint = new System.Windows.Forms.Button();
+            this.Creat3dBall = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -107,7 +110,7 @@
             // 
             // ReadCoord
             // 
-            this.ReadCoord.Location = new System.Drawing.Point(158, 390);
+            this.ReadCoord.Location = new System.Drawing.Point(158, 394);
             this.ReadCoord.Name = "ReadCoord";
             this.ReadCoord.Size = new System.Drawing.Size(118, 44);
             this.ReadCoord.TabIndex = 2;
@@ -139,15 +142,49 @@
             this.PointToCoord.UseVisualStyleBackColor = true;
             this.PointToCoord.Click += new System.EventHandler(this.PointToCoord_Click);
             // 
+            // ReadAixPoint
+            // 
+            this.ReadAixPoint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.ReadAixPoint.Location = new System.Drawing.Point(304, 394);
+            this.ReadAixPoint.Name = "ReadAixPoint";
+            this.ReadAixPoint.Size = new System.Drawing.Size(118, 44);
+            this.ReadAixPoint.TabIndex = 2;
+            this.ReadAixPoint.Text = "坐标导入";
+            this.ReadAixPoint.UseVisualStyleBackColor = false;
+            this.ReadAixPoint.Click += new System.EventHandler(this.Aix_To_Ball_Click);
+            // 
+            // Creat3dPoint
+            // 
+            this.Creat3dPoint.Location = new System.Drawing.Point(450, 394);
+            this.Creat3dPoint.Name = "Creat3dPoint";
+            this.Creat3dPoint.Size = new System.Drawing.Size(118, 44);
+            this.Creat3dPoint.TabIndex = 2;
+            this.Creat3dPoint.Text = "生成3D点";
+            this.Creat3dPoint.UseVisualStyleBackColor = true;
+            this.Creat3dPoint.Click += new System.EventHandler(this.Creat3dPoint_Click);
+            // 
+            // Creat3dBall
+            // 
+            this.Creat3dBall.Location = new System.Drawing.Point(596, 394);
+            this.Creat3dBall.Name = "Creat3dBall";
+            this.Creat3dBall.Size = new System.Drawing.Size(118, 44);
+            this.Creat3dBall.TabIndex = 2;
+            this.Creat3dBall.Text = "生成3D球";
+            this.Creat3dBall.UseVisualStyleBackColor = true;
+            this.Creat3dBall.Click += new System.EventHandler(this.Creat3dBall_Click);
+            // 
             // CatiaQuickTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ClientSize = new System.Drawing.Size(880, 440);
+            this.ClientSize = new System.Drawing.Size(880, 445);
             this.Controls.Add(this.DataGrid);
+            this.Controls.Add(this.Creat3dBall);
+            this.Controls.Add(this.Creat3dPoint);
             this.Controls.Add(this.AutoHole);
             this.Controls.Add(this.PointToCoord);
+            this.Controls.Add(this.ReadAixPoint);
             this.Controls.Add(this.ReadCoord);
             this.Controls.Add(this.ClearAllData);
             this.Controls.Add(this.BollToPoint);
@@ -155,7 +192,6 @@
             this.Controls.Add(this.KeepName);
             this.Controls.Add(this.TryRead);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(896, 479);
             this.MinimumSize = new System.Drawing.Size(896, 479);
             this.Name = "CatiaQuickTool";
             this.Text = "CatiaQuickTool";
@@ -178,5 +214,8 @@
         private System.Windows.Forms.Button ClearAllData;
         private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.Button PointToCoord;
+        private System.Windows.Forms.Button ReadAixPoint;
+        private System.Windows.Forms.Button Creat3dPoint;
+        private System.Windows.Forms.Button Creat3dBall;
     }
 }

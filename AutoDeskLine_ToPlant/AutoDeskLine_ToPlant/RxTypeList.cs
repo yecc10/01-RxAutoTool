@@ -78,6 +78,17 @@ namespace AutoDeskLine_ToPlant
             public virtual string Layer { get; set; }
 
         }
+        public class CatPointType
+        {
+            public virtual string PName { get; set; }
+            public virtual double PX { get; set; }
+            public virtual double PY { get; set; }
+            public virtual double PZ { get; set; }
+            public virtual double RX { get; set; }
+            public virtual double RY { get; set; }
+            public virtual double RZ { get; set; }
+
+        }
     }
     /// <summary>
     /// Plant Simulation 成员变量集合

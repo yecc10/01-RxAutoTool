@@ -10,6 +10,7 @@ using NPOI.OpenXml4Net;
 using NPOI.Util;
 using System.IO;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace AutoDeskLine_ToPlant
 {
@@ -73,6 +74,85 @@ namespace AutoDeskLine_ToPlant
                     MessageBox.Show("数据表中不存在任何数据，没有必要导出！");
                     return false;
                 }
+            }
+            static public bool ReadXlsData(string xlsPath, DataGridView DG)
+            {
+                //DataGridView DG = new DataGridView();
+                try
+                {
+                    IWorkbook xlsBook = WorkbookFactory.Create(xlsPath);
+                    ISheet sheet = xlsBook.GetSheetAt(0);
+                    RxTypeList.CatPointType CP = new RxTypeList.CatPointType();
+                    for (int i = 0; i <=sheet.LastRowNum; i++)
+                    {
+                        IRow Row = sheet.GetRow(i);
+                        if (i == 0) //初始化表头
+                        {
+                            for (int j = 0; j < Row.LastCellNum; j++)
+                            {
+                                ICell Cell = Row.GetCell(j);
+                                try
+                                {
+
+                                    DG.Columns.Add(Cell.StringCellValue, Cell.StringCellValue);
+                                }
+                                catch (Exception)
+                                {
+
+                                    throw;
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                DG.Rows.Add(Row.GetCell(0), Row.GetCell(1), Row.GetCell(2), Row.GetCell(3), Row.GetCell(4), Row.GetCell(5), Row.GetCell(6), Row.GetCell(7));
+                            }
+                            catch (Exception)
+                            {
+
+                                throw;
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("打开失败!请确认是否已解密？");
+                }
+                return false;
+            }
+            /// <summary>
+            /// 读取EXCEL焊点坐标数据
+            /// </summary>
+            static public string oPenXls()
+            {
+                //HSSFWorkbook wkb = new HSSFWorkbook();
+                Stream myStream = null;
+                OpenFileDialog XlsFile = new OpenFileDialog();
+                XlsFile.InitialDirectory = "C:\\Users\\Administrator\\Desktop\\";
+                XlsFile.Filter = "EXCEL files (*.xls,*.xlsx)|*.xls;*.xlsx";
+                XlsFile.FilterIndex = 2;
+                XlsFile.RestoreDirectory = true;
+                if (XlsFile.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        if ((myStream = XlsFile.OpenFile()) != null)
+                        {
+                            return XlsFile.FileName;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                    }
+                }
+                return null;
             }
         }
     }

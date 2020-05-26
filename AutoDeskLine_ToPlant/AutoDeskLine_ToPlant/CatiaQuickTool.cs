@@ -22,6 +22,7 @@ using SPATypeLib;
 using NavigatorTypeLib;
 using KnowledgewareTypeLib;
 using HybridShapeTypeLib;
+using System.IO;
 
 namespace AutoDeskLine_ToPlant
 {
@@ -395,6 +396,199 @@ namespace AutoDeskLine_ToPlant
             this.WindowState = FormWindowState.Normal;
             this.StartPosition = FormStartPosition.CenterScreen;
             return SelectArc;
+        }
+
+        private bool GetSelect(bool InitFrame)
+        {
+            this.WindowState = FormWindowState.Minimized;
+            try
+            {
+                CatApplication = (INFITF.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Catia.Application");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            CatApplication.set_Caption("正在运行瑞祥快速建模工具！");
+            // 获取当前活动ProductDocument
+            try
+            {
+                CatDocument = (ProductDocument)CatApplication.ActiveDocument;
+            }
+            catch (Exception)
+            {
+                CatDocument = (ProductDocument)CatApplication.Documents.Add("Product");
+                try
+                {
+                    CatDocument.set_Name("RxProduct");
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
+                    return true;
+                }
+                MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
+            }
+            // 添加一个新零件
+            string Name = "RXFastDesignTool";
+            try
+            {
+                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    CatDocument.Product.Products.AddNewComponent("Part", Name);
+                }
+                catch (Exception)
+                {
+                    return false;
+                    // throw;
+                }
+                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
+                OriginElements Tpart = PartID.OriginElements;
+                AnyObject dxy = Tpart.PlaneXY;
+                AnyObject dyz = Tpart.PlaneYZ;
+                AnyObject dzx = Tpart.PlaneZX;
+                Selection SelectT = CatDocument.Selection;
+                VisPropertySet VP = SelectT.VisProperties;
+                SelectT.Add(dxy);
+                SelectT.Add(dyz);
+                SelectT.Add(dzx);
+                VP = (VisPropertySet)VP.Parent;
+                VP.SetShow(CatVisPropertyShow.catVisPropertyNoShowAttr);
+                SelectT.Clear();
+            }
+            try
+            {
+                CatDocument.Product.ApplyWorkMode(CatWorkModeType.DESIGN_MODE);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Change Design Model Faild!");
+            }
+            this.WindowState = FormWindowState.Normal;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            return true;
+        }
+
+        [STAThread]
+        private void Aix_To_Ball_Click(object sender, EventArgs e)
+        {
+            ReadAixPoint.BackColor = SystemColors.ActiveCaption;
+            System.Threading.Thread importThread = new System.Threading.Thread(new ThreadStart(xlsPath));
+            importThread.SetApartmentState(ApartmentState.STA); //重点
+            importThread.Start();
+        }
+        public void xlsPath()
+        {
+            CheckForIllegalCrossThreadCalls = false;
+            string Path = string.Empty;
+            OpenFileDialog XlsFile = new OpenFileDialog();
+            XlsFile.InitialDirectory = "C:\\Users\\Administrator\\Desktop\\";
+            XlsFile.Filter = "EXCEL files (*.xls,*.xlsx)|*.xls;*.xlsx";
+            XlsFile.FilterIndex = 2;
+            XlsFile.RestoreDirectory = true;
+            XlsFile.Multiselect = false;
+            if (XlsFile.ShowDialog() == DialogResult.OK)
+            {
+                RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName,DataGrid);
+                DataGrid.Update();
+                ReadAixPoint.BackColor = Color.Green;
+            }
+        }
+
+        private void Creat3dPoint_Click(object sender, EventArgs e)
+        {
+            Creat3dPoint.BackColor = SystemColors.ActiveCaption;
+            ReadType = 2;
+            bool SelectArc = GetSelect(false);
+            if (SelectArc ==false)
+            {
+                return;
+            }
+            int ERR = 0;
+
+            for (int i = 0; i < DataGrid.RowCount; i++)
+            {
+                HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
+                var TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
+                HybridShapePointCoord NewPoint = PartHyb.AddNewPointCoord(Convert.ToDouble(DataGrid.Rows[i].Cells[2].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[3].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString()));
+                if (KeepName.Checked)
+                {
+                    NewPoint.set_Name(TName);
+                }
+                else
+                {
+                    NewPoint.set_Name("Rx_" + (i+1));
+                }
+                HybridBodies Hybs = PartID.HybridBodies;
+                HybridBody Hyb = Hybs.Item("几何图形集.1");
+                Hyb.AppendHybridShape(NewPoint);
+                PartID.InWorkObject = NewPoint;
+                try
+                {
+                    PartID.Update();
+                }
+                catch (Exception)
+                {
+                    ERR += 1;
+                }
+            }
+            if (ERR > 0)
+            {
+                MessageBox.Show("共计:" + ERR + "个点创建新参考点失败！");
+            }
+            Creat3dPoint.BackColor = Color.Green;
+        }
+
+        private void Creat3dBall_Click(object sender, EventArgs e)
+        {
+            Creat3dPoint.BackColor = SystemColors.ActiveCaption;
+            ReadType = 2;
+            bool SelectArc = GetSelect(false);
+            if (SelectArc == false)
+            {
+                return;
+            }
+            int ERR = 0;
+
+            for (int i = 0; i < DataGrid.RowCount; i++)
+            {
+                HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
+                //SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatDocument.GetWorkbench("SPAWorkbench");
+                //Reference referenceObject = SelectArc.Item(i).Reference;
+                //Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
+                //TheMeasurable.GetPoint(PointCoord); //读取选择的曲面坐标
+                var TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
+                HybridShapePointCoord NewPoint = PartHyb.AddNewPointCoord(Convert.ToDouble(DataGrid.Rows[i].Cells[2].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[3].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString()));
+                if (KeepName.Checked)
+                {
+                    NewPoint.set_Name(TName);
+                }
+                else
+                {
+                    NewPoint.set_Name("Rx_" + (i + 1));
+                }
+                HybridBodies Hybs = PartID.HybridBodies;
+                HybridBody Hyb = Hybs.Item("几何图形集.1");
+                Hyb.AppendHybridShape(NewPoint);
+                PartID.InWorkObject = NewPoint;
+                try
+                {
+                    PartID.Update();
+                }
+                catch (Exception)
+                {
+                    ERR += 1;
+                }
+            }
+            if (ERR > 0)
+            {
+                MessageBox.Show("共计:" + ERR + "个点创建新参考点失败！");
+            }
+            Creat3dPoint.BackColor = Color.Green;
         }
     }
 }
