@@ -320,7 +320,10 @@ namespace AutoDeskLine_ToPlant
             }
             catch (Exception)
             {
-                throw;
+                this.WindowState = FormWindowState.Normal;
+                this.StartPosition = FormStartPosition.CenterScreen;
+                MessageBox.Show("未检测到打开的CATIA!,请重新运行CATIA!");
+                return null;
             }
             CatApplication.set_Caption("正在运行瑞祥快速建模工具！");
             // 获取当前活动ProductDocument
@@ -407,7 +410,11 @@ namespace AutoDeskLine_ToPlant
             }
             catch (Exception)
             {
-                throw;
+                this.WindowState = FormWindowState.Normal;
+                this.StartPosition = FormStartPosition.CenterScreen;
+                MessageBox.Show("未检测到打开的CATIA!,请重新运行CATIA!");
+                return false;
+                //throw;
             }
             CatApplication.set_Caption("正在运行瑞祥快速建模工具！");
             // 获取当前活动ProductDocument
