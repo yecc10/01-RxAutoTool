@@ -425,7 +425,7 @@ namespace AutoDeskLine_ToPlant
                 catch (Exception)
                 {
                     MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
-                    return true;
+                    return false;
                 }
                 MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
             }
@@ -499,9 +499,9 @@ namespace AutoDeskLine_ToPlant
             }
         }
 
-        private void Creat3dPoint_Click(object sender, EventArgs e)
+        private void Creat3dBall_Click(object sender, EventArgs e)//Creat3dPoint_Click
         {
-            Creat3dPoint.BackColor = SystemColors.ActiveCaption;
+            Creat3dBall.BackColor = SystemColors.ActiveCaption;
             ReadType = 2;
             bool SelectArc = GetSelect(false);
             if (SelectArc ==false)
@@ -513,20 +513,31 @@ namespace AutoDeskLine_ToPlant
             for (int i = 0; i < DataGrid.RowCount; i++)
             {
                 HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
+                //SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatDocument.GetWorkbench("SPAWorkbench");
+                //Reference referenceObject = SelectArc.Item(i).Reference;
+                //Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
+                //TheMeasurable.GetPoint(PointCoord); //读取选择的曲面坐标
                 var TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
                 HybridShapePointCoord NewPoint = PartHyb.AddNewPointCoord(Convert.ToDouble(DataGrid.Rows[i].Cells[2].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[3].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString()));
+                Reference ShapeRef = PartID.CreateReferenceFromObject(NewPoint);
+                HybridShapeSphere NewShape = PartHyb.AddNewSphere(ShapeRef, null,Convert.ToDouble(BallRadio.Text), -45.000000, 45.000000, 0.000000, 180.000000);
+                NewShape.Limitation = 1;
                 if (KeepName.Checked)
                 {
                     NewPoint.set_Name(TName);
+                    NewShape.set_Name(TName);
                 }
                 else
                 {
                     NewPoint.set_Name("Rx_" + (i+1));
+                    NewShape.set_Name("Rx_" + (i + 1));
                 }
                 HybridBodies Hybs = PartID.HybridBodies;
                 HybridBody Hyb = Hybs.Item("几何图形集.1");
-                Hyb.AppendHybridShape(NewPoint);
-                PartID.InWorkObject = NewPoint;
+               // Hyb.AppendHybridShape(NewPoint);
+                Hyb.AppendHybridShape(NewShape);
+              //  PartID.InWorkObject = NewPoint;
+                PartID.InWorkObject = NewShape;
                 try
                 {
                     PartID.Update();
@@ -535,15 +546,19 @@ namespace AutoDeskLine_ToPlant
                 {
                     ERR += 1;
                 }
+                Selection SetColor= CatDocument.Selection;
+                VisPropertySet VSet = SetColor.VisProperties;
+                SetColor.Add(NewShape);
+                VSet.SetRealColor(128, 255, 0, 0);
             }
             if (ERR > 0)
             {
                 MessageBox.Show("共计:" + ERR + "个点创建新参考点失败！");
             }
-            Creat3dPoint.BackColor = Color.Green;
+            Creat3dBall.BackColor = Color.Green;
         }
 
-        private void Creat3dBall_Click(object sender, EventArgs e)
+        private void Creat3dPoint_Click(object sender, EventArgs e)//Creat3dBall_Click
         {
             Creat3dPoint.BackColor = SystemColors.ActiveCaption;
             ReadType = 2;

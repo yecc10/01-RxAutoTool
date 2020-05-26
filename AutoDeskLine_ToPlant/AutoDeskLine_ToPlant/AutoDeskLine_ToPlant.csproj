@@ -14,21 +14,24 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>F:\97 我的开发文档\00 DevLib\瑞祥快捷设计中心\</PublishUrl>
+    <PublishUrl>\\DESKTOP-5HK1A1I\SystemRoot\PushData\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
+    <InstallFrom>Unc</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Background</UpdateMode>
+    <UpdateInterval>1</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
+    <UpdateUrl>\\DESKTOP-5HK1A1I\SystemRoot\PushData\</UpdateUrl>
     <ProductName>瑞祥快捷设计中心</ProductName>
     <PublisherName>安徽瑞祥工业_研发部_叶朝成_yecc10%40163.com</PublisherName>
     <SuiteName>安徽瑞祥工业工厂仿真组</SuiteName>
-    <ApplicationRevision>15</ApplicationRevision>
-    <ApplicationVersion>1.1.1.%2a</ApplicationVersion>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <ApplicationRevision>3</ApplicationRevision>
+    <ApplicationVersion>1.2.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>

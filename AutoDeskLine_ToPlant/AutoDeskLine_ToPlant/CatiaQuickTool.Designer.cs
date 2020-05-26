@@ -43,6 +43,8 @@
             this.ReadAixPoint = new System.Windows.Forms.Button();
             this.Creat3dPoint = new System.Windows.Forms.Button();
             this.Creat3dBall = new System.Windows.Forms.Button();
+            this.BallRadio = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -173,12 +175,32 @@
             this.Creat3dBall.UseVisualStyleBackColor = true;
             this.Creat3dBall.Click += new System.EventHandler(this.Creat3dBall_Click);
             // 
+            // BallRadio
+            // 
+            this.BallRadio.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.BallRadio.Location = new System.Drawing.Point(781, 403);
+            this.BallRadio.Name = "BallRadio";
+            this.BallRadio.Size = new System.Drawing.Size(77, 26);
+            this.BallRadio.TabIndex = 4;
+            this.BallRadio.Text = "8";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(734, 410);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(41, 12);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "球半径";
+            // 
             // CatiaQuickTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.ClientSize = new System.Drawing.Size(880, 445);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.BallRadio);
             this.Controls.Add(this.DataGrid);
             this.Controls.Add(this.Creat3dBall);
             this.Controls.Add(this.Creat3dPoint);
@@ -217,5 +239,7 @@
         private System.Windows.Forms.Button ReadAixPoint;
         private System.Windows.Forms.Button Creat3dPoint;
         private System.Windows.Forms.Button Creat3dBall;
+        private System.Windows.Forms.TextBox BallRadio;
+        private System.Windows.Forms.Label label1;
     }
 }
