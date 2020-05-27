@@ -102,6 +102,7 @@
             // 
             this.DataGrid.AllowUserToAddRows = false;
             this.DataGrid.AllowUserToDeleteRows = false;
+            this.DataGrid.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.DataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DataGrid.Location = new System.Drawing.Point(12, 23);
             this.DataGrid.Name = "DataGrid";

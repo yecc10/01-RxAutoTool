@@ -78,6 +78,7 @@ namespace AutoDeskLine_ToPlant
             static public bool ReadXlsData(string xlsPath, DataGridView DG)
             {
                 //DataGridView DG = new DataGridView();
+                int RowNum = 0;
                 try
                 {
                     IWorkbook xlsBook = WorkbookFactory.Create(xlsPath);
@@ -86,29 +87,56 @@ namespace AutoDeskLine_ToPlant
                     for (int i = 0; i <=sheet.LastRowNum; i++)
                     {
                         IRow Row = sheet.GetRow(i);
-                        if (i == 0) //初始化表头
+                        RowNum = Row.LastCellNum;
+                        if (i == 0 ) //初始化表头
                         {
-                            for (int j = 0; j < Row.LastCellNum; j++)
+                            if (RowNum == 3||RowNum == 4|| RowNum == 7 || RowNum == 8)
                             {
-                                ICell Cell = Row.GetCell(j);
-                                try
-                                {
-
-                                    DG.Columns.Add(Cell.StringCellValue, Cell.StringCellValue);
-                                }
-                                catch (Exception)
-                                {
-
-                                    throw;
-                                }
-
+                                DG.Columns.Add("序号", "序号");
+                                DG.Columns.Add("名称", "名称");
+                                DG.Columns.Add("X坐标", "X坐标");
+                                DG.Columns.Add("Y坐标", "Y坐标");
+                                DG.Columns.Add("Z坐标", "Z坐标");
+                                DG.Columns.Add("RX", "RX");
+                                DG.Columns.Add("RY", "RY");
+                                DG.Columns.Add("RZ", "RZ");
                             }
+                            else
+                            {
+                                MessageBox.Show("所提供的EXCEL 文件格式不符合默认标准请提供4列(名称、X、Y、Z)、7列(带角度)、8列(多序号)的Xls表!");
+                                return false;
+                            }
+
                         }
                         else
                         {
                             try
                             {
-                                DG.Rows.Add(Row.GetCell(0), Row.GetCell(1), Row.GetCell(2), Row.GetCell(3), Row.GetCell(4), Row.GetCell(5), Row.GetCell(6), Row.GetCell(7));
+                                switch (RowNum)
+                                {
+                                    case 3:
+                                        {
+                                            DG.Rows.Add(i,"RX_"+i, Row.GetCell(0), Row.GetCell(1), Row.GetCell(2), 0, 0, 0);
+                                            break;
+                                        }
+                                    case 4:
+                                        {
+                                            DG.Rows.Add(i, Row.GetCell(0), Row.GetCell(1), Row.GetCell(2), Row.GetCell(3),0,0,0);
+                                            break;
+                                        }
+                                    case 7:
+                                        {
+                                            DG.Rows.Add(i, Row.GetCell(0), Row.GetCell(1), Row.GetCell(2), Row.GetCell(3), Row.GetCell(4), Row.GetCell(5), Row.GetCell(6));
+                                            break;
+                                        }
+                                    case 8:
+                                        {
+                                            DG.Rows.Add(i, Row.GetCell(1), Row.GetCell(2), Row.GetCell(3), Row.GetCell(4), Row.GetCell(5), Row.GetCell(6), Row.GetCell(7));
+                                            break;
+                                        }
+                                    default:
+                                        break;
+                                }
                             }
                             catch (Exception)
                             {

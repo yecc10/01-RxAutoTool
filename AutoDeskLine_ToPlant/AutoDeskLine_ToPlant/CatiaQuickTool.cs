@@ -138,7 +138,7 @@ namespace AutoDeskLine_ToPlant
                     }
                 case 2: //GetAnyObject
                     {
-                     return new object[] { "AnyObject" };
+                        return new object[] { "AnyObject" };
                     }
                 default:
                     return new object[] { "AnyObject" };
@@ -154,7 +154,7 @@ namespace AutoDeskLine_ToPlant
         {
             ReadType = 2;
             Selection SelectArc = GetSelect();
-            if (SelectArc == null || SelectArc.Count2==0)
+            if (SelectArc == null || SelectArc.Count2 == 0)
             {
                 return;
             }
@@ -372,7 +372,7 @@ namespace AutoDeskLine_ToPlant
                 SelectT.Add(dxy);
                 SelectT.Add(dyz);
                 SelectT.Add(dzx);
-                VP =(VisPropertySet) VP.Parent;
+                VP = (VisPropertySet)VP.Parent;
                 VP.SetShow(CatVisPropertyShow.catVisPropertyNoShowAttr);
                 SelectT.Clear();
             }
@@ -500,7 +500,7 @@ namespace AutoDeskLine_ToPlant
             XlsFile.Multiselect = false;
             if (XlsFile.ShowDialog() == DialogResult.OK)
             {
-                RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName,DataGrid);
+                RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, DataGrid);
                 DataGrid.Update();
                 ReadAixPoint.BackColor = Color.Green;
             }
@@ -511,12 +511,16 @@ namespace AutoDeskLine_ToPlant
             Creat3dBall.BackColor = SystemColors.ActiveCaption;
             ReadType = 2;
             bool SelectArc = GetSelect(false);
-            if (SelectArc ==false)
+            if (SelectArc == false)
             {
                 return;
             }
             int ERR = 0;
-
+            if (DataGrid.RowCount < 1)
+            {
+                MessageBox.Show("数据为空，无法建立3D模型！");
+                return;
+            }
             for (int i = 0; i < DataGrid.RowCount; i++)
             {
                 HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
@@ -527,7 +531,7 @@ namespace AutoDeskLine_ToPlant
                 var TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
                 HybridShapePointCoord NewPoint = PartHyb.AddNewPointCoord(Convert.ToDouble(DataGrid.Rows[i].Cells[2].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[3].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString()));
                 Reference ShapeRef = PartID.CreateReferenceFromObject(NewPoint);
-                HybridShapeSphere NewShape = PartHyb.AddNewSphere(ShapeRef, null,Convert.ToDouble(BallRadio.Text), -45.000000, 45.000000, 0.000000, 180.000000);
+                HybridShapeSphere NewShape = PartHyb.AddNewSphere(ShapeRef, null, Convert.ToDouble(BallRadio.Text), -45.000000, 45.000000, 0.000000, 180.000000);
                 NewShape.Limitation = 1;
                 if (KeepName.Checked)
                 {
@@ -536,14 +540,14 @@ namespace AutoDeskLine_ToPlant
                 }
                 else
                 {
-                    NewPoint.set_Name("Rx_" + (i+1));
+                    NewPoint.set_Name("Rx_" + (i + 1));
                     NewShape.set_Name("Rx_" + (i + 1));
                 }
                 HybridBodies Hybs = PartID.HybridBodies;
                 HybridBody Hyb = Hybs.Item("几何图形集.1");
-               // Hyb.AppendHybridShape(NewPoint);
+                // Hyb.AppendHybridShape(NewPoint);
                 Hyb.AppendHybridShape(NewShape);
-              //  PartID.InWorkObject = NewPoint;
+                //  PartID.InWorkObject = NewPoint;
                 PartID.InWorkObject = NewShape;
                 try
                 {
@@ -553,7 +557,7 @@ namespace AutoDeskLine_ToPlant
                 {
                     ERR += 1;
                 }
-                Selection SetColor= CatDocument.Selection;
+                Selection SetColor = CatDocument.Selection;
                 VisPropertySet VSet = SetColor.VisProperties;
                 SetColor.Add(NewShape);
                 VSet.SetRealColor(128, 255, 0, 0);
@@ -563,6 +567,7 @@ namespace AutoDeskLine_ToPlant
                 MessageBox.Show("共计:" + ERR + "个点创建新参考点失败！");
             }
             Creat3dBall.BackColor = Color.Green;
+            ShowCenter();
         }
 
         private void Creat3dPoint_Click(object sender, EventArgs e)//Creat3dBall_Click
@@ -575,7 +580,11 @@ namespace AutoDeskLine_ToPlant
                 return;
             }
             int ERR = 0;
-
+            if (DataGrid.RowCount < 1)
+            {
+                MessageBox.Show("数据为空，无法建立3D模型！");
+                return;
+            }
             for (int i = 0; i < DataGrid.RowCount; i++)
             {
                 HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
@@ -611,6 +620,15 @@ namespace AutoDeskLine_ToPlant
                 MessageBox.Show("共计:" + ERR + "个点创建新参考点失败！");
             }
             Creat3dPoint.BackColor = Color.Green;
+            ShowCenter();
+        }
+        private bool ShowCenter()
+        {
+            SpecsAndGeomWindow SAGW = (SpecsAndGeomWindow)CatApplication.ActiveWindow;
+            Viewer3D NewView = (Viewer3D)SAGW.ActiveViewer;
+            NewView.Reframe();
+            Viewpoint3D viewpoint3D1 = NewView.Viewpoint3D;
+            return false;
         }
     }
 }
