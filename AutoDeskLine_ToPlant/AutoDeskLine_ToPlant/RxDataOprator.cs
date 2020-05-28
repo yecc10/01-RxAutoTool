@@ -38,7 +38,7 @@ namespace AutoDeskLine_ToPlant
                     ICellStyle CST = wkb.CreateCellStyle();
                     CST.VerticalAlignment = VerticalAlignment.Center;
                     CST.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
-                    for (int i = 0; i <dataGridView.Rows[1].Cells.Count; i++) //初始化表头
+                    for (int i = 0; i < dataGridView.Rows[1].Cells.Count; i++) //初始化表头
                     {
                         ICell HeadCell = HeadRow.CreateCell(i);
                         HeadCell.SetCellValue(dataGridView.Columns[i].HeaderText);
@@ -46,7 +46,7 @@ namespace AutoDeskLine_ToPlant
                     }
                     for (int i = 0; i < dataGridView.Rows.Count; i++) //依次遍历全部行
                     {
-                        IRow DataRow = sheet.CreateRow(i+1);
+                        IRow DataRow = sheet.CreateRow(i + 1);
                         DataRow.RowStyle = CST;
                         DataRow.Height = 400;
                         for (int j = 0; j < dataGridView.Rows[i].Cells.Count; j++) //读取每行中所有列
@@ -60,7 +60,7 @@ namespace AutoDeskLine_ToPlant
                     string datatime = DateTime.Now.ToString("yyyymmddHHmmssffff");
                     string strDesktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
-                    string path = strDesktopPath+"\\瑞祥工业工厂仿真组" + datatime + ".xls";
+                    string path = strDesktopPath + "\\瑞祥工业工厂仿真组" + datatime + ".xls";
                     FileStream file = new FileStream(path, FileMode.OpenOrCreate);
                     wkb.Write(file);
                     file.Flush();
@@ -84,14 +84,27 @@ namespace AutoDeskLine_ToPlant
                     IWorkbook xlsBook = WorkbookFactory.Create(xlsPath);
                     ISheet sheet = xlsBook.GetSheetAt(0);
                     RxTypeList.CatPointType CP = new RxTypeList.CatPointType();
-                    for (int i = 0; i <=sheet.LastRowNum; i++)
+                    for (int i = 0; i <= sheet.LastRowNum; i++)
                     {
                         IRow Row = sheet.GetRow(i);
                         RowNum = Row.LastCellNum;
-                        if (i == 0 ) //初始化表头
+                        if (i == 0) //初始化表头
                         {
-                            if (RowNum == 3||RowNum == 4|| RowNum == 7 || RowNum == 8)
+                            if (RowNum == 3 || RowNum == 4 || RowNum == 7 || RowNum == 8)
                             {
+                                DG.DataSource = null;
+                                DG.AllowUserToAddRows = true;
+                                if (DG.ColumnCount>0)
+                                {
+                                    DG.Columns.Remove("序号");
+                                    DG.Columns.Remove("名称");
+                                    DG.Columns.Remove("X坐标");
+                                    DG.Columns.Remove("Y坐标");
+                                    DG.Columns.Remove("Z坐标");
+                                    DG.Columns.Remove("RX");
+                                    DG.Columns.Remove("RY");
+                                    DG.Columns.Remove("RZ");
+                                }
                                 DG.Columns.Add("序号", "序号");
                                 DG.Columns.Add("名称", "名称");
                                 DG.Columns.Add("X坐标", "X坐标");
@@ -116,12 +129,12 @@ namespace AutoDeskLine_ToPlant
                                 {
                                     case 3:
                                         {
-                                            DG.Rows.Add(i,"RX_"+i, Row.GetCell(0), Row.GetCell(1), Row.GetCell(2), 0, 0, 0);
+                                            DG.Rows.Add(i, "RX_" + i, Row.GetCell(0), Row.GetCell(1), Row.GetCell(2), 0, 0, 0);
                                             break;
                                         }
                                     case 4:
                                         {
-                                            DG.Rows.Add(i, Row.GetCell(0), Row.GetCell(1), Row.GetCell(2), Row.GetCell(3),0,0,0);
+                                            DG.Rows.Add(i, Row.GetCell(0), Row.GetCell(1), Row.GetCell(2), Row.GetCell(3), 0, 0, 0);
                                             break;
                                         }
                                     case 7:

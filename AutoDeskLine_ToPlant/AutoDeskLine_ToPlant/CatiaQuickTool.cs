@@ -242,6 +242,7 @@ namespace AutoDeskLine_ToPlant
             {
                 HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
                 SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatDocument.GetWorkbench("SPAWorkbench");
+
                 Reference referenceObject = SelectArc.Item(i).Reference;
                 Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
                 var TName = referenceObject.get_Name(); //读取选择的曲面名称
