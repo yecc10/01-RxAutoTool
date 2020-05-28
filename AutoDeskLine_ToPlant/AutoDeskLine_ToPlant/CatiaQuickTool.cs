@@ -242,8 +242,25 @@ namespace AutoDeskLine_ToPlant
             {
                 HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
                 SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatDocument.GetWorkbench("SPAWorkbench");
-
-                Reference referenceObject = SelectArc.Item(i).Reference;
+                Reference referenceObject;
+                try
+                {
+                    referenceObject = SelectArc.Item(i).Reference;
+                }
+                catch (Exception)
+                {
+                    Boolean LeafProductProcessed;
+                    AnyObject Feature =(AnyObject)SelectArc.Item(i).Value;
+                    var LeafProduct = SelectArc.Item(i).LeafProduct;
+                    LeafProductProcessed = true;
+                    if (LeafProduct.get_Name()!= "InvalidLeafProduct")
+                    {
+                        LeafProductProcessed = false;
+                    }
+                   AnyObject Body= (AnyObject)Feature.Parent;
+                    string Name = Body.get_Name();
+                    throw;
+                }
                 Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
                 var TName = referenceObject.get_Name(); //读取选择的曲面名称
                 try
