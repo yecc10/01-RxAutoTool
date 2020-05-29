@@ -583,7 +583,16 @@ namespace AutoDeskLine_ToPlant
                 //Reference referenceObject = SelectArc.Item(i).Reference;
                 //Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
                 //TheMeasurable.GetPoint(PointCoord); //读取选择的曲面坐标
-                var TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
+                string TName;
+                try
+                {
+                    TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
+                }
+                catch (Exception)
+                {
+
+                    continue;
+                }
                 HybridShapePointCoord NewPoint = PartHyb.AddNewPointCoord(Convert.ToDouble(DataGrid.Rows[i].Cells[2].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[3].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString()));
                 Reference ShapeRef = PartID.CreateReferenceFromObject(NewPoint);
                 HybridShapeSphere NewShape = PartHyb.AddNewSphere(ShapeRef, null, Convert.ToDouble(BallRadio.Text), -45.000000, 45.000000, 0.000000, 180.000000);
@@ -647,7 +656,16 @@ namespace AutoDeskLine_ToPlant
                 //Reference referenceObject = SelectArc.Item(i).Reference;
                 //Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
                 //TheMeasurable.GetPoint(PointCoord); //读取选择的曲面坐标
-                var TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
+                string TName;
+                try
+                {
+                    TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
+                }
+                catch (Exception)
+                {
+
+                    continue;
+                }
                 HybridShapePointCoord NewPoint = PartHyb.AddNewPointCoord(Convert.ToDouble(DataGrid.Rows[i].Cells[2].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[3].Value.ToString()), Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString()));
                 if (KeepName.Checked)
                 {

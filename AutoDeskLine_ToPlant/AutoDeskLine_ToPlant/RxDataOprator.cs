@@ -123,6 +123,11 @@ namespace AutoDeskLine_ToPlant
                         }
                         else
                         {
+                            string CheckValue = Row.GetCell(0).StringCellValue;
+                            if (string.IsNullOrEmpty(CheckValue))
+                            {
+                                continue;
+                            }
                             try
                             {
                                 switch (RowNum)
