@@ -710,6 +710,10 @@ namespace AutoDeskLine_ToPlant
             Product Cproduct = CatDocument.Product;
             Products Cps = Cproduct.Products;
             string GunPath=Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;.CATPart", 0);
+            if (string.IsNullOrEmpty(GunPath))
+            {
+                return;
+            }
             object[] oPositionMatrix = new object[12];
             double oRx, oRy, oRz;
             for (int i = 0; i < DataGrid.RowCount; i++)
