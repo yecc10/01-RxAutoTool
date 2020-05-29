@@ -702,7 +702,7 @@ namespace AutoDeskLine_ToPlant
 
         private void InsGun_Click(object sender, EventArgs e)
         {
-            if (DataGrid.ColumnCount<1)
+            if (DataGrid.RowCount < 1)
             {
                 MessageBox.Show("未检测到任何数据请先导入EXCEL数据再执行该操作!");
                 return;
@@ -710,17 +710,17 @@ namespace AutoDeskLine_ToPlant
             Product Cproduct = CatDocument.Product;
             Products Cps = Cproduct.Products;
             string GunPath=Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;.CATPart", 0);
-            object[] oPositionMatrix = new object[11];
+            object[] oPositionMatrix = new object[12];
             double oRx, oRy, oRz;
-            for (int i = 0; i < DataGrid.ColumnCount; i++)
+            for (int i = 0; i < DataGrid.RowCount; i++)
             {
-               // double oPi = 3.1415926536;
+               double oPi = 3.1415926536;
 
-                oRx = Convert.ToDouble(DataGrid.Rows[i].Cells[7].Value.ToString());
+                oRx = Convert.ToDouble(DataGrid.Rows[i].Cells[5].Value.ToString()) * oPi / 180;
 
-                oRy = Convert.ToDouble(DataGrid.Rows[i].Cells[6].Value.ToString());
+                oRy = Convert.ToDouble(DataGrid.Rows[i].Cells[6].Value.ToString()) * oPi / 180;
 
-                oRz = Convert.ToDouble(DataGrid.Rows[i].Cells[5].Value.ToString());
+                oRz = Convert.ToDouble(DataGrid.Rows[i].Cells[7].Value.ToString()) * oPi / 180;
 
                 oPositionMatrix[0] = Math.Cos(oRy) * Math.Cos(oRz);
 
