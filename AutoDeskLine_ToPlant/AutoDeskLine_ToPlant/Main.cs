@@ -15,6 +15,7 @@ namespace AutoDeskLine_ToPlant
     {
         public Main()
         {
+            this.TopMost = true;
             InitializeComponent();
             this.WindowState = FormWindowState.Normal;
             this.StartPosition = FormStartPosition.CenterScreen;

@@ -62,10 +62,10 @@
     <ApplicationIcon>RxLogo.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>248AD5D6A45443E1C5884F4342A9D990A433A970</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>1A843D2B11C614B13EB76707BBEBAA408277C64B</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>AutoDeskLine_ToPlant_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>AutoDeskLine_ToPlant_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -77,7 +77,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>AutoDeskLine_ToPlant_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>yecc.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>AutoDeskLine_ToPlant.Program</StartupObject>
@@ -207,6 +207,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="AutoDeskLine_ToPlant_1_TemporaryKey.pfx" />
     <None Include="AutoDeskLine_ToPlant_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -309,15 +310,6 @@
     </COMReference>
     <COMReference Include="CATDataExch">
       <Guid>{737CBEE1-8395-4A53-818C-FE7BFE900297}</Guid>
-      <VersionMajor>0</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="CATDrmRmsSettings">
-      <Guid>{4C919743-B7D7-463C-9A61-B0797E2D4D8E}</Guid>
       <VersionMajor>0</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
@@ -568,15 +560,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-    <COMReference Include="DELPPRNavig">
-      <Guid>{0E8246B8-80F1-44F9-9F39-C16F27551C78}</Guid>
-      <VersionMajor>0</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
     <COMReference Include="DNBASY">
       <Guid>{9A12E21A-7CAC-11D6-810A-00C04FA145A1}</Guid>
       <VersionMajor>0</VersionMajor>
@@ -631,62 +614,8 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-    <COMReference Include="DNBEHMItf">
-      <Guid>{1BB1941F-AF6C-43AA-A1DA-98AA0AC80E7A}</Guid>
-      <VersionMajor>0</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="DNBEHSItf">
-      <Guid>{BF09BFEA-A136-4026-896D-5F57B7B63A76}</Guid>
-      <VersionMajor>0</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="DNBEKP">
-      <Guid>{7A658408-BF52-4171-83B4-B29558E5E934}</Guid>
-      <VersionMajor>0</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
     <COMReference Include="DNBFastener">
       <Guid>{7558A44C-B4C5-11D4-80C4-0050040CCFB4}</Guid>
-      <VersionMajor>0</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="DNBHumanSimInterfaces">
-      <Guid>{C2A5C259-5108-4293-BAE2-C9C6BBAE267A}</Guid>
-      <VersionMajor>0</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="DNBIgpAMPPath">
-      <Guid>{F679E8FF-099A-48DE-A050-735D141CCA63}</Guid>
-      <VersionMajor>0</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="DNBIgpOlp">
-      <Guid>{3AA0957E-D319-4150-B5D5-5AE2909D2866}</Guid>
       <VersionMajor>0</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
@@ -775,15 +704,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-    <COMReference Include="DNBShopViewer">
-      <Guid>{91DB4DB1-4D14-4423-80C8-D921283BF20A}</Guid>
-      <VersionMajor>0</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
     <COMReference Include="DNBSimAct">
       <Guid>{F1978546-69D8-4A96-BCDD-AD943304CBB7}</Guid>
       <VersionMajor>0</VersionMajor>
@@ -811,26 +731,8 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-    <COMReference Include="DNBSOR">
-      <Guid>{F89B2213-09EA-4253-A2FF-9CA6D6314A41}</Guid>
-      <VersionMajor>0</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
     <COMReference Include="DNBState">
       <Guid>{655A0376-C6BD-4B8F-9763-AFDDA406B423}</Guid>
-      <VersionMajor>0</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="DNBWork">
-      <Guid>{49ADA80F-0DFE-4F00-B762-CE5039C56C4F}</Guid>
       <VersionMajor>0</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>

@@ -702,6 +702,7 @@ namespace AutoDeskLine_ToPlant
 
         private void InsGun_Click(object sender, EventArgs e)
         {
+            this.TopMost = false;
             if (DataGrid.RowCount < 1)
             {
                 MessageBox.Show("未检测到任何数据请先导入EXCEL数据再执行该操作!");
@@ -709,11 +710,12 @@ namespace AutoDeskLine_ToPlant
             }
             Product Cproduct = CatDocument.Product;
             Products Cps = Cproduct.Products;
-            string GunPath=Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;.CATPart", 0);
+            string GunPath=Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;*.CATPart", 0);
             if (string.IsNullOrEmpty(GunPath))
             {
                 return;
             }
+            this.TopMost = true;
             object[] oPositionMatrix = new object[12];
             double oRx, oRy, oRz;
             for (int i = 0; i < DataGrid.RowCount; i++)
@@ -751,9 +753,11 @@ namespace AutoDeskLine_ToPlant
                 oPositionMatrix[11] = Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString());
                 object[] arrayOfVariantOfBSTR1 = new object[] { GunPath };
                 Cps.AddComponentsFromFiles(arrayOfVariantOfBSTR1, "All");
-                Cps.Item(i + 1).Position.SetComponents(oPositionMatrix);
-                Cps.Item(i + 1).set_Name(DataGrid.Rows[i].Cells[1].Value.ToString());
-                Cps.Item(i + 1).Move.Apply(oPositionMatrix);
+                Cps.Item(Cps.Count).Position.SetComponents(oPositionMatrix);
+                //object[] CurrAix = new object[12]; --for debug
+                //Cps.Item(Cps.Count).Position.GetComponents(CurrAix);
+                string NewName = DataGrid.Rows[i].Cells[1].Value.ToString();
+                Cps.Item(Cps.Count).set_PartNumber(NewName);
             }
             SettingControllers SettingControllers1 = Cps.Application.SettingControllers;
             VisualizationSettingAtt visualizationSettingAtt1 = (VisualizationSettingAtt)SettingControllers1.Item("CATVizVisualizationSettingCtrl");
