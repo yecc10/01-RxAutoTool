@@ -753,9 +753,12 @@ namespace AutoDeskLine_ToPlant
                 Cps.AddComponentsFromFiles(arrayOfVariantOfBSTR1, "All");
                 Cps.Item(i + 1).Position.SetComponents(oPositionMatrix);
                 Cps.Item(i + 1).set_Name(DataGrid.Rows[i].Cells[1].Value.ToString());
+                Cps.Item(i + 1).Move.Apply(oPositionMatrix);
             }
+            SettingControllers SettingControllers1 = Cps.Application.SettingControllers;
+            VisualizationSettingAtt visualizationSettingAtt1 = (VisualizationSettingAtt)SettingControllers1.Item("CATVizVisualizationSettingCtrl");
+            visualizationSettingAtt1.SaveRepository();
             ShowCenter();
-
         }
     }
 }
