@@ -265,7 +265,7 @@ namespace AutoDeskLine_ToPlant
                         String ShapeName = Feature.get_Name();
                         VisPropertySet VPS = SelectArc.VisProperties;
                         VPS.SetVisibleColor(255, 0, 0, 0);
-                        return;
+                        continue;
                         // AnyObject Body = (AnyObject)Feature.Parent;
                         // Body body1 = (Body)Body;
                         // Shapes Nshape = body1.Shapes;
@@ -288,7 +288,7 @@ namespace AutoDeskLine_ToPlant
                         String ShapeName = Feature.get_Name();
                         VisPropertySet VPS = SelectArc.VisProperties;
                         VPS.SetVisibleColor(255, 0, 0, 0);
-                        return;
+                        continue;
                     }
                 }
                 Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
