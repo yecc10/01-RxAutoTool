@@ -199,10 +199,6 @@ namespace AutoDeskLine_ToPlant
 
         }
 
-        private void AutoHole_Click(object sender, EventArgs e)
-        {
-            this.WindowState = FormWindowState.Minimized;
-        }
         private bool WriteObjectToDataGrid(string Name, object[] PointData)
         {
             try
@@ -702,6 +698,60 @@ namespace AutoDeskLine_ToPlant
             NewView.Reframe();
             Viewpoint3D viewpoint3D1 = NewView.Viewpoint3D;
             return false;
+        }
+
+        private void InsGun_Click(object sender, EventArgs e)
+        {
+            if (DataGrid.ColumnCount<1)
+            {
+                MessageBox.Show("未检测到任何数据请先导入EXCEL数据再执行该操作!");
+                return;
+            }
+            Product Cproduct = CatDocument.Product;
+            Products Cps = Cproduct.Products;
+            string GunPath=Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;.CATPart", 0);
+            object[] oPositionMatrix = new object[11];
+            double oRx, oRy, oRz;
+            for (int i = 0; i < DataGrid.ColumnCount; i++)
+            {
+               // double oPi = 3.1415926536;
+
+                oRx = Convert.ToDouble(DataGrid.Rows[i].Cells[7].Value.ToString());
+
+                oRy = Convert.ToDouble(DataGrid.Rows[i].Cells[6].Value.ToString());
+
+                oRz = Convert.ToDouble(DataGrid.Rows[i].Cells[5].Value.ToString());
+
+                oPositionMatrix[0] = Math.Cos(oRy) * Math.Cos(oRz);
+
+                oPositionMatrix[1] = Math.Cos(oRy) * Math.Sin(oRz);
+
+                oPositionMatrix[2] = -Math.Sin(oRy);
+
+                oPositionMatrix[3] = (Math.Sin(oRx) * Math.Sin(oRy) * Math.Cos(oRz)) - (Math.Cos(oRx) * Math.Sin(oRz));
+
+                oPositionMatrix[4] = (Math.Sin(oRx) * Math.Sin(oRy) * Math.Sin(oRz)) + (Math.Cos(oRx) * Math.Cos(oRz));
+
+                oPositionMatrix[5] = (Math.Sin(oRx) * Math.Cos(oRy));
+
+                oPositionMatrix[6] = (Math.Cos(oRx) * Math.Sin(oRy) * Math.Cos(oRz)) + (Math.Sin(oRx) * Math.Sin(oRz));
+
+                oPositionMatrix[7] = (Math.Cos(oRx) * Math.Sin(oRy) * Math.Sin(oRz)) - (Math.Cos(oRx) * Math.Cos(oRz));
+
+                oPositionMatrix[8] = Math.Cos(oRx) * Math.Cos(oRy);
+
+                oPositionMatrix[9] = Convert.ToDouble(DataGrid.Rows[i].Cells[2].Value.ToString()); ;
+
+                oPositionMatrix[10] = Convert.ToDouble(DataGrid.Rows[i].Cells[3].Value.ToString());
+
+                oPositionMatrix[11] = Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString());
+                object[] arrayOfVariantOfBSTR1 = new object[] { GunPath };
+                Cps.AddComponentsFromFiles(arrayOfVariantOfBSTR1, "All");
+                Cps.Item(i + 1).Position.SetComponents(oPositionMatrix);
+                Cps.Item(i + 1).set_Name(DataGrid.Rows[i].Cells[1].Value.ToString());
+            }
+            ShowCenter();
+
         }
     }
 }

@@ -34,7 +34,7 @@
             this.KeepName = new System.Windows.Forms.CheckBox();
             this.OutToEXcel = new System.Windows.Forms.Button();
             this.BollToPoint = new System.Windows.Forms.Button();
-            this.AutoHole = new System.Windows.Forms.Button();
+            this.InsGun = new System.Windows.Forms.Button();
             this.DataGrid = new System.Windows.Forms.DataGridView();
             this.ReadCoord = new System.Windows.Forms.Button();
             this.ClearAllData = new System.Windows.Forms.Button();
@@ -88,15 +88,15 @@
             this.BollToPoint.UseVisualStyleBackColor = true;
             this.BollToPoint.Click += new System.EventHandler(this.BollToPoint_Click);
             // 
-            // AutoHole
+            // InsGun
             // 
-            this.AutoHole.Location = new System.Drawing.Point(450, 345);
-            this.AutoHole.Name = "AutoHole";
-            this.AutoHole.Size = new System.Drawing.Size(118, 44);
-            this.AutoHole.TabIndex = 2;
-            this.AutoHole.Text = "自动打孔";
-            this.AutoHole.UseVisualStyleBackColor = true;
-            this.AutoHole.Click += new System.EventHandler(this.AutoHole_Click);
+            this.InsGun.Location = new System.Drawing.Point(450, 345);
+            this.InsGun.Name = "InsGun";
+            this.InsGun.Size = new System.Drawing.Size(118, 44);
+            this.InsGun.TabIndex = 2;
+            this.InsGun.Text = "插入焊钳";
+            this.InsGun.UseVisualStyleBackColor = true;
+            this.InsGun.Click += new System.EventHandler(this.InsGun_Click);
             // 
             // DataGrid
             // 
@@ -205,7 +205,7 @@
             this.Controls.Add(this.DataGrid);
             this.Controls.Add(this.Creat3dBall);
             this.Controls.Add(this.Creat3dPoint);
-            this.Controls.Add(this.AutoHole);
+            this.Controls.Add(this.InsGun);
             this.Controls.Add(this.PointToCoord);
             this.Controls.Add(this.ReadAixPoint);
             this.Controls.Add(this.ReadCoord);
@@ -231,7 +231,7 @@
         private System.Windows.Forms.CheckBox KeepName;
         private System.Windows.Forms.Button OutToEXcel;
         private System.Windows.Forms.Button BollToPoint;
-        private System.Windows.Forms.Button AutoHole;
+        private System.Windows.Forms.Button InsGun;
         private System.Windows.Forms.DataGridView DataGrid;
         private System.Windows.Forms.Button ReadCoord;
         private System.Windows.Forms.Button ClearAllData;
