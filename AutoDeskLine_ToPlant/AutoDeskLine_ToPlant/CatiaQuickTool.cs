@@ -239,9 +239,9 @@ namespace AutoDeskLine_ToPlant
                 return;
             }
             int ERR = 0;
-            object[] PointCoord = new object[] { -99, -99, -99, -99, -99, -99 };
             for (int i = 1; i <= SelectArc.Count2; i++)
             {
+                object[] PointCoord = new object[] { -99, -99, -99, -99, -99, -99 };
                 HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
                 SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatDocument.GetWorkbench("SPAWorkbench");
                 Reference referenceObject;
@@ -251,6 +251,7 @@ namespace AutoDeskLine_ToPlant
                 }
                 catch (Exception)
                 {
+                    ERR += 1;
                     Boolean LeafProductProcessed;
                     AnyObject Feature = (AnyObject)SelectArc.Item(i).Value;
                     var LeafProduct = SelectArc.Item(i).LeafProduct;
@@ -262,26 +263,31 @@ namespace AutoDeskLine_ToPlant
                     if (LeafProductProcessed)
                     {
                         String ShapeName = Feature.get_Name();
-
-                        AnyObject Body = (AnyObject)Feature.Parent;
-                        Body body1 = (Body)Body;
-                        Shapes Nshape = body1.Shapes;
-                        Shape ReShape = Nshape.Item(ShapeName);
-                        HybridShapeSphere Sph = (HybridShapeSphere)PartHyb;
-                       var Center= Sph.Center;
-                       // Measurable mab = new Measurable();
-                        //referenceObject = PartID.CreateReferenceFromBRepName(ReShape);
-                        referenceObject =PartID.CreateReferenceFromBRepName("RSur:(Face:(Brp:(1);None:();Cf11:());WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)", ReShape);
-                        HybridShapePointCenter PointCenter = PartHyb.AddNewPointCenter(referenceObject);
-                        HybridBodies Hybs = PartID.HybridBodies;
-                        HybridBody Hyb = Hybs.Item("几何图形集.1");
-                        Hyb.AppendHybridShape(PointCenter);
-                        PartID.InWorkObject = PointCenter;
-                        PartID.Update();
-                        referenceObject = PartID.CreateReferenceFromObject(PointCenter);
+                        VisPropertySet VPS = SelectArc.VisProperties;
+                        VPS.SetVisibleColor(255, 0, 0, 0);
+                        return;
+                        // AnyObject Body = (AnyObject)Feature.Parent;
+                        // Body body1 = (Body)Body;
+                        // Shapes Nshape = body1.Shapes;
+                        // Shape ReShape = Nshape.Item(ShapeName);
+                        // HybridShapeSphere Sph = (HybridShapeSphere)PartHyb;
+                        //var Center= Sph.Center;
+                        //// Measurable mab = new Measurable();
+                        // //referenceObject = PartID.CreateReferenceFromBRepName(ReShape);
+                        // referenceObject =PartID.CreateReferenceFromBRepName("RSur:(Face:(Brp:(1);None:();Cf11:());WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)", ReShape);
+                        // HybridShapePointCenter PointCenter = PartHyb.AddNewPointCenter(referenceObject);
+                        // HybridBodies Hybs = PartID.HybridBodies;
+                        // HybridBody Hyb = Hybs.Item("几何图形集.1");
+                        // Hyb.AppendHybridShape(PointCenter);
+                        // PartID.InWorkObject = PointCenter;
+                        // PartID.Update();
+                        // referenceObject = PartID.CreateReferenceFromObject(PointCenter);
                     }
                     else
                     {
+                        String ShapeName = Feature.get_Name();
+                        VisPropertySet VPS = SelectArc.VisProperties;
+                        VPS.SetVisibleColor(255, 0, 0, 0);
                         return;
                     }
                 }
@@ -293,7 +299,14 @@ namespace AutoDeskLine_ToPlant
                 }
                 catch (Exception)
                 {
-                    ERR += 1;
+                    try
+                    {
+                        TheMeasurable.GetCOG(PointCoord);
+                    }
+                    catch (Exception)
+                    {
+                        ERR += 1;
+                    }
                 }
                 if (!KeepName.Checked)
                 {
