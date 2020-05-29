@@ -23,6 +23,8 @@ using NavigatorTypeLib;
 using KnowledgewareTypeLib;
 using HybridShapeTypeLib;
 using System.IO;
+using DNBPert;
+using CATMat;
 
 namespace AutoDeskLine_ToPlant
 {
@@ -250,16 +252,38 @@ namespace AutoDeskLine_ToPlant
                 catch (Exception)
                 {
                     Boolean LeafProductProcessed;
-                    AnyObject Feature =(AnyObject)SelectArc.Item(i).Value;
+                    AnyObject Feature = (AnyObject)SelectArc.Item(i).Value;
                     var LeafProduct = SelectArc.Item(i).LeafProduct;
                     LeafProductProcessed = true;
-                    if (LeafProduct.get_Name()!= "InvalidLeafProduct")
+                    if (LeafProduct.get_Name() == "InvalidLeafProduct")
                     {
                         LeafProductProcessed = false;
                     }
-                   AnyObject Body= (AnyObject)Feature.Parent;
-                    string Name = Body.get_Name();
-                    throw;
+                    if (LeafProductProcessed)
+                    {
+                        String ShapeName = Feature.get_Name();
+
+                        AnyObject Body = (AnyObject)Feature.Parent;
+                        Body body1 = (Body)Body;
+                        Shapes Nshape = body1.Shapes;
+                        Shape ReShape = Nshape.Item(ShapeName);
+                        HybridShapeSphere Sph = (HybridShapeSphere)PartHyb;
+                       var Center= Sph.Center;
+                       // Measurable mab = new Measurable();
+                        //referenceObject = PartID.CreateReferenceFromBRepName(ReShape);
+                        referenceObject =PartID.CreateReferenceFromBRepName("RSur:(Face:(Brp:(1);None:();Cf11:());WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)", ReShape);
+                        HybridShapePointCenter PointCenter = PartHyb.AddNewPointCenter(referenceObject);
+                        HybridBodies Hybs = PartID.HybridBodies;
+                        HybridBody Hyb = Hybs.Item("几何图形集.1");
+                        Hyb.AppendHybridShape(PointCenter);
+                        PartID.InWorkObject = PointCenter;
+                        PartID.Update();
+                        referenceObject = PartID.CreateReferenceFromObject(PointCenter);
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
                 Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
                 var TName = referenceObject.get_Name(); //读取选择的曲面名称
