@@ -534,6 +534,7 @@ namespace AutoDeskLine_ToPlant
         [STAThread]
         private void Aix_To_Ball_Click(object sender, EventArgs e)
         {
+            this.TopMost = false;
             ReadAixPoint.BackColor = SystemColors.ActiveCaption;
             System.Threading.Thread importThread = new System.Threading.Thread(new ThreadStart(xlsPath));
             importThread.SetApartmentState(ApartmentState.STA); //重点
@@ -555,6 +556,7 @@ namespace AutoDeskLine_ToPlant
                 DataGrid.Update();
                 ReadAixPoint.BackColor = Color.Green;
             }
+            this.TopMost = true;
         }
 
         private void Creat3dBall_Click(object sender, EventArgs e)//Creat3dPoint_Click

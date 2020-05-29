@@ -63,9 +63,9 @@
             this.KeepName.AutoSize = true;
             this.KeepName.Location = new System.Drawing.Point(25, 405);
             this.KeepName.Name = "KeepName";
-            this.KeepName.Size = new System.Drawing.Size(96, 16);
+            this.KeepName.Size = new System.Drawing.Size(72, 16);
             this.KeepName.TabIndex = 1;
-            this.KeepName.Text = "保留现有名称";
+            this.KeepName.Text = "保留名称";
             this.KeepName.UseVisualStyleBackColor = true;
             // 
             // OutToEXcel
