@@ -201,5 +201,34 @@ namespace AutoDeskLine_ToPlant
                 return null;
             }
         }
+        /// <summary>
+        /// 对数据进行执行重复检查，标记重复数据并在执行完成后报警！
+        /// </summary>
+        /// <param name="DGR">待检测对象行</param>
+        /// <param name="DG">参考数据集</param>
+        /// <returns></returns>
+        static public bool DoRepeatCheck(double[] DGR, DataGridView DG)
+        {
+            bool Result = false;
+            int Num = 0;
+            if (DG.RowCount < 1)
+            {
+               // MessageBox.Show("当前未导入任何数据，请导入数据后重试!");
+                return false;
+            }
+            foreach (DataGridViewRow item in DG.Rows)
+            {
+                if (string.IsNullOrEmpty(item.Cells[0].Value.ToString())) //确定当前行非空
+                {
+                    continue;
+                }
+                if ((Convert.ToDouble(item.Cells[2].Value)== DGR[0] && Convert.ToDouble(item.Cells[3].Value) == DGR[1] && Convert.ToDouble(item.Cells[4].Value) == DGR[2]))//对比XYZ值 如果一致则判断重复
+                {
+                    Num += 1;
+                }
+            }
+            Result = Num > 0; //扣除本身数量
+            return Result;
+        }
     }
 }

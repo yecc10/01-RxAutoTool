@@ -45,12 +45,14 @@
             this.Creat3dBall = new System.Windows.Forms.Button();
             this.BallRadio = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.RepeatCheck = new System.Windows.Forms.CheckBox();
+            this.IgRepeat = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // TryRead
             // 
-            this.TryRead.Location = new System.Drawing.Point(596, 345);
+            this.TryRead.Location = new System.Drawing.Point(599, 345);
             this.TryRead.Name = "TryRead";
             this.TryRead.Size = new System.Drawing.Size(118, 44);
             this.TryRead.TabIndex = 0;
@@ -61,7 +63,7 @@
             // KeepName
             // 
             this.KeepName.AutoSize = true;
-            this.KeepName.Location = new System.Drawing.Point(25, 405);
+            this.KeepName.Location = new System.Drawing.Point(6, 397);
             this.KeepName.Name = "KeepName";
             this.KeepName.Size = new System.Drawing.Size(72, 16);
             this.KeepName.TabIndex = 1;
@@ -80,7 +82,7 @@
             // 
             // BollToPoint
             // 
-            this.BollToPoint.Location = new System.Drawing.Point(158, 345);
+            this.BollToPoint.Location = new System.Drawing.Point(170, 345);
             this.BollToPoint.Name = "BollToPoint";
             this.BollToPoint.Size = new System.Drawing.Size(118, 44);
             this.BollToPoint.TabIndex = 2;
@@ -90,7 +92,7 @@
             // 
             // InsGun
             // 
-            this.InsGun.Location = new System.Drawing.Point(450, 345);
+            this.InsGun.Location = new System.Drawing.Point(456, 345);
             this.InsGun.Name = "InsGun";
             this.InsGun.Size = new System.Drawing.Size(118, 44);
             this.InsGun.TabIndex = 2;
@@ -114,7 +116,7 @@
             // 
             // ReadCoord
             // 
-            this.ReadCoord.Location = new System.Drawing.Point(158, 394);
+            this.ReadCoord.Location = new System.Drawing.Point(170, 394);
             this.ReadCoord.Name = "ReadCoord";
             this.ReadCoord.Size = new System.Drawing.Size(118, 44);
             this.ReadCoord.TabIndex = 2;
@@ -124,7 +126,7 @@
             // 
             // ClearAllData
             // 
-            this.ClearAllData.Location = new System.Drawing.Point(304, 345);
+            this.ClearAllData.Location = new System.Drawing.Point(313, 345);
             this.ClearAllData.Name = "ClearAllData";
             this.ClearAllData.Size = new System.Drawing.Size(118, 44);
             this.ClearAllData.TabIndex = 2;
@@ -149,7 +151,7 @@
             // ReadAixPoint
             // 
             this.ReadAixPoint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ReadAixPoint.Location = new System.Drawing.Point(304, 394);
+            this.ReadAixPoint.Location = new System.Drawing.Point(313, 394);
             this.ReadAixPoint.Name = "ReadAixPoint";
             this.ReadAixPoint.Size = new System.Drawing.Size(118, 44);
             this.ReadAixPoint.TabIndex = 2;
@@ -159,7 +161,7 @@
             // 
             // Creat3dPoint
             // 
-            this.Creat3dPoint.Location = new System.Drawing.Point(450, 394);
+            this.Creat3dPoint.Location = new System.Drawing.Point(456, 394);
             this.Creat3dPoint.Name = "Creat3dPoint";
             this.Creat3dPoint.Size = new System.Drawing.Size(118, 44);
             this.Creat3dPoint.TabIndex = 2;
@@ -169,7 +171,7 @@
             // 
             // Creat3dBall
             // 
-            this.Creat3dBall.Location = new System.Drawing.Point(596, 394);
+            this.Creat3dBall.Location = new System.Drawing.Point(599, 395);
             this.Creat3dBall.Name = "Creat3dBall";
             this.Creat3dBall.Size = new System.Drawing.Size(118, 44);
             this.Creat3dBall.TabIndex = 2;
@@ -184,7 +186,8 @@
             this.BallRadio.Name = "BallRadio";
             this.BallRadio.Size = new System.Drawing.Size(77, 26);
             this.BallRadio.TabIndex = 4;
-            this.BallRadio.Text = "8";
+            this.BallRadio.Text = "6";
+            this.BallRadio.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label1
             // 
@@ -194,6 +197,30 @@
             this.label1.Size = new System.Drawing.Size(41, 12);
             this.label1.TabIndex = 5;
             this.label1.Text = "球半径";
+            // 
+            // RepeatCheck
+            // 
+            this.RepeatCheck.AutoSize = true;
+            this.RepeatCheck.Checked = true;
+            this.RepeatCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.RepeatCheck.Location = new System.Drawing.Point(6, 420);
+            this.RepeatCheck.Name = "RepeatCheck";
+            this.RepeatCheck.Size = new System.Drawing.Size(72, 16);
+            this.RepeatCheck.TabIndex = 1;
+            this.RepeatCheck.Text = "重复检查";
+            this.RepeatCheck.UseVisualStyleBackColor = true;
+            // 
+            // IgRepeat
+            // 
+            this.IgRepeat.AutoSize = true;
+            this.IgRepeat.Checked = true;
+            this.IgRepeat.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.IgRepeat.Location = new System.Drawing.Point(86, 420);
+            this.IgRepeat.Name = "IgRepeat";
+            this.IgRepeat.Size = new System.Drawing.Size(72, 16);
+            this.IgRepeat.TabIndex = 1;
+            this.IgRepeat.Text = "过滤重复";
+            this.IgRepeat.UseVisualStyleBackColor = true;
             // 
             // CatiaQuickTool
             // 
@@ -213,6 +240,8 @@
             this.Controls.Add(this.ClearAllData);
             this.Controls.Add(this.BollToPoint);
             this.Controls.Add(this.OutToEXcel);
+            this.Controls.Add(this.IgRepeat);
+            this.Controls.Add(this.RepeatCheck);
             this.Controls.Add(this.KeepName);
             this.Controls.Add(this.TryRead);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -243,5 +272,7 @@
         private System.Windows.Forms.Button Creat3dBall;
         private System.Windows.Forms.TextBox BallRadio;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox RepeatCheck;
+        private System.Windows.Forms.CheckBox IgRepeat;
     }
 }

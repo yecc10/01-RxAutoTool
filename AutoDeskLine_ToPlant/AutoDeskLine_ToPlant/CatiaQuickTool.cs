@@ -37,6 +37,10 @@ namespace AutoDeskLine_ToPlant
         DataRow DataRow;
         DataView dataview;
         Part PartID;
+
+        AnyObject[] GetRepeatRef = new AnyObject[99];
+        int RepeatNum = 0;
+
         /// <summary>
         /// Value=1->Read Point;Value=2->AnyPoint
         /// </summary>
@@ -154,6 +158,7 @@ namespace AutoDeskLine_ToPlant
 
         private void BollToPoint_Click(object sender, EventArgs e)
         {
+            this.WindowState = FormWindowState.Minimized;
             ReadType = 2;
             Selection SelectArc = GetSelect();
             if (SelectArc == null || SelectArc.Count2 == 0)
@@ -199,20 +204,41 @@ namespace AutoDeskLine_ToPlant
 
         }
 
-        private bool WriteObjectToDataGrid(string Name, object[] PointData)
+        /// <summary>
+        /// 记录重复对象并将坐标保存到主视图DataGrid中
+        /// </summary>
+        /// <param name="Name">元素名称</param>
+        /// <param name="PointData">点坐标</param>
+        /// <param name="RefObj">操作对象</param>
+        /// <param name="IgRepeat">是否过滤重复数据</param>
+        /// <returns></returns>
+        private bool WriteObjectToDataGrid(string Name, object[] PointData,Reference RefObj,bool IgRepeat)
         {
             try
             {
+                double[] xyz = new double[3];
                 int keepValuePoint = Convert.ToInt16(2);
                 DataRow = datatable.NewRow();
+                xyz[0] = Math.Round(Convert.ToDouble(PointData[0]), keepValuePoint);
+                xyz[1] = Math.Round(Convert.ToDouble(PointData[1]), keepValuePoint);
+                xyz[2] = Math.Round(Convert.ToDouble(PointData[2]), keepValuePoint);
                 DataRow["序号"] = DataGrid.RowCount + 1;
                 DataRow["名称"] = Name;//Convert.ToDouble(PointCoord[0]), Convert.ToDouble(PointData[1]), Convert.ToDouble(PointData[2])
-                DataRow["X坐标"] = Math.Round(Convert.ToDouble(PointData[0]), keepValuePoint);
-                DataRow["Y坐标"] = Math.Round(Convert.ToDouble(PointData[1]), keepValuePoint);
-                DataRow["Z坐标"] = Math.Round(Convert.ToDouble(PointData[2]), keepValuePoint);
-                DataRow["RX"] = Math.Round(Convert.ToDouble(PointData[3]), keepValuePoint); ;
-                DataRow["RY"] = Math.Round(Convert.ToDouble(PointData[4]), keepValuePoint); ;
-                DataRow["RZ"] = Math.Round(Convert.ToDouble(PointData[5]), keepValuePoint); ;
+                DataRow["X坐标"] = xyz[0];
+                DataRow["Y坐标"] = xyz[1];
+                DataRow["Z坐标"] = xyz[2];
+                DataRow["RX"] = Math.Round(Convert.ToDouble(PointData[3]), keepValuePoint); 
+                DataRow["RY"] = Math.Round(Convert.ToDouble(PointData[4]), keepValuePoint); 
+                DataRow["RZ"] = Math.Round(Convert.ToDouble(PointData[5]), keepValuePoint);
+                if (RxDataOprator.DoRepeatCheck(xyz, DataGrid))//True 为重复值
+                {
+                    GetRepeatRef.SetValue(RefObj, RepeatNum);//记录重复对象
+                    RepeatNum += 1;
+                    if (IgRepeat)
+                    {
+                        return true;
+                    }
+                }
                 datatable.Rows.Add(DataRow);
                 dataview = new DataView(datatable);
                 DataGrid.DataSource = dataview;
@@ -221,6 +247,7 @@ namespace AutoDeskLine_ToPlant
             }
             catch (System.Exception)
             {
+                //throw;
                 return false;
             }
 
@@ -228,10 +255,17 @@ namespace AutoDeskLine_ToPlant
 
         private void ReadCoord_Click(object sender, EventArgs e)
         {
+            this.WindowState = FormWindowState.Minimized;
+            RepeatNum = 0;
+            Array.Clear(GetRepeatRef, 0, GetRepeatRef.Length);
+
             ReadType = 2;
             Selection SelectArc = GetSelect();
             if (SelectArc == null || SelectArc.Count2 == 0)
             {
+                this.WindowState = FormWindowState.Normal;
+                this.StartPosition = FormStartPosition.CenterScreen;
+                this.TopMost = true;
                 return;
             }
             int ERR = 0;
@@ -308,14 +342,37 @@ namespace AutoDeskLine_ToPlant
                 {
                     TName = "Rx_" + (DataGrid.RowCount + 1);
                 }
-                WriteObjectToDataGrid(TName, PointCoord);
+                WriteObjectToDataGrid(TName, PointCoord, referenceObject,IgRepeat.Checked); //记录数据到DataGridView
             }
             if (ERR > 0)
             {
                 MessageBox.Show("共计:" + ERR + "个点创建新参考点失败！");
             }
+            if (RepeatCheck.Checked)
+            {
+                CheckRepeat(SelectArc);
+            }
         }
-
+        private void  CheckRepeat(Selection SelectArc)
+        {
+            if (RepeatNum > 0)
+            {
+                VisPropertySet VPS = SelectArc.VisProperties;
+                SelectArc.Clear();
+                foreach (var item in GetRepeatRef)
+                {
+                    if (item == null)
+                    {
+                        continue;
+                    }
+                    SelectArc.Add(item);
+                }
+                VPS.SetRealColor(255, 0, 128, 0);
+                MessageBox.Show("当前选择的对象集中存在: " + RepeatNum + "个重复数据!并已为你进行颜色标记!");
+                RepeatNum = 0;
+                Array.Clear(GetRepeatRef, 0, GetRepeatRef.Length);
+            }
+        }
         private void ClearAllData_Click(object sender, EventArgs e)
         {
             datatable.Clear();
@@ -331,10 +388,16 @@ namespace AutoDeskLine_ToPlant
 
         private void PointToCoord_Click(object sender, EventArgs e)
         {
+            this.WindowState = FormWindowState.Minimized;
+            RepeatNum = 0;
+            Array.Clear(GetRepeatRef, 0, GetRepeatRef.Length);
             ReadType = 1;
             Selection SelectArc = GetSelect();
             if (SelectArc == null || SelectArc.Count2 == 0)
             {
+                this.WindowState = FormWindowState.Normal;
+                this.StartPosition = FormStartPosition.CenterScreen;
+                this.TopMost = true;
                 return;
             }
             int ERR = 0;
@@ -351,11 +414,15 @@ namespace AutoDeskLine_ToPlant
                 {
                     TName = "Rx_" + (DataGrid.RowCount + 1);
                 }
-                WriteObjectToDataGrid(TName, PointCoord);
+                WriteObjectToDataGrid(TName, PointCoord, referenceObject,IgRepeat.Checked);
             }
             if (ERR > 0)
             {
                 MessageBox.Show("共计:" + ERR + "个点创建新参考点失败！");
+            }
+            if (RepeatCheck.Checked)
+            {
+                CheckRepeat(SelectArc);
             }
         }
         /// <summary>
@@ -535,6 +602,8 @@ namespace AutoDeskLine_ToPlant
         private void Aix_To_Ball_Click(object sender, EventArgs e)
         {
             this.TopMost = false;
+            this.WindowState = FormWindowState.Normal;
+            this.StartPosition = FormStartPosition.CenterScreen;
             ReadAixPoint.BackColor = SystemColors.ActiveCaption;
             System.Threading.Thread importThread = new System.Threading.Thread(new ThreadStart(xlsPath));
             importThread.SetApartmentState(ApartmentState.STA); //重点
@@ -556,6 +625,11 @@ namespace AutoDeskLine_ToPlant
                 DataGrid.ScrollBars = ScrollBars.Both;
                 DataGrid.Update();
                 ReadAixPoint.BackColor = Color.Green;
+            }
+            else
+            {
+                this.WindowState = FormWindowState.Normal;
+                this.StartPosition = FormStartPosition.CenterScreen;
             }
             this.TopMost = true;
         }
@@ -842,5 +916,6 @@ namespace AutoDeskLine_ToPlant
             }
             return true;
         }
+
     }
 }
