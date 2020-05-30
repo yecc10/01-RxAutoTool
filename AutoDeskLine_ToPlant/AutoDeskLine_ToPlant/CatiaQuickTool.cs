@@ -793,11 +793,7 @@ namespace AutoDeskLine_ToPlant
             }
             Product Cproduct = CatDocument.Product;
             Products Cps = Cproduct.Products;
-            string GunPath=Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;*.CATPart", 0);
-            if (string.IsNullOrEmpty(GunPath))
-            {
-                return;
-            }
+            string GunPath;
             this.TopMost = true;
             object[] oPositionMatrix = new object[12];
             double oRx, oRy, oRz;
@@ -807,6 +803,14 @@ namespace AutoDeskLine_ToPlant
                 try
                 {
                     TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
+                    if (TName== "ChangeGun")
+                    {
+                        GunPath = Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;*.CATPart", 0);
+                        if (string.IsNullOrEmpty(GunPath))
+                        {
+                            MessageBox.Show("是否取消导入焊钳？（Y/C/N）","");
+                        }
+                    }
                 }
                 catch (Exception)
                 {

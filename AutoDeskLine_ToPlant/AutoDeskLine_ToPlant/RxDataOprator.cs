@@ -82,24 +82,27 @@ namespace AutoDeskLine_ToPlant
                 try
                 {
                     IWorkbook xlsBook = WorkbookFactory.Create(xlsPath);
-                    ISheet sheet = (xlsBook.GetSheetAt(0).LastRowNum> xlsBook.GetSheetAt(1).LastRowNum)?xlsBook.GetSheetAt(0) : xlsBook.GetSheetAt(1);
+                    ISheet sheet = (xlsBook.GetSheetAt(0).LastRowNum > xlsBook.GetSheetAt(1).LastRowNum) ? xlsBook.GetSheetAt(0) : xlsBook.GetSheetAt(1);
                     RxTypeList.CatPointType CP = new RxTypeList.CatPointType();
+                    bool ChangeGun = false;
+                    int GunNum = 0;
+                    int RowID = 1;
                     for (int i = 0; i <= sheet.LastRowNum; i++)
                     {
-                        if (sheet.LastRowNum<2)
+                        if (sheet.LastRowNum < 2)
                         {
-                            MessageBox.Show("您选择的坐标XLS为空或首个Sheet表为空，请保证首个Sheet表为即将导入的坐标集！", "导入错误报告",MessageBoxButtons.OK);
+                            MessageBox.Show("您选择的坐标XLS为空或首个Sheet表为空，请保证首个Sheet表为即将导入的坐标集！", "导入错误报告", MessageBoxButtons.OK);
                             return false;
                         }
                         IRow Row = sheet.GetRow(i);
                         RowNum = Row.LastCellNum;
                         if (i == 0) //初始化表头
                         {
-                            if (RowNum == 3 || RowNum == 4 || RowNum == 7 || RowNum == 8|| RowNum == 21)
+                            if (RowNum == 3 || RowNum == 4 || RowNum == 7 || RowNum == 8 || RowNum == 21)
                             {
                                 DG.DataSource = null;
                                 DG.AllowUserToAddRows = true;
-                                if (DG.ColumnCount>0)
+                                if (DG.ColumnCount > 0)
                                 {
                                     DG.Columns.Remove("序号");
                                     DG.Columns.Remove("名称");
@@ -159,11 +162,19 @@ namespace AutoDeskLine_ToPlant
                                         }
                                     case 21:
                                         {
-                                            if (string.IsNullOrEmpty(Row.GetCell(0).StringCellValue)|| string.IsNullOrEmpty(Row.GetCell(3).ToString()) || !string.IsNullOrEmpty(Row.GetCell(10).ToString() ))
+                                            if (string.IsNullOrEmpty(Row.GetCell(0).StringCellValue) || string.IsNullOrEmpty(Row.GetCell(3).ToString()))
                                             {
+                                                ChangeGun = true;
                                                 continue;
                                             }
-                                            DG.Rows.Add(i, Row.GetCell(0), Row.GetCell(3), Row.GetCell(4), Row.GetCell(5), Row.GetCell(6), Row.GetCell(7), Row.GetCell(8));
+                                            if (ChangeGun)
+                                            {
+                                                ChangeGun = false;
+                                                DG.Rows.Add(0, "ChangeGun", 0, 0, 0, 0, 0);
+                                                GunNum++;
+                                            }
+                                            DG.Rows.Add(RowID, Row.GetCell(0), Row.GetCell(3), Row.GetCell(4), Row.GetCell(5), Row.GetCell(6), Row.GetCell(7), Row.GetCell(8));
+                                            RowID++;
                                             break;
                                         }
                                     default:
@@ -227,7 +238,7 @@ namespace AutoDeskLine_ToPlant
             int Num = 0;
             if (DG.RowCount < 1)
             {
-               // MessageBox.Show("当前未导入任何数据，请导入数据后重试!");
+                // MessageBox.Show("当前未导入任何数据，请导入数据后重试!");
                 return false;
             }
             foreach (DataGridViewRow item in DG.Rows)
@@ -236,7 +247,7 @@ namespace AutoDeskLine_ToPlant
                 {
                     continue;
                 }
-                if ((Convert.ToDouble(item.Cells[2].Value)== DGR[0] && Convert.ToDouble(item.Cells[3].Value) == DGR[1] && Convert.ToDouble(item.Cells[4].Value) == DGR[2]))//对比XYZ值 如果一致则判断重复
+                if ((Convert.ToDouble(item.Cells[2].Value) == DGR[0] && Convert.ToDouble(item.Cells[3].Value) == DGR[1] && Convert.ToDouble(item.Cells[4].Value) == DGR[2]))//对比XYZ值 如果一致则判断重复
                 {
                     Num += 1;
                 }
