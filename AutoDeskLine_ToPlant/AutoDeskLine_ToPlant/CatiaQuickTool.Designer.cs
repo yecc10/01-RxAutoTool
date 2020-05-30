@@ -227,7 +227,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ClientSize = new System.Drawing.Size(880, 445);
+            this.ClientSize = new System.Drawing.Size(880, 440);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BallRadio);
             this.Controls.Add(this.DataGrid);
@@ -245,6 +245,7 @@
             this.Controls.Add(this.KeepName);
             this.Controls.Add(this.TryRead);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(896, 479);
             this.MinimumSize = new System.Drawing.Size(896, 479);
             this.Name = "CatiaQuickTool";
             this.Text = "CatiaQuickTool";

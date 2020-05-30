@@ -375,10 +375,10 @@ namespace AutoDeskLine_ToPlant
         }
         private void ClearAllData_Click(object sender, EventArgs e)
         {
-            datatable.Clear();
-            dataview = new DataView(datatable);
-            DataGrid.DataSource = dataview;
+            this.TopMost = true;
+            DataGrid.Rows.Clear();
             DataGrid.Update();
+            this.TopMost = true;
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -810,7 +810,6 @@ namespace AutoDeskLine_ToPlant
                 }
                 catch (Exception)
                 {
-
                     continue;
                 }
                 double oPi = 3.1415926536;
