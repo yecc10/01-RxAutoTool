@@ -212,7 +212,7 @@ namespace AutoDeskLine_ToPlant
         /// <param name="RefObj">操作对象</param>
         /// <param name="IgRepeat">是否过滤重复数据</param>
         /// <returns></returns>
-        private bool WriteObjectToDataGrid(string Name, object[] PointData,Reference RefObj,bool IgRepeat)
+        private bool WriteObjectToDataGrid(string Name, object[] PointData, Reference RefObj, bool IgRepeat)
         {
             try
             {
@@ -227,8 +227,8 @@ namespace AutoDeskLine_ToPlant
                 DataRow["X坐标"] = xyz[0];
                 DataRow["Y坐标"] = xyz[1];
                 DataRow["Z坐标"] = xyz[2];
-                DataRow["RX"] = Math.Round(Convert.ToDouble(PointData[3]), keepValuePoint); 
-                DataRow["RY"] = Math.Round(Convert.ToDouble(PointData[4]), keepValuePoint); 
+                DataRow["RX"] = Math.Round(Convert.ToDouble(PointData[3]), keepValuePoint);
+                DataRow["RY"] = Math.Round(Convert.ToDouble(PointData[4]), keepValuePoint);
                 DataRow["RZ"] = Math.Round(Convert.ToDouble(PointData[5]), keepValuePoint);
                 if (RxDataOprator.DoRepeatCheck(xyz, DataGrid))//True 为重复值
                 {
@@ -342,7 +342,7 @@ namespace AutoDeskLine_ToPlant
                 {
                     TName = "Rx_" + (DataGrid.RowCount + 1);
                 }
-                WriteObjectToDataGrid(TName, PointCoord, referenceObject,IgRepeat.Checked); //记录数据到DataGridView
+                WriteObjectToDataGrid(TName, PointCoord, referenceObject, IgRepeat.Checked); //记录数据到DataGridView
             }
             if (ERR > 0)
             {
@@ -353,7 +353,7 @@ namespace AutoDeskLine_ToPlant
                 CheckRepeat(SelectArc);
             }
         }
-        private void  CheckRepeat(Selection SelectArc)
+        private void CheckRepeat(Selection SelectArc)
         {
             if (RepeatNum > 0)
             {
@@ -414,7 +414,7 @@ namespace AutoDeskLine_ToPlant
                 {
                     TName = "Rx_" + (DataGrid.RowCount + 1);
                 }
-                WriteObjectToDataGrid(TName, PointCoord, referenceObject,IgRepeat.Checked);
+                WriteObjectToDataGrid(TName, PointCoord, referenceObject, IgRepeat.Checked);
             }
             if (ERR > 0)
             {
@@ -634,7 +634,7 @@ namespace AutoDeskLine_ToPlant
             this.TopMost = true;
         }
         private delegate void InvokeHandler();
-//子线程中
+        //子线程中
         private void Creat3dBall_Click(object sender, EventArgs e)//Creat3dPoint_Click
         {
             Creat3dBall.BackColor = SystemColors.ActiveCaption;
@@ -788,13 +788,23 @@ namespace AutoDeskLine_ToPlant
                 MessageBox.Show("未检测到任何数据请先导入EXCEL数据再执行该操作!");
                 return;
             }
-            if (CatDocument==null)
+            if (CatDocument == null)
             {
                 InitCatEnv();
             }
-            Product Cproduct = CatDocument.Product;
+            Product Cproduct;
+            try
+            {
+                Cproduct = CatDocument.Product;
+            }
+            catch (Exception)
+            {
+                InitCatEnv();
+                Cproduct = CatDocument.Product;
+            }
+
             Products Cps = Cproduct.Products;
-            string GunPath=string.Empty;
+            string GunPath = string.Empty;
             this.TopMost = true;
             object[] oPositionMatrix = new object[12];
             double oRx, oRy, oRz;
@@ -804,12 +814,13 @@ namespace AutoDeskLine_ToPlant
                 try
                 {
                     TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
-                    if (TName== "ChangeGun")
-                    { 
-                           A: GunPath = Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;*.CATPart", 0);
+                    String GunName = DataGrid.Rows[i + 1].Cells[1].Value.ToString();
+                    if (TName == "ChangeGun")
+                    {
+                        A: GunPath = Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;*.CATPart", 0);
                         if (string.IsNullOrEmpty(GunPath))
                         {
-                           var Result=MessageBox.Show("未选择任何焊枪，是否重新选择？（Y/N/C）","请做出选择",MessageBoxButtons.YesNoCancel);
+                            var Result = MessageBox.Show("未选择任何焊枪，是否重新选择？（Y/N/C）", "请做出选择", MessageBoxButtons.YesNoCancel);
                             switch (Result)
                             {
                                 case DialogResult.None:
@@ -838,12 +849,19 @@ namespace AutoDeskLine_ToPlant
                                     break;
                             }
                         }
+                        else
+                        {
+                            Cproduct = AddProduct(CatDocument.Product.Products, GunName);
+                            Cps = Cproduct.Products;
+                        }
                         continue;
                     }
                     else
                     {
                         if (string.IsNullOrEmpty(GunPath)) //常规模式下读取焊枪 一次即可
                         {
+                            Cproduct = AddProduct(CatDocument.Product.Products, GunName);
+                            Cps = Cproduct.Products;
                             GunPath = Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;*.CATPart", 0);
                         }
                     }
@@ -954,6 +972,20 @@ namespace AutoDeskLine_ToPlant
                 PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
             }
             return true;
+        }
+        private Product AddProduct(Products TargetProduct, string Name)
+        {
+            try
+            {
+                Product Tdocument = TargetProduct.AddNewProduct(Name);
+                //(ProductDocument)TargetProduct.Application.Documents.Add("Product");
+                //Tdocument.Product.set_PartNumber(Name);
+                return Tdocument;
+            }
+            catch (Exception)
+            {
+                return null; ;
+            }
         }
 
     }
