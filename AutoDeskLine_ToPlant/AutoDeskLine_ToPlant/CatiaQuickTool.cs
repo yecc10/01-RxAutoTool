@@ -553,12 +553,14 @@ namespace AutoDeskLine_ToPlant
             if (XlsFile.ShowDialog() == DialogResult.OK)
             {
                 RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, DataGrid);
+                DataGrid.ScrollBars = ScrollBars.Both;
                 DataGrid.Update();
                 ReadAixPoint.BackColor = Color.Green;
             }
             this.TopMost = true;
         }
-
+        private delegate void InvokeHandler();
+//子线程中
         private void Creat3dBall_Click(object sender, EventArgs e)//Creat3dPoint_Click
         {
             Creat3dBall.BackColor = SystemColors.ActiveCaption;
@@ -699,6 +701,7 @@ namespace AutoDeskLine_ToPlant
             Viewer3D NewView = (Viewer3D)SAGW.ActiveViewer;
             NewView.Reframe();
             Viewpoint3D viewpoint3D1 = NewView.Viewpoint3D;
+            this.TopMost = false;
             return false;
         }
 
@@ -709,6 +712,10 @@ namespace AutoDeskLine_ToPlant
             {
                 MessageBox.Show("未检测到任何数据请先导入EXCEL数据再执行该操作!");
                 return;
+            }
+            if (CatDocument==null)
+            {
+                InitCatEnv();
             }
             Product Cproduct = CatDocument.Product;
             Products Cps = Cproduct.Products;
@@ -722,7 +729,17 @@ namespace AutoDeskLine_ToPlant
             double oRx, oRy, oRz;
             for (int i = 0; i < DataGrid.RowCount; i++)
             {
-               double oPi = 3.1415926536;
+                string TName;
+                try
+                {
+                    TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
+                }
+                catch (Exception)
+                {
+
+                    continue;
+                }
+                double oPi = 3.1415926536;
 
                 oRx = Convert.ToDouble(DataGrid.Rows[i].Cells[5].Value.ToString()) * oPi / 180;
 
@@ -765,6 +782,65 @@ namespace AutoDeskLine_ToPlant
             VisualizationSettingAtt visualizationSettingAtt1 = (VisualizationSettingAtt)SettingControllers1.Item("CATVizVisualizationSettingCtrl");
             visualizationSettingAtt1.SaveRepository();
             ShowCenter();
+        }
+        /// <summary>
+        /// 初始化CATIA环境并获取信息到全局变量
+        /// </summary>
+        /// <returns></returns>
+        private bool InitCatEnv()
+        {
+            try
+            {
+                CatApplication = (INFITF.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Catia.Application");
+            }
+            catch (Exception)
+            {
+                this.WindowState = FormWindowState.Normal;
+                this.StartPosition = FormStartPosition.CenterScreen;
+                MessageBox.Show("未检测到打开的CATIA!,请重新运行CATIA!");
+                return false;
+                //throw;
+            }
+            CatApplication.set_Caption("正在运行瑞祥快速建模工具！");
+            // 获取当前活动ProductDocument
+            try
+            {
+                CatDocument = (ProductDocument)CatApplication.ActiveDocument;
+            }
+            catch (Exception)
+            {
+                CatDocument = (ProductDocument)CatApplication.Documents.Add("Product");
+                try
+                {
+                    CatDocument.Product.set_PartNumber("RxProduct");
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
+                    return false;
+                }
+                //MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
+            }
+            // 添加一个新零件
+            string Name = "RXFastDesignTool";
+            try
+            {
+                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    CatDocument.Product.Products.AddNewComponent("Part", Name);
+                }
+                catch (Exception)
+                {
+                    return false;
+                    // throw;
+                }
+                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
+            }
+            return true;
         }
     }
 }

@@ -108,6 +108,7 @@
             this.DataGrid.Name = "DataGrid";
             this.DataGrid.ReadOnly = true;
             this.DataGrid.RowTemplate.Height = 23;
+            this.DataGrid.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.DataGrid.Size = new System.Drawing.Size(852, 304);
             this.DataGrid.TabIndex = 3;
             // 
