@@ -782,6 +782,7 @@ namespace AutoDeskLine_ToPlant
         private void InsGun_Click(object sender, EventArgs e)
         {
             this.TopMost = false;
+            this.WindowState = FormWindowState.Minimized;
             if (DataGrid.RowCount < 1)
             {
                 MessageBox.Show("未检测到任何数据请先导入EXCEL数据再执行该操作!");
@@ -793,7 +794,7 @@ namespace AutoDeskLine_ToPlant
             }
             Product Cproduct = CatDocument.Product;
             Products Cps = Cproduct.Products;
-            string GunPath;
+            string GunPath=string.Empty;
             this.TopMost = true;
             object[] oPositionMatrix = new object[12];
             double oRx, oRy, oRz;
@@ -804,11 +805,46 @@ namespace AutoDeskLine_ToPlant
                 {
                     TName = DataGrid.Rows[i].Cells[1].Value.ToString(); //读取选择的曲面名称
                     if (TName== "ChangeGun")
-                    {
-                        GunPath = Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;*.CATPart", 0);
+                    { 
+                           A: GunPath = Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;*.CATPart", 0);
                         if (string.IsNullOrEmpty(GunPath))
                         {
-                            MessageBox.Show("是否取消导入焊钳？（Y/C/N）","");
+                           var Result=MessageBox.Show("未选择任何焊枪，是否重新选择？（Y/N/C）","请做出选择",MessageBoxButtons.YesNoCancel);
+                            switch (Result)
+                            {
+                                case DialogResult.None:
+                                    break;
+                                case DialogResult.OK:
+                                    break;
+                                case DialogResult.Cancel:
+                                    this.TopMost = true;
+                                    this.WindowState = FormWindowState.Normal;
+                                    this.StartPosition = FormStartPosition.CenterScreen;
+                                    return; //终止焊枪导入
+                                case DialogResult.Abort:
+                                    break;
+                                case DialogResult.Retry:
+                                    break;
+                                case DialogResult.Ignore:
+                                    break;
+                                case DialogResult.Yes:
+                                    goto A; //回到插入焊枪阶段
+                                case DialogResult.No:
+                                    this.TopMost = true;
+                                    this.WindowState = FormWindowState.Normal;
+                                    this.StartPosition = FormStartPosition.CenterScreen;
+                                    return; //终止焊枪导入
+                                default:
+                                    break;
+                            }
+                        }
+                        continue;
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(GunPath)) //常规模式下读取焊枪 一次即可
+                        {
+                            GunPath = Cps.Application.FileSelectionBox("请选择焊枪", "*.cgr;*.wrl;*.CATPart", 0);
                         }
                     }
                 }

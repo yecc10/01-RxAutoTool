@@ -62,10 +62,10 @@
     <ApplicationIcon>RxLogo.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>248AD5D6A45443E1C5884F4342A9D990A433A970</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>372355F418C6C8A2D8A745D04B61FCA0805602EE</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>AutoDeskLine_ToPlant_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>yecc.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -77,7 +77,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>AutoDeskLine_ToPlant_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>yecc.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>AutoDeskLine_ToPlant.Program</StartupObject>
