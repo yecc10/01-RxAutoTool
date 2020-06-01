@@ -25,6 +25,8 @@ using HybridShapeTypeLib;
 using System.IO;
 using DNBPert;
 using CATMat;
+using FittingTypeLib;
+using DNBASY;
 
 namespace AutoDeskLine_ToPlant
 {
@@ -807,7 +809,7 @@ namespace AutoDeskLine_ToPlant
             string GunPath = string.Empty;
             this.TopMost = true;
             object[] oPositionMatrix = new object[12];
-            object[] oPositionSafeMatrix = new object[12] {1,0,0,0,1,0,0,0,1,0,0,0 };
+            object[] oPositionSafeMatrix = new object[12] {1,0,0,0,1,0,0,0,0,0,0,1 };
             double oRx, oRy, oRz;
             for (int i = 0; i < DataGrid.RowCount; i++)
             {
@@ -873,11 +875,11 @@ namespace AutoDeskLine_ToPlant
                 }
                 double oPi = 3.1415926536;
 
-                oRx = Convert.ToDouble(DataGrid.Rows[i].Cells[5].Value.ToString()) * oPi / 180;
+                oRx = Convert.ToDouble(DataGrid.Rows[i].Cells[5].Value.ToString()) * oPi / 180; //转换弧度进行运算
 
-                oRy = Convert.ToDouble(DataGrid.Rows[i].Cells[6].Value.ToString()) * oPi / 180;
+                oRy = Convert.ToDouble(DataGrid.Rows[i].Cells[6].Value.ToString()) * oPi / 180;//转换弧度进行运算
 
-                oRz = Convert.ToDouble(DataGrid.Rows[i].Cells[7].Value.ToString()) * oPi / 180;
+                oRz = Convert.ToDouble(DataGrid.Rows[i].Cells[7].Value.ToString()) * oPi / 180;//转换弧度进行运算
 
                 oPositionMatrix[0] = Math.Cos(oRy) * Math.Cos(oRz);
 
@@ -893,7 +895,7 @@ namespace AutoDeskLine_ToPlant
 
                 oPositionMatrix[6] = (Math.Cos(oRx) * Math.Sin(oRy) * Math.Cos(oRz)) + (Math.Sin(oRx) * Math.Sin(oRz));
 
-                oPositionMatrix[7] = (Math.Cos(oRx) * Math.Sin(oRy) * Math.Sin(oRz)) - (Math.Cos(oRx) * Math.Cos(oRz));
+                oPositionMatrix[7] = (Math.Cos(oRx) * Math.Sin(oRy) * Math.Sin(oRz)) - (Math.Sin(oRx) * Math.Cos(oRz));
 
                 oPositionMatrix[8] = Math.Cos(oRx) * Math.Cos(oRy);
 
@@ -902,14 +904,14 @@ namespace AutoDeskLine_ToPlant
                 oPositionMatrix[10] = Convert.ToDouble(DataGrid.Rows[i].Cells[3].Value.ToString());
 
                 oPositionMatrix[11] = Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString());
+                oPositionMatrix =new object[12]{ 1,0,0,0,0.707,0.707,0,-0.707,0.707,10,20,30};
                 object[] arrayOfVariantOfBSTR1 = new object[1] { GunPath };
                 Cps.AddComponentsFromFiles(arrayOfVariantOfBSTR1, "All");
-                Move MovePart = Cps.Item(Cps.Count).Move;
-                MovePart = MovePart.MovableObject;
-                MovePart.Apply(oPositionSafeMatrix);
-                MovePart = Cps.Item(Cps.Count).Move;
-                MovePart = MovePart.MovableObject;
-                MovePart.Apply(oPositionMatrix);
+                Cps.Item(Cps.Count).Position.SetComponents(oPositionMatrix);// 相对世界坐标设定位置
+                //Move MovePart = Cps.Item(Cps.Count).Move;
+                //MovePart = MovePart.MovableObject;
+                //MovePart.Apply(oPositionMatrix);
+                //MovePart.Apply(oPositionMatrix); //执行选择操作可重复操作
                 string NewName = DataGrid.Rows[i].Cells[1].Value.ToString();
                 Cps.Item(Cps.Count).set_PartNumber(NewName);
             }
