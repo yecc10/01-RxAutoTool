@@ -9,6 +9,9 @@ using System.Reflection;
 using System.Security.Principal;
 using System.Diagnostics;
 using eMPlantLib;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace AutoDeskLine_ToPlant
 {
@@ -28,6 +31,7 @@ namespace AutoDeskLine_ToPlant
      );
         static void Main()
         {
+            //AppCenter.Start("9005f00b-d016-46c8-ae25-7303e7095dfd", typeof(Analytics), typeof(Crashes));
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
