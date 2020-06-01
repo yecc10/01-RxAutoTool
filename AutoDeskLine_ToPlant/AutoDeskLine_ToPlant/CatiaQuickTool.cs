@@ -807,6 +807,7 @@ namespace AutoDeskLine_ToPlant
             string GunPath = string.Empty;
             this.TopMost = true;
             object[] oPositionMatrix = new object[12];
+            object[] oPositionSafeMatrix = new object[12] {1,0,0,0,1,0,0,0,1,0,0,0 };
             double oRx, oRy, oRz;
             for (int i = 0; i < DataGrid.RowCount; i++)
             {
@@ -901,19 +902,17 @@ namespace AutoDeskLine_ToPlant
                 oPositionMatrix[10] = Convert.ToDouble(DataGrid.Rows[i].Cells[3].Value.ToString());
 
                 oPositionMatrix[11] = Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString());
-                object[] arrayOfVariantOfBSTR1 = new object[] { GunPath };
+                object[] arrayOfVariantOfBSTR1 = new object[1] { GunPath };
                 Cps.AddComponentsFromFiles(arrayOfVariantOfBSTR1, "All");
-                //Cps.Item(Cps.Count).Move.Apply(oPositionMatrix);
-                Cps.Item(Cps.Count).Position.SetComponents(oPositionMatrix);
-                Cps.Item(Cps.Count).Update();
-                //object[] CurrAix = new object[12]; --for debug
-                //Cps.Item(Cps.Count).Position.GetComponents(CurrAix);
+                Move MovePart = Cps.Item(Cps.Count).Move;
+                MovePart = MovePart.MovableObject;
+                MovePart.Apply(oPositionSafeMatrix);
+                MovePart = Cps.Item(Cps.Count).Move;
+                MovePart = MovePart.MovableObject;
+                MovePart.Apply(oPositionMatrix);
                 string NewName = DataGrid.Rows[i].Cells[1].Value.ToString();
                 Cps.Item(Cps.Count).set_PartNumber(NewName);
             }
-            //SettingControllers SettingControllers1 = Cps.Application.SettingControllers;
-            //VisualizationSettingAtt visualizationSettingAtt1 = (VisualizationSettingAtt)SettingControllers1.Item("CATVizVisualizationSettingCtrl");
-            //visualizationSettingAtt1.SaveRepository();
             ShowCenter();
         }
         /// <summary>
