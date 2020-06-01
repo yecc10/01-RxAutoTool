@@ -152,12 +152,36 @@ namespace AutoDeskLine_ToPlant
                                         }
                                     case 7:
                                         {
+                                            if (string.IsNullOrEmpty(Row.GetCell(0).StringCellValue) || string.IsNullOrEmpty(Row.GetCell(1).ToString()))
+                                            {
+                                                ChangeGun = true;
+                                                continue;
+                                            }
+                                            if (ChangeGun)
+                                            {
+                                                ChangeGun = false;
+                                                DG.Rows.Add(0, "ChangeGun", 0, 0, 0, 0, 0);
+                                                GunNum++;
+                                            }
                                             DG.Rows.Add(i, Row.GetCell(0), Row.GetCell(1), Row.GetCell(2), Row.GetCell(3), Row.GetCell(4), Row.GetCell(5), Row.GetCell(6));
+                                            RowID++;
                                             break;
                                         }
                                     case 8:
                                         {
+                                            if (string.IsNullOrEmpty(Row.GetCell(0).StringCellValue) || string.IsNullOrEmpty(Row.GetCell(2).ToString()))
+                                            {
+                                                ChangeGun = true;
+                                                continue;
+                                            }
+                                            if (ChangeGun)
+                                            {
+                                                ChangeGun = false;
+                                                DG.Rows.Add(0, "ChangeGun", 0, 0, 0, 0, 0);
+                                                GunNum++;
+                                            }
                                             DG.Rows.Add(i, Row.GetCell(1), Row.GetCell(2), Row.GetCell(3), Row.GetCell(4), Row.GetCell(5), Row.GetCell(6), Row.GetCell(7));
+                                            RowID++;
                                             break;
                                         }
                                     case 21:

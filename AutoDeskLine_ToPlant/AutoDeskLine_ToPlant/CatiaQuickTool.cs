@@ -903,15 +903,17 @@ namespace AutoDeskLine_ToPlant
                 oPositionMatrix[11] = Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString());
                 object[] arrayOfVariantOfBSTR1 = new object[] { GunPath };
                 Cps.AddComponentsFromFiles(arrayOfVariantOfBSTR1, "All");
+                //Cps.Item(Cps.Count).Move.Apply(oPositionMatrix);
                 Cps.Item(Cps.Count).Position.SetComponents(oPositionMatrix);
+                Cps.Item(Cps.Count).Update();
                 //object[] CurrAix = new object[12]; --for debug
                 //Cps.Item(Cps.Count).Position.GetComponents(CurrAix);
                 string NewName = DataGrid.Rows[i].Cells[1].Value.ToString();
                 Cps.Item(Cps.Count).set_PartNumber(NewName);
             }
-            SettingControllers SettingControllers1 = Cps.Application.SettingControllers;
-            VisualizationSettingAtt visualizationSettingAtt1 = (VisualizationSettingAtt)SettingControllers1.Item("CATVizVisualizationSettingCtrl");
-            visualizationSettingAtt1.SaveRepository();
+            //SettingControllers SettingControllers1 = Cps.Application.SettingControllers;
+            //VisualizationSettingAtt visualizationSettingAtt1 = (VisualizationSettingAtt)SettingControllers1.Item("CATVizVisualizationSettingCtrl");
+            //visualizationSettingAtt1.SaveRepository();
             ShowCenter();
         }
         /// <summary>
