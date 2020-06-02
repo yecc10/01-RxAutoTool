@@ -51,37 +51,7 @@ namespace AutoDeskLine_ToPlant
         {
             InitializeComponent();
             timer.Enabled = true;
-            dataColum = new System.Data.DataColumn();
-            dataColum.ColumnName = "序号";
-            datatable.Columns.Add(dataColum);
-
-            dataColum = new System.Data.DataColumn();
-            dataColum.ColumnName = "名称";
-            datatable.Columns.Add(dataColum);
-
-            dataColum = new System.Data.DataColumn();
-            dataColum.ColumnName = "X坐标";
-            datatable.Columns.Add(dataColum);
-
-            dataColum = new System.Data.DataColumn();
-            dataColum.ColumnName = "Y坐标";
-            datatable.Columns.Add(dataColum);
-
-            dataColum = new System.Data.DataColumn();
-            dataColum.ColumnName = "Z坐标";
-            datatable.Columns.Add(dataColum);
-
-            dataColum = new System.Data.DataColumn();
-            dataColum.ColumnName = "RX";
-            datatable.Columns.Add(dataColum);
-
-            dataColum = new System.Data.DataColumn();
-            dataColum.ColumnName = "RY";
-            datatable.Columns.Add(dataColum);
-
-            dataColum = new System.Data.DataColumn();
-            dataColum.ColumnName = "RZ";
-            datatable.Columns.Add(dataColum);
+            InitDataTable();
         }
         private void TryRead_Click(object sender, EventArgs e)
         {
@@ -220,11 +190,16 @@ namespace AutoDeskLine_ToPlant
             {
                 double[] xyz = new double[3];
                 int keepValuePoint = Convert.ToInt16(2);
+                if (!datatable.IsInitialized)
+                {
+                    datatable.Reset();
+                }
                 DataRow = datatable.NewRow();
+                datatable.Rows.Add(DataRow);
                 xyz[0] = Math.Round(Convert.ToDouble(PointData[0]), keepValuePoint);
                 xyz[1] = Math.Round(Convert.ToDouble(PointData[1]), keepValuePoint);
                 xyz[2] = Math.Round(Convert.ToDouble(PointData[2]), keepValuePoint);
-                DataRow["序号"] = DataGrid.RowCount + 1;
+                DataRow["序号"] = datatable.Rows.Count;
                 DataRow["名称"] = Name;//Convert.ToDouble(PointCoord[0]), Convert.ToDouble(PointData[1]), Convert.ToDouble(PointData[2])
                 DataRow["X坐标"] = xyz[0];
                 DataRow["Y坐标"] = xyz[1];
@@ -242,9 +217,7 @@ namespace AutoDeskLine_ToPlant
                     }
                 }
                 datatable.Rows.Add(DataRow);
-                dataview = new DataView(datatable);
-                DataGrid.DataSource = dataview;
-                DataGrid.Update();
+                //dataview = new DataView(datatable);
                 return true;
             }
             catch (System.Exception)
@@ -257,6 +230,10 @@ namespace AutoDeskLine_ToPlant
 
         private void ReadCoord_Click(object sender, EventArgs e)
         {
+            if (datatable.Columns.Count<1)
+            {
+                InitDataTable();
+            }
             this.WindowState = FormWindowState.Minimized;
             RepeatNum = 0;
             Array.Clear(GetRepeatRef, 0, GetRepeatRef.Length);
@@ -298,22 +275,6 @@ namespace AutoDeskLine_ToPlant
                         VisPropertySet VPS = SelectArc.VisProperties;
                         VPS.SetVisibleColor(255, 0, 0, 0);
                         continue;
-                        // AnyObject Body = (AnyObject)Feature.Parent;
-                        // Body body1 = (Body)Body;
-                        // Shapes Nshape = body1.Shapes;
-                        // Shape ReShape = Nshape.Item(ShapeName);
-                        // HybridShapeSphere Sph = (HybridShapeSphere)PartHyb;
-                        //var Center= Sph.Center;
-                        //// Measurable mab = new Measurable();
-                        // //referenceObject = PartID.CreateReferenceFromBRepName(ReShape);
-                        // referenceObject =PartID.CreateReferenceFromBRepName("RSur:(Face:(Brp:(1);None:();Cf11:());WithPermanentBody;WithoutBuildError;WithSelectingFeatureSupport;MFBRepVersion_CXR15)", ReShape);
-                        // HybridShapePointCenter PointCenter = PartHyb.AddNewPointCenter(referenceObject);
-                        // HybridBodies Hybs = PartID.HybridBodies;
-                        // HybridBody Hyb = Hybs.Item("几何图形集.1");
-                        // Hyb.AppendHybridShape(PointCenter);
-                        // PartID.InWorkObject = PointCenter;
-                        // PartID.Update();
-                        // referenceObject = PartID.CreateReferenceFromObject(PointCenter);
                     }
                     else
                     {
@@ -342,10 +303,11 @@ namespace AutoDeskLine_ToPlant
                 }
                 if (!KeepName.Checked)
                 {
-                    TName = "Rx_" + (DataGrid.RowCount + 1);
+                    TName = "Rx_" + (datatable.Rows.Count + 1);
                 }
                 WriteObjectToDataGrid(TName, PointCoord, referenceObject, IgRepeat.Checked); //记录数据到DataGridView
             }
+            SetDataGrid();
             if (ERR > 0)
             {
                 MessageBox.Show("共计:" + ERR + "个点创建新参考点失败！");
@@ -378,7 +340,16 @@ namespace AutoDeskLine_ToPlant
         private void ClearAllData_Click(object sender, EventArgs e)
         {
             this.TopMost = true;
-            DataGrid.Rows.Clear();
+            if (DataGrid.DataSource!=null)
+            {
+                datatable.Clear();
+            }
+            else
+            {
+                DataGrid.Rows.Clear();
+            }
+            DataGrid.ScrollBars = ScrollBars.Vertical;
+            DataGrid.AllowUserToAddRows = true;
             DataGrid.Update();
             this.TopMost = true;
         }
@@ -414,10 +385,11 @@ namespace AutoDeskLine_ToPlant
                 var TName = referenceObject.get_Name(); //读取选择的曲面名称
                 if (!KeepName.Checked)
                 {
-                    TName = "Rx_" + (DataGrid.RowCount + 1);
+                    TName = "Rx_" + (datatable.Rows.Count + 1);
                 }
                 WriteObjectToDataGrid(TName, PointCoord, referenceObject, IgRepeat.Checked);
             }
+            SetDataGrid();
             if (ERR > 0)
             {
                 MessageBox.Show("共计:" + ERR + "个点创建新参考点失败！");
@@ -623,10 +595,10 @@ namespace AutoDeskLine_ToPlant
             XlsFile.Multiselect = false;
             if (XlsFile.ShowDialog() == DialogResult.OK)
             {
-                RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, DataGrid);
-                DataGrid.ScrollBars = ScrollBars.Both;
-                DataGrid.Update();
+                //RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, DataGrid);
+                RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, datatable);
                 ReadAixPoint.BackColor = Color.Green;
+                SetDataGrid();
             }
             else
             {
@@ -634,6 +606,20 @@ namespace AutoDeskLine_ToPlant
                 this.StartPosition = FormStartPosition.CenterScreen;
             }
             this.TopMost = true;
+        }
+        private void SetDataGrid()
+        {
+            //DataGrid.DataSource = null;
+            //DataGrid.DataSource = datatable;
+            //DataGrid.AllowUserToAddRows = true;
+            //DataGrid.Enabled = true;
+            //DataGrid.ScrollBars = ScrollBars.Vertical;
+            this.Invoke(new InvokeHandler(delegate ()
+            {
+                DataGrid.DataSource = null;
+                DataGrid.DataSource = datatable;
+            }));
+            DataGrid.Update();
         }
         private delegate void InvokeHandler();
         //子线程中
@@ -989,6 +975,40 @@ namespace AutoDeskLine_ToPlant
             {
                 return null; ;
             }
+        }
+        private void InitDataTable()
+        {
+            dataColum = new System.Data.DataColumn();
+            dataColum.ColumnName = "序号";
+            datatable.Columns.Add(dataColum);
+
+            dataColum = new System.Data.DataColumn();
+            dataColum.ColumnName = "名称";
+            datatable.Columns.Add(dataColum);
+
+            dataColum = new System.Data.DataColumn();
+            dataColum.ColumnName = "X坐标";
+            datatable.Columns.Add(dataColum);
+
+            dataColum = new System.Data.DataColumn();
+            dataColum.ColumnName = "Y坐标";
+            datatable.Columns.Add(dataColum);
+
+            dataColum = new System.Data.DataColumn();
+            dataColum.ColumnName = "Z坐标";
+            datatable.Columns.Add(dataColum);
+
+            dataColum = new System.Data.DataColumn();
+            dataColum.ColumnName = "RX";
+            datatable.Columns.Add(dataColum);
+
+            dataColum = new System.Data.DataColumn();
+            dataColum.ColumnName = "RY";
+            datatable.Columns.Add(dataColum);
+
+            dataColum = new System.Data.DataColumn();
+            dataColum.ColumnName = "RZ";
+            datatable.Columns.Add(dataColum);
         }
 
     }
