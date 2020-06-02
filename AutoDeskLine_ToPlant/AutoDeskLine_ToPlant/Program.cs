@@ -9,9 +9,6 @@ using System.Reflection;
 using System.Security.Principal;
 using System.Diagnostics;
 using eMPlantLib;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 
 namespace AutoDeskLine_ToPlant
 {
@@ -49,19 +46,6 @@ namespace AutoDeskLine_ToPlant
                     MessageBox.Show("管理员运行失败");
                 }
             }
-            //try
-            //{
-            //    Autodesk.AutoCAD.Interop.AcadApplication tAcadApplication = null;
-            //    tAcadApplication = (AcadApplication)Marshal.GetActiveObject("AutoCAD.Application");
-            //    string AcadPath = tAcadApplication.Path;
-            //    Assembly.LoadFrom(AcadPath + "\\acmgd.dll");
-            //    Assembly.LoadFrom(AcadPath + "\\acdbmgd.dll");
-            //    Assembly.LoadFrom(AcadPath + "\\accoremgd.dll");
-            //}
-            //catch (System.Exception)
-            //{
-            //    MessageBox.Show("检测到您尚未运行AutoCAD 2018软件 必备运行库可能未成功加载,若此软件出现异常请先打开软件后再打开该软件！", "安徽瑞祥工业软件运行检测报告！");
-            //}
             System.Windows.Forms.Application.Run(new Main());
         }
     }

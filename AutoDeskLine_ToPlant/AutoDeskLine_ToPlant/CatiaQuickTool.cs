@@ -875,36 +875,36 @@ namespace AutoDeskLine_ToPlant
                 }
                 double oPi = 3.1415926536;
 
-                oRx = Convert.ToDouble(DataGrid.Rows[i].Cells[5].Value.ToString()) * oPi / 180; //转换弧度进行运算
+                oRx = Convert.ToDouble(DataGrid.Rows[i].Cells[5].Value.ToString())* oPi / 180; //转换弧度进行运算
 
-                oRy = Convert.ToDouble(DataGrid.Rows[i].Cells[6].Value.ToString()) * oPi / 180;//转换弧度进行运算
+                oRy = Convert.ToDouble(DataGrid.Rows[i].Cells[6].Value.ToString())* oPi / 180;//转换弧度进行运算
 
-                oRz = Convert.ToDouble(DataGrid.Rows[i].Cells[7].Value.ToString()) * oPi / 180;//转换弧度进行运算
+                oRz = Convert.ToDouble(DataGrid.Rows[i].Cells[7].Value.ToString())* oPi / 180;//转换弧度进行运算
 
-                oPositionMatrix[0] = Math.Cos(oRy) * Math.Cos(oRz);
+                oPositionMatrix[0] =Math.Round(Math.Cos(oRy) * Math.Cos(oRz),5);
 
-                oPositionMatrix[1] = Math.Cos(oRy) * Math.Sin(oRz);
+                oPositionMatrix[1] = Math.Round(Math.Cos(oRy) * Math.Sin(oRz), 5);
 
-                oPositionMatrix[2] = -Math.Sin(oRy);
+                oPositionMatrix[2] = Math.Round(-Math.Sin(oRy), 5);
 
-                oPositionMatrix[3] = (Math.Sin(oRx) * Math.Sin(oRy) * Math.Cos(oRz)) - (Math.Cos(oRx) * Math.Sin(oRz));
+                oPositionMatrix[3] = Math.Round((Math.Sin(oRx) * Math.Sin(oRy) * Math.Cos(oRz)) - (Math.Cos(oRx) * Math.Sin(oRz)), 5);
 
-                oPositionMatrix[4] = (Math.Sin(oRx) * Math.Sin(oRy) * Math.Sin(oRz)) + (Math.Cos(oRx) * Math.Cos(oRz));
+                oPositionMatrix[4] = Math.Round((Math.Sin(oRx) * Math.Sin(oRy) * Math.Sin(oRz)) + (Math.Cos(oRx) * Math.Cos(oRz)), 5);
 
-                oPositionMatrix[5] = (Math.Sin(oRx) * Math.Cos(oRy));
+                oPositionMatrix[5] = Math.Round((Math.Sin(oRx) * Math.Cos(oRy)), 5);
 
-                oPositionMatrix[6] = (Math.Cos(oRx) * Math.Sin(oRy) * Math.Cos(oRz)) + (Math.Sin(oRx) * Math.Sin(oRz));
+                oPositionMatrix[6] = Math.Round((Math.Cos(oRx) * Math.Sin(oRy) * Math.Cos(oRz)) + (Math.Sin(oRx) * Math.Sin(oRz)), 5);
 
-                oPositionMatrix[7] = (Math.Cos(oRx) * Math.Sin(oRy) * Math.Sin(oRz)) - (Math.Sin(oRx) * Math.Cos(oRz));
+                oPositionMatrix[7] = Math.Round((Math.Cos(oRx) * Math.Sin(oRy) * Math.Sin(oRz)) - (Math.Sin(oRx) * Math.Cos(oRz)), 5);
 
-                oPositionMatrix[8] = Math.Cos(oRx) * Math.Cos(oRy);
+                oPositionMatrix[8] = Math.Round(Math.Cos(oRx) * Math.Cos(oRy), 5);
 
-                oPositionMatrix[9] = Convert.ToDouble(DataGrid.Rows[i].Cells[2].Value.ToString()); ;
+                oPositionMatrix[9] = Convert.ToDouble(DataGrid.Rows[i].Cells[2].Value.ToString()); 
 
                 oPositionMatrix[10] = Convert.ToDouble(DataGrid.Rows[i].Cells[3].Value.ToString());
 
                 oPositionMatrix[11] = Convert.ToDouble(DataGrid.Rows[i].Cells[4].Value.ToString());
-                oPositionMatrix =new object[12]{ 1,0,0,0,0.707,0.707,0,-0.707,0.707,10,20,30};
+                //oPositionMatrix =new object[12]{ 1,0,0,0,0.707,0.707,0,-0.707,0.707,10,20,30};//测试
                 object[] arrayOfVariantOfBSTR1 = new object[1] { GunPath };
                 Cps.AddComponentsFromFiles(arrayOfVariantOfBSTR1, "All");
                 Cps.Item(Cps.Count).Position.SetComponents(oPositionMatrix);// 相对世界坐标设定位置
