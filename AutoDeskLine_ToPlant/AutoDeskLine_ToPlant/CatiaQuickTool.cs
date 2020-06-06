@@ -911,7 +911,7 @@ namespace AutoDeskLine_ToPlant
             ShowCenter();
         }
         /// <summary>
-        /// 初始化CATIA环境并获取信息到全局变量
+        /// 初始化CATIA环境并获取信息到全局变量 
         /// </summary>
         /// <returns></returns>
         private bool InitCatEnv()
