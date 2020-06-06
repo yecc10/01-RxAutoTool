@@ -199,14 +199,6 @@ namespace AutoDeskLine_ToPlant
                 xyz[0] = Math.Round(Convert.ToDouble(PointData[0]), keepValuePoint);
                 xyz[1] = Math.Round(Convert.ToDouble(PointData[1]), keepValuePoint);
                 xyz[2] = Math.Round(Convert.ToDouble(PointData[2]), keepValuePoint);
-                DataRow["序号"] = datatable.Rows.Count;
-                DataRow["名称"] = Name;//Convert.ToDouble(PointCoord[0]), Convert.ToDouble(PointData[1]), Convert.ToDouble(PointData[2])
-                DataRow["X坐标"] = xyz[0];
-                DataRow["Y坐标"] = xyz[1];
-                DataRow["Z坐标"] = xyz[2];
-                DataRow["RX"] = Math.Round(Convert.ToDouble(PointData[3]), keepValuePoint);
-                DataRow["RY"] = Math.Round(Convert.ToDouble(PointData[4]), keepValuePoint);
-                DataRow["RZ"] = Math.Round(Convert.ToDouble(PointData[5]), keepValuePoint);
                 if (RxDataOprator.DoRepeatCheck(xyz, datatable))//True 为重复值
                 {
                     GetRepeatRef.SetValue(RefObj, RepeatNum);//记录重复对象
@@ -216,6 +208,14 @@ namespace AutoDeskLine_ToPlant
                         return true;
                     }
                 }
+                DataRow["序号"] = datatable.Rows.Count;
+                DataRow["名称"] = Name;//Convert.ToDouble(PointCoord[0]), Convert.ToDouble(PointData[1]), Convert.ToDouble(PointData[2])
+                DataRow["X坐标"] = xyz[0];
+                DataRow["Y坐标"] = xyz[1];
+                DataRow["Z坐标"] = xyz[2];
+                DataRow["RX"] = Math.Round(Convert.ToDouble(PointData[3]), keepValuePoint);
+                DataRow["RY"] = Math.Round(Convert.ToDouble(PointData[4]), keepValuePoint);
+                DataRow["RZ"] = Math.Round(Convert.ToDouble(PointData[5]), keepValuePoint);
                 datatable.Rows.Add(DataRow);
                 //dataview = new DataView(datatable);
                 return true;
