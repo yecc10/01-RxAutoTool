@@ -894,10 +894,6 @@ namespace AutoDeskLine_ToPlant
                 object[] arrayOfVariantOfBSTR1 = new object[1] { GunPath };
                 Cps.AddComponentsFromFiles(arrayOfVariantOfBSTR1, "All");
                 Cps.Item(Cps.Count).Position.SetComponents(oPositionMatrix);// 相对世界坐标设定位置
-                //Move MovePart = Cps.Item(Cps.Count).Move;
-                //MovePart = MovePart.MovableObject;
-                //MovePart.Apply(oPositionMatrix);
-                //MovePart.Apply(oPositionMatrix); //执行选择操作可重复操作
                 string NewName = DataGrid.Rows[i].Cells[1].Value.ToString();
                 Cps.Item(Cps.Count).set_PartNumber(NewName);
             }
