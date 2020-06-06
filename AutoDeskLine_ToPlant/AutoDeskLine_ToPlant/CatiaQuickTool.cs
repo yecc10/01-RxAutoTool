@@ -207,7 +207,7 @@ namespace AutoDeskLine_ToPlant
                 DataRow["RX"] = Math.Round(Convert.ToDouble(PointData[3]), keepValuePoint);
                 DataRow["RY"] = Math.Round(Convert.ToDouble(PointData[4]), keepValuePoint);
                 DataRow["RZ"] = Math.Round(Convert.ToDouble(PointData[5]), keepValuePoint);
-                if (RxDataOprator.DoRepeatCheck(xyz, DataGrid))//True 为重复值
+                if (RxDataOprator.DoRepeatCheck(xyz, datatable))//True 为重复值
                 {
                     GetRepeatRef.SetValue(RefObj, RepeatNum);//记录重复对象
                     RepeatNum += 1;
@@ -441,32 +441,43 @@ namespace AutoDeskLine_ToPlant
             string Name = "RXFastDesignTool";
             try
             {
-                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
+                //PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
+                //PartID = ((PartDocument)CatApplication.Documents.Item(Name)).Part;
+                Selection FindPart = CatApplication.ActiveDocument.Selection;
+                FindPart.Search("Name=RXFastDesignTool,all");
+                if (FindPart.Count2>0)
+                {
+                    PartID =(Part)FindPart.Item2(1).Value; //仅拾取带个并对第一个进行操作
+                }
+                else
+                {
+                    try
+                    {
+                        CatDocument.Product.Products.AddNewComponent("Part", Name);
+                    }
+                    catch (Exception)
+                    {
+                        return null;
+                        // throw;
+                    }
+                    PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
+                    OriginElements Tpart = PartID.OriginElements;
+                    AnyObject dxy = Tpart.PlaneXY;
+                    AnyObject dyz = Tpart.PlaneYZ;
+                    AnyObject dzx = Tpart.PlaneZX;
+                    Selection SelectT = CatDocument.Selection;
+                    VisPropertySet VP = SelectT.VisProperties;
+                    SelectT.Add(dxy);
+                    SelectT.Add(dyz);
+                    SelectT.Add(dzx);
+                    VP = (VisPropertySet)VP.Parent;
+                    VP.SetShow(CatVisPropertyShow.catVisPropertyNoShowAttr);
+                    SelectT.Clear();
+                }
             }
             catch (Exception)
             {
-                try
-                {
-                    CatDocument.Product.Products.AddNewComponent("Part", Name);
-                }
-                catch (Exception)
-                {
-                    return null;
-                    // throw;
-                }
-                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
-                OriginElements Tpart = PartID.OriginElements;
-                AnyObject dxy = Tpart.PlaneXY;
-                AnyObject dyz = Tpart.PlaneYZ;
-                AnyObject dzx = Tpart.PlaneZX;
-                Selection SelectT = CatDocument.Selection;
-                VisPropertySet VP = SelectT.VisProperties;
-                SelectT.Add(dxy);
-                SelectT.Add(dyz);
-                SelectT.Add(dzx);
-                VP = (VisPropertySet)VP.Parent;
-                VP.SetShow(CatVisPropertyShow.catVisPropertyNoShowAttr);
-                SelectT.Clear();
+                return null;
             }
             try
             {
