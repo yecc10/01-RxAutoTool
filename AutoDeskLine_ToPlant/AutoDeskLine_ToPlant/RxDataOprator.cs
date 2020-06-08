@@ -486,12 +486,12 @@ namespace AutoDeskLine_ToPlant
                                 {
                                     case 3:
                                         {
-                                            DG.Rows.Add(i, "RX_" + i, sheet.Cells[i, 1].Value, sheet.Cells[i, 2].Value, sheet.Cells[i, 3].Value, 0, 0, 0);
+                                            DG.Rows.Add(i, "RX_" + (i-1), sheet.Cells[i, 1].Value, sheet.Cells[i, 2].Value, sheet.Cells[i, 3].Value, 0, 0, 0);
                                             break;
                                         }
                                     case 4:
                                         {
-                                            DG.Rows.Add(i, sheet.Cells[i,1].Value, sheet.Cells[i,2].Value, sheet.Cells[i,3].Value, sheet.Cells[i,4].Value, 0, 0, 0);
+                                            DG.Rows.Add((i - 1), sheet.Cells[i,1].Value, sheet.Cells[i,2].Value, sheet.Cells[i,3].Value, sheet.Cells[i,4].Value, 0, 0, 0);
                                             break;
                                         }
                                     case 7:
@@ -507,7 +507,7 @@ namespace AutoDeskLine_ToPlant
                                                 DG.Rows.Add(0, "ChangeGun", 0, 0, 0, 0, 0);
                                                 GunNum++;
                                             }
-                                            DG.Rows.Add(i, sheet.Cells[i, 1].Value, sheet.Cells[i, 2].Value, sheet.Cells[i, 3].Value, sheet.Cells[i, 4].Value, sheet.Cells[i,5].Value, sheet.Cells[i,6].Value, sheet.Cells[i,7].Value);
+                                            DG.Rows.Add((i - 1), sheet.Cells[i, 1].Value, sheet.Cells[i, 2].Value, sheet.Cells[i, 3].Value, sheet.Cells[i, 4].Value, sheet.Cells[i,5].Value, sheet.Cells[i,6].Value, sheet.Cells[i,7].Value);
                                             RowID++;
                                             break;
                                         }
@@ -524,7 +524,7 @@ namespace AutoDeskLine_ToPlant
                                                 DG.Rows.Add(0, "ChangeGun", 0, 0, 0, 0, 0);
                                                 GunNum++;
                                             }
-                                            DG.Rows.Add(i, sheet.Cells[i, 2].Value, sheet.Cells[i, 3].Value, sheet.Cells[i, 4].Value, sheet.Cells[i, 5].Value, sheet.Cells[i, 6].Value, sheet.Cells[i, 7].Value.Cells[i,8].Value);
+                                            DG.Rows.Add((i - 1), sheet.Cells[i, 2].Value, sheet.Cells[i, 3].Value, sheet.Cells[i, 4].Value, sheet.Cells[i, 5].Value, sheet.Cells[i, 6].Value, sheet.Cells[i, 7].Value.Cells[i,8].Value);
                                             RowID++;
                                             break;
                                         }
