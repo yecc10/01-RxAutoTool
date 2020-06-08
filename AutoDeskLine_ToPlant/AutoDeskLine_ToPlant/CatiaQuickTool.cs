@@ -607,7 +607,14 @@ namespace AutoDeskLine_ToPlant
             if (XlsFile.ShowDialog() == DialogResult.OK)
             {
                 //RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, DataGrid);
-                RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, datatable);
+                if (ByExcel.Checked)
+                {
+                    RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, datatable,true);
+                }
+                else
+                {
+                    RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, datatable);
+                }
                 ReadAixPoint.BackColor = Color.Green;
                 SetDataGrid();
             }
@@ -617,6 +624,8 @@ namespace AutoDeskLine_ToPlant
                 this.StartPosition = FormStartPosition.CenterScreen;
             }
             this.TopMost = true;
+            this.WindowState = FormWindowState.Normal;
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
         private void SetDataGrid()
         {

@@ -12,6 +12,10 @@ using System.IO;
 using System.Windows.Forms;
 using System.Threading;
 using System.Data;
+using Microsoft.Office.Interop.Excel;
+using Excel = Microsoft.Office.Interop.Excel;
+
+
 
 namespace AutoDeskLine_ToPlant
 {
@@ -222,7 +226,7 @@ namespace AutoDeskLine_ToPlant
                 }
                 return false;
             }
-            static public bool ReadXlsData(string xlsPath, DataTable DG)
+            static public bool ReadXlsData(string xlsPath, System.Data.DataTable DG)
             {
                 //DataGridView DG = new DataGridView();
                 int RowNum = 0;
@@ -248,7 +252,7 @@ namespace AutoDeskLine_ToPlant
                             if (RowNum == 3 || RowNum == 4 || RowNum == 7 || RowNum == 8 || RowNum == 21)
                             {
                                 System.Data.DataColumn dataColum;
-                                if (DG.Columns.Count<1)
+                                if (DG.Columns.Count < 1)
                                 {
                                     dataColum = new System.Data.DataColumn();
                                     dataColum.ColumnName = "序号";
@@ -382,6 +386,185 @@ namespace AutoDeskLine_ToPlant
                 }
                 return false;
             }
+            static public bool ReadXlsData(string xlsPath, System.Data.DataTable DG, bool ByExcel)
+            {
+                //DataGridView DG = new DataGridView();
+                int ColumnsNum = 0;
+                try
+                {
+                    Excel.Application xlApp = new Excel.Application();
+                    xlApp.DisplayAlerts = false;
+                    xlApp.Visible = false;
+                    xlApp.ScreenUpdating = false;
+                    //打开Excel
+                    Excel.Workbook xlsWorkBook = xlApp.Workbooks.Open(xlsPath, System.Type.Missing, System.Type.Missing, System.Type.Missing,
+                    System.Type.Missing, System.Type.Missing, System.Type.Missing, System.Type.Missing, System.Type.Missing, System.Type.Missing, System.Type.Missing,
+                    System.Type.Missing, System.Type.Missing, System.Type.Missing, System.Type.Missing);
+
+                    //处理数据过程，更多操作方法自行百度
+                    Excel.Worksheet sheet;
+                    if (xlsWorkBook.Sheets.Count > 1)
+                    {
+                        Excel.Worksheet sheetA = xlsWorkBook.Worksheets[1];//工作薄从1开始，不是0
+                        Excel.Worksheet sheetB = xlsWorkBook.Worksheets[2];//工作薄从1开始，不是0
+                        sheet = (sheetA.Cells.Count > sheetB.Cells.Count) ? sheetA : sheetB;
+                    }
+                    else
+                    {
+                        sheet = xlsWorkBook.Worksheets[1];
+                    }
+                    RxTypeList.CatPointType CP = new RxTypeList.CatPointType();
+                    bool ChangeGun = false;
+                    int GunNum = 0;
+                    int RowID = 1;
+                    int SheetCount= sheet.UsedRange.Rows.Count;
+                    for (int i = 1; i <= SheetCount; i++)
+                    {
+                        if (SheetCount < 2)
+                        {
+                            MessageBox.Show("您选择的坐标XLS为空或首个Sheet表为空，请保证首个Sheet表为即将导入的坐标集！", "导入错误报告", MessageBoxButtons.OK);
+                            return false;
+                        }
+                        ColumnsNum = sheet.UsedRange.Columns.Count;
+                        if (i == 1) //初始化表头
+                        {
+                            if (ColumnsNum == 3 || ColumnsNum == 4 || ColumnsNum == 7 || ColumnsNum == 8 || ColumnsNum == 21)
+                            {
+                                System.Data.DataColumn dataColum;
+                                if (DG.Columns.Count < 1)
+                                {
+                                    dataColum = new System.Data.DataColumn();
+                                    dataColum.ColumnName = "序号";
+                                    DG.Columns.Add(dataColum);
+
+                                    dataColum = new System.Data.DataColumn();
+                                    dataColum.ColumnName = "名称";
+                                    DG.Columns.Add(dataColum);
+
+                                    dataColum = new System.Data.DataColumn();
+                                    dataColum.ColumnName = "X坐标";
+                                    DG.Columns.Add(dataColum);
+
+                                    dataColum = new System.Data.DataColumn();
+                                    dataColum.ColumnName = "Y坐标";
+                                    DG.Columns.Add(dataColum);
+
+                                    dataColum = new System.Data.DataColumn();
+                                    dataColum.ColumnName = "Z坐标";
+                                    DG.Columns.Add(dataColum);
+
+                                    dataColum = new System.Data.DataColumn();
+                                    dataColum.ColumnName = "RX";
+                                    DG.Columns.Add(dataColum);
+
+                                    dataColum = new System.Data.DataColumn();
+                                    dataColum.ColumnName = "RY";
+                                    DG.Columns.Add(dataColum);
+
+                                    dataColum = new System.Data.DataColumn();
+                                    dataColum.ColumnName = "RZ";
+                                    DG.Columns.Add(dataColum);
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show("所提供的EXCEL 文件格式不符合默认标准请提供4列(名称、X、Y、Z)、7列(带角度)、8列(多序号)的Xls表!");
+                                return false;
+                            }
+
+                        }
+                        else
+                        {
+                            string CheckValue = sheet.UsedRange.Cells[i,1].Value;
+                            if (string.IsNullOrEmpty(CheckValue))
+                            {
+                                continue;
+                            }
+                            try
+                            {
+                                switch (ColumnsNum)
+                                {
+                                    case 3:
+                                        {
+                                            DG.Rows.Add(i, "RX_" + i, sheet.Cells[i, 1].Value, sheet.Cells[i, 2].Value, sheet.Cells[i, 3].Value, 0, 0, 0);
+                                            break;
+                                        }
+                                    case 4:
+                                        {
+                                            DG.Rows.Add(i, sheet.Cells[i,1].Value, sheet.Cells[i,2].Value, sheet.Cells[i,3].Value, sheet.Cells[i,4].Value, 0, 0, 0);
+                                            break;
+                                        }
+                                    case 7:
+                                        {
+                                            if (string.IsNullOrEmpty(sheet.Cells[i,1].Value) || string.IsNullOrEmpty(sheet.Cells[i,2].Value))
+                                            {
+                                                ChangeGun = true;
+                                                continue;
+                                            }
+                                            if (ChangeGun)
+                                            {
+                                                ChangeGun = false;
+                                                DG.Rows.Add(0, "ChangeGun", 0, 0, 0, 0, 0);
+                                                GunNum++;
+                                            }
+                                            DG.Rows.Add(i, sheet.Cells[i, 1].Value, sheet.Cells[i, 2].Value, sheet.Cells[i, 3].Value, sheet.Cells[i, 4].Value, sheet.Cells[i,5].Value, sheet.Cells[i,6].Value, sheet.Cells[i,7].Value);
+                                            RowID++;
+                                            break;
+                                        }
+                                    case 8:
+                                        {
+                                            if (string.IsNullOrEmpty(sheet.Cells[0,i].Value) || string.IsNullOrEmpty(sheet.Cells[2,i].Value))
+                                            {
+                                                ChangeGun = true;
+                                                continue;
+                                            }
+                                            if (ChangeGun)
+                                            {
+                                                ChangeGun = false;
+                                                DG.Rows.Add(0, "ChangeGun", 0, 0, 0, 0, 0);
+                                                GunNum++;
+                                            }
+                                            DG.Rows.Add(i, sheet.Cells[i, 2].Value, sheet.Cells[i, 3].Value, sheet.Cells[i, 4].Value, sheet.Cells[i, 5].Value, sheet.Cells[i, 6].Value, sheet.Cells[i, 7].Value.Cells[i,8].Value);
+                                            RowID++;
+                                            break;
+                                        }
+                                    case 21:
+                                        {
+                                            if (string.IsNullOrEmpty(sheet.Cells[i,1].Value) || string.IsNullOrEmpty(sheet.Cells[i,4].Value))
+                                            {
+                                                ChangeGun = true;
+                                                continue;
+                                            }
+                                            if (ChangeGun)
+                                            {
+                                                ChangeGun = false;
+                                                DG.Rows.Add(0, "ChangeGun", 0, 0, 0, 0, 0);
+                                                GunNum++;
+                                            }
+                                            DG.Rows.Add(RowID, sheet.Cells[i,1].Value, sheet.Cells[i, 4].Value, sheet.Cells[i, 5].Value, sheet.Cells[i, 6].Value, sheet.Cells[i, 7].Value.Cells[i, 8].Value, sheet.Cells[i,9].Value);
+                                            RowID++;
+                                            break;
+                                        }
+                                    default:
+                                        break;
+                                }
+                            }
+                            catch (Exception)
+                            {
+
+                                throw;
+                            }
+                        }
+                    }
+                    ClosePro(xlApp, xlsWorkBook);
+                    return true;
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("打开失败!请确认是否已解密？");
+                }
+                return false;
+            }
             /// <summary>
             /// 读取EXCEL焊点坐标数据
             /// </summary>
@@ -411,13 +594,14 @@ namespace AutoDeskLine_ToPlant
                 return null;
             }
         }
+
         /// <summary>
         /// 对数据进行执行重复检查，标记重复数据并在执行完成后报警！
         /// </summary>
         /// <param name="DGR">待检测对象行</param>
         /// <param name="DG">参考数据集</param>
         /// <returns></returns>
-        static public bool DoRepeatCheck(double[] DGR, DataTable DG)
+        static public bool DoRepeatCheck(double[] DGR, System.Data.DataTable DG)
         {
             bool Result = false;
             int Num = 0;
@@ -440,5 +624,19 @@ namespace AutoDeskLine_ToPlant
             Result = Num > 0; //扣除本身数量
             return Result;
         }
+        static void ClosePro(Excel.Application xlApp, Excel.Workbook xlsWorkBook)
+        {
+            if (xlsWorkBook != null)
+                xlsWorkBook.Close(true, Type.Missing, Type.Missing);
+            xlApp.Quit();
+            // 安全回收进程
+            System.GC.GetGeneration(xlApp);
+           // IntPtr t = new IntPtr(xlApp.Hwnd);   //获取句柄
+            //int k = 0;
+            //GetWindowThreadProcessId(t, out k);   //获取进程唯一标志
+            //System.Diagnostics.Process p = System.Diagnostics.Process.GetProcessById(k);
+           // p.Kill();     //关闭进程
+        }
     }
+
 }
