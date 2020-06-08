@@ -47,6 +47,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.RepeatCheck = new System.Windows.Forms.CheckBox();
             this.IgRepeat = new System.Windows.Forms.CheckBox();
+            this.ByExcel = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -222,6 +223,18 @@
             this.IgRepeat.Text = "过滤重复";
             this.IgRepeat.UseVisualStyleBackColor = true;
             // 
+            // ByExcel
+            // 
+            this.ByExcel.AutoSize = true;
+            this.ByExcel.Checked = true;
+            this.ByExcel.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ByExcel.Location = new System.Drawing.Point(86, 398);
+            this.ByExcel.Name = "ByExcel";
+            this.ByExcel.Size = new System.Drawing.Size(66, 16);
+            this.ByExcel.TabIndex = 1;
+            this.ByExcel.Text = "ByExcel";
+            this.ByExcel.UseVisualStyleBackColor = true;
+            // 
             // CatiaQuickTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -240,6 +253,7 @@
             this.Controls.Add(this.ClearAllData);
             this.Controls.Add(this.BollToPoint);
             this.Controls.Add(this.OutToEXcel);
+            this.Controls.Add(this.ByExcel);
             this.Controls.Add(this.IgRepeat);
             this.Controls.Add(this.RepeatCheck);
             this.Controls.Add(this.KeepName);
@@ -275,5 +289,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox RepeatCheck;
         private System.Windows.Forms.CheckBox IgRepeat;
+        private System.Windows.Forms.CheckBox ByExcel;
     }
 }
