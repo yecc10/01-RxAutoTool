@@ -48,6 +48,7 @@
             this.RepeatCheck = new System.Windows.Forms.CheckBox();
             this.IgRepeat = new System.Windows.Forms.CheckBox();
             this.ByExcel = new System.Windows.Forms.CheckBox();
+            this.ARCChange = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -117,7 +118,7 @@
             // 
             // ReadCoord
             // 
-            this.ReadCoord.Location = new System.Drawing.Point(170, 394);
+            this.ReadCoord.Location = new System.Drawing.Point(170, 404);
             this.ReadCoord.Name = "ReadCoord";
             this.ReadCoord.Size = new System.Drawing.Size(118, 44);
             this.ReadCoord.TabIndex = 2;
@@ -152,7 +153,7 @@
             // ReadAixPoint
             // 
             this.ReadAixPoint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ReadAixPoint.Location = new System.Drawing.Point(313, 394);
+            this.ReadAixPoint.Location = new System.Drawing.Point(313, 404);
             this.ReadAixPoint.Name = "ReadAixPoint";
             this.ReadAixPoint.Size = new System.Drawing.Size(118, 44);
             this.ReadAixPoint.TabIndex = 2;
@@ -162,7 +163,7 @@
             // 
             // Creat3dPoint
             // 
-            this.Creat3dPoint.Location = new System.Drawing.Point(456, 394);
+            this.Creat3dPoint.Location = new System.Drawing.Point(456, 404);
             this.Creat3dPoint.Name = "Creat3dPoint";
             this.Creat3dPoint.Size = new System.Drawing.Size(118, 44);
             this.Creat3dPoint.TabIndex = 2;
@@ -172,7 +173,7 @@
             // 
             // Creat3dBall
             // 
-            this.Creat3dBall.Location = new System.Drawing.Point(599, 395);
+            this.Creat3dBall.Location = new System.Drawing.Point(599, 405);
             this.Creat3dBall.Name = "Creat3dBall";
             this.Creat3dBall.Size = new System.Drawing.Size(118, 44);
             this.Creat3dBall.TabIndex = 2;
@@ -183,7 +184,7 @@
             // BallRadio
             // 
             this.BallRadio.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.BallRadio.Location = new System.Drawing.Point(781, 403);
+            this.BallRadio.Location = new System.Drawing.Point(781, 413);
             this.BallRadio.Name = "BallRadio";
             this.BallRadio.Size = new System.Drawing.Size(77, 26);
             this.BallRadio.TabIndex = 4;
@@ -193,7 +194,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(734, 410);
+            this.label1.Location = new System.Drawing.Point(734, 420);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 12);
             this.label1.TabIndex = 5;
@@ -235,12 +236,22 @@
             this.ByExcel.Text = "ByExcel";
             this.ByExcel.UseVisualStyleBackColor = true;
             // 
+            // ARCChange
+            // 
+            this.ARCChange.AutoSize = true;
+            this.ARCChange.Location = new System.Drawing.Point(6, 442);
+            this.ARCChange.Name = "ARCChange";
+            this.ARCChange.Size = new System.Drawing.Size(108, 16);
+            this.ARCChange.TabIndex = 1;
+            this.ARCChange.Text = "Delmia->OutTag";
+            this.ARCChange.UseVisualStyleBackColor = true;
+            // 
             // CatiaQuickTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ClientSize = new System.Drawing.Size(880, 440);
+            this.ClientSize = new System.Drawing.Size(880, 461);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BallRadio);
             this.Controls.Add(this.DataGrid);
@@ -255,12 +266,13 @@
             this.Controls.Add(this.OutToEXcel);
             this.Controls.Add(this.ByExcel);
             this.Controls.Add(this.IgRepeat);
+            this.Controls.Add(this.ARCChange);
             this.Controls.Add(this.RepeatCheck);
             this.Controls.Add(this.KeepName);
             this.Controls.Add(this.TryRead);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(896, 479);
-            this.MinimumSize = new System.Drawing.Size(896, 479);
+            this.MaximumSize = new System.Drawing.Size(896, 500);
+            this.MinimumSize = new System.Drawing.Size(896, 500);
             this.Name = "CatiaQuickTool";
             this.Text = "CatiaQuickTool";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.CatiaQuickTool_FormClosed);
@@ -290,5 +302,6 @@
         private System.Windows.Forms.CheckBox RepeatCheck;
         private System.Windows.Forms.CheckBox IgRepeat;
         private System.Windows.Forms.CheckBox ByExcel;
+        private System.Windows.Forms.CheckBox ARCChange;
     }
 }

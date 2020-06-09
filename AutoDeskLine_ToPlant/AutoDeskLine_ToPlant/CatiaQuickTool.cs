@@ -880,14 +880,25 @@ namespace AutoDeskLine_ToPlant
                     continue;
                 }
                 double oPi = 3.1415926536;
+                if (ARCChange.Checked) //弧度值
+                {
+                    oRx = Convert.ToDouble(DataGrid.Rows[i].Cells[7].Value.ToString()); //DELMIA Tag点导出集合该坐标为Z
 
-                oRx = Convert.ToDouble(DataGrid.Rows[i].Cells[5].Value.ToString())* oPi / 180; //转换弧度进行运算
+                    oRy = Convert.ToDouble(DataGrid.Rows[i].Cells[6].Value.ToString());//DELMIA Tag点导出集合该坐标为Y
 
-                oRy = Convert.ToDouble(DataGrid.Rows[i].Cells[6].Value.ToString())* oPi / 180;//转换弧度进行运算
+                    oRz = Convert.ToDouble(DataGrid.Rows[i].Cells[5].Value.ToString());//DELMIA Tag点导出集合该坐标为X
 
-                oRz = Convert.ToDouble(DataGrid.Rows[i].Cells[7].Value.ToString())* oPi / 180;//转换弧度进行运算
+                }
+                else
+                {
+                    oRx = Convert.ToDouble(DataGrid.Rows[i].Cells[5].Value.ToString()) * oPi / 180; //转换弧度进行运算
 
-                oPositionMatrix[0] =Math.Round(Math.Cos(oRy) * Math.Cos(oRz),5);
+                    oRy = Convert.ToDouble(DataGrid.Rows[i].Cells[6].Value.ToString()) * oPi / 180;//转换弧度进行运算
+
+                    oRz = Convert.ToDouble(DataGrid.Rows[i].Cells[7].Value.ToString()) * oPi / 180;//转换弧度进行运算
+                }
+
+                oPositionMatrix[0] = Math.Round(Math.Cos(oRy) * Math.Cos(oRz), 5);
 
                 oPositionMatrix[1] = Math.Round(Math.Cos(oRy) * Math.Sin(oRz), 5);
 
@@ -905,7 +916,7 @@ namespace AutoDeskLine_ToPlant
 
                 oPositionMatrix[8] = Math.Round(Math.Cos(oRx) * Math.Cos(oRy), 5);
 
-                oPositionMatrix[9] = Convert.ToDouble(DataGrid.Rows[i].Cells[2].Value.ToString()); 
+                oPositionMatrix[9] = Convert.ToDouble(DataGrid.Rows[i].Cells[2].Value.ToString());
 
                 oPositionMatrix[10] = Convert.ToDouble(DataGrid.Rows[i].Cells[3].Value.ToString());
 
