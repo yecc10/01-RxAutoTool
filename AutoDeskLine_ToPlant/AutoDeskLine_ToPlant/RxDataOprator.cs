@@ -61,7 +61,6 @@ namespace AutoDeskLine_ToPlant
                             DataCell.CellStyle = CST;
                         }
                     }
-
                     string datatime = DateTime.Now.ToString("yyyymmddHHmmssffff");
                     string strDesktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 

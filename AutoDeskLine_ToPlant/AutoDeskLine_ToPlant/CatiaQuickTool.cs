@@ -230,7 +230,7 @@ namespace AutoDeskLine_ToPlant
 
         private void ReadCoord_Click(object sender, EventArgs e)
         {
-            if (datatable.Columns.Count<1)
+            if (datatable.Columns.Count < 1)
             {
                 InitDataTable();
             }
@@ -256,32 +256,46 @@ namespace AutoDeskLine_ToPlant
                 Reference referenceObject;
                 try
                 {
-                    referenceObject = SelectArc.Item(i).Reference;
+                    //Temp = PartID.CreateReferenceFromGeometry((AnyObject)SelectArc.Item(i).Value);
+                    referenceObject = SelectArc.Item(i).Reference;//!=null? SelectArc.Item(i).Reference: Temp;
                 }
                 catch (Exception)
                 {
-                    ERR += 1;
                     Boolean LeafProductProcessed;
                     AnyObject Feature = (AnyObject)SelectArc.Item(i).Value;
-                    var LeafProduct = SelectArc.Item(i).LeafProduct;
-                    LeafProductProcessed = true;
-                    if (LeafProduct.get_Name() == "InvalidLeafProduct")
+                    try
                     {
-                        LeafProductProcessed = false;
+                        String Name=string.Empty;
+                        Shape GE = (Shape)SelectArc.Item(i).Value;
+                        //Name = GE.get_Name();
+                        //Pad Spad = (Pad)GE.GetItem("Face1");
+                        //Name = Spad.get_Name();
+                        referenceObject = PartID.CreateReferenceFromObject(Feature);
+                        PartHyb.AddNewPointCenter(referenceObject);
                     }
-                    if (LeafProductProcessed)
+                    catch (Exception)
                     {
-                        String ShapeName = Feature.get_Name();
-                        VisPropertySet VPS = SelectArc.VisProperties;
-                        VPS.SetVisibleColor(255, 0, 0, 0);
-                        continue;
-                    }
-                    else
-                    {
-                        String ShapeName = Feature.get_Name();
-                        VisPropertySet VPS = SelectArc.VisProperties;
-                        VPS.SetVisibleColor(255, 0, 0, 0);
-                        continue;
+                        ERR += 1;
+                        var LeafProduct = SelectArc.Item(i).LeafProduct;
+                        LeafProductProcessed = true;
+                        if (LeafProduct.get_Name() == "InvalidLeafProduct")
+                        {
+                            LeafProductProcessed = false;
+                        }
+                        if (LeafProductProcessed)
+                        {
+                            String ShapeName = Feature.get_Name();
+                            VisPropertySet VPS = SelectArc.VisProperties;
+                            VPS.SetVisibleColor(255, 0, 0, 0);
+                            continue;
+                        }
+                        else
+                        {
+                            String ShapeName = Feature.get_Name();
+                            VisPropertySet VPS = SelectArc.VisProperties;
+                            VPS.SetVisibleColor(255, 0, 0, 0);
+                            continue;
+                        }
                     }
                 }
                 Measurable TheMeasurable = TheSPAWorkbench.GetMeasurable(referenceObject);
@@ -340,7 +354,7 @@ namespace AutoDeskLine_ToPlant
         private void ClearAllData_Click(object sender, EventArgs e)
         {
             this.TopMost = true;
-            if (DataGrid.DataSource!=null)
+            if (DataGrid.DataSource != null)
             {
                 datatable.Clear();
             }
@@ -445,9 +459,9 @@ namespace AutoDeskLine_ToPlant
                 //PartID = ((PartDocument)CatApplication.Documents.Item(Name)).Part;
                 Selection FindPart = CatApplication.ActiveDocument.Selection;
                 FindPart.Search("Name=RXFastDesignTool,all");
-                if (FindPart.Count2>0)
+                if (FindPart.Count2 > 0)
                 {
-                    PartID =(Part)FindPart.Item2(1).Value; //仅拾取带个并对第一个进行操作
+                    PartID = (Part)FindPart.Item2(1).Value; //仅拾取带个并对第一个进行操作
                 }
                 else
                 {
@@ -600,7 +614,7 @@ namespace AutoDeskLine_ToPlant
             string Path = string.Empty;
             OpenFileDialog XlsFile = new OpenFileDialog();
             XlsFile.InitialDirectory = "C:\\Users\\Administrator\\Desktop\\";
-            XlsFile.Filter = "EXCEL files (*.xls,*.xlsx)|*.xls;*.xlsx";
+            XlsFile.Filter = "EXCEL files (*.xls,*.xlsx,*.csv)|*.xls;*.xlsx;*.csv";
             XlsFile.FilterIndex = 2;
             XlsFile.RestoreDirectory = true;
             XlsFile.Multiselect = false;
@@ -609,7 +623,7 @@ namespace AutoDeskLine_ToPlant
                 //RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, DataGrid);
                 if (ByExcel.Checked)
                 {
-                    RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, datatable,true);
+                    RxDataOprator.ExcelOprator.ReadXlsData(XlsFile.FileName, datatable, true);
                 }
                 else
                 {
@@ -815,7 +829,7 @@ namespace AutoDeskLine_ToPlant
             string GunPath = string.Empty;
             this.TopMost = true;
             object[] oPositionMatrix = new object[12];
-            object[] oPositionSafeMatrix = new object[12] {1,0,0,0,1,0,0,0,0,0,0,1 };
+            object[] oPositionSafeMatrix = new object[12] { 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1 };
             double oRx, oRy, oRz;
             for (int i = 0; i < DataGrid.RowCount; i++)
             {
