@@ -175,6 +175,12 @@
     <Compile Include="AutoDeskUI.Designer.cs">
       <DependentUpon>AutoDeskUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="AutoHole\CATIA_AutoHole.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AutoHole\CATIA_AutoHole.Designer.cs">
+      <DependentUpon>CATIA_AutoHole.cs</DependentUpon>
+    </Compile>
     <Compile Include="CatiaQuickTool.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -204,6 +210,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AutoDeskUI.resx">
       <DependentUpon>AutoDeskUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AutoHole\CATIA_AutoHole.resx">
+      <DependentUpon>CATIA_AutoHole.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CatiaQuickTool.resx">
       <DependentUpon>CatiaQuickTool.cs</DependentUpon>

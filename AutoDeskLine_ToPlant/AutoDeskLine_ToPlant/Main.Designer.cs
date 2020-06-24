@@ -32,6 +32,7 @@
             this.CreateTrack = new System.Windows.Forms.Button();
             this.CreateFence = new System.Windows.Forms.Button();
             this.BollToAix = new System.Windows.Forms.Button();
+            this.ToAutoHole = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // CreateTrack
@@ -64,18 +65,29 @@
             this.BollToAix.UseVisualStyleBackColor = true;
             this.BollToAix.Click += new System.EventHandler(this.BollToAix_Click);
             // 
+            // ToAutoHole
+            // 
+            this.ToAutoHole.Location = new System.Drawing.Point(5, 66);
+            this.ToAutoHole.Name = "ToAutoHole";
+            this.ToAutoHole.Size = new System.Drawing.Size(121, 48);
+            this.ToAutoHole.TabIndex = 0;
+            this.ToAutoHole.Text = "辅助设计";
+            this.ToAutoHole.UseVisualStyleBackColor = true;
+            this.ToAutoHole.Click += new System.EventHandler(this.ToAutoHole_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ClientSize = new System.Drawing.Size(389, 76);
+            this.ClientSize = new System.Drawing.Size(389, 121);
             this.Controls.Add(this.BollToAix);
             this.Controls.Add(this.CreateFence);
+            this.Controls.Add(this.ToAutoHole);
             this.Controls.Add(this.CreateTrack);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(405, 115);
-            this.MinimumSize = new System.Drawing.Size(405, 115);
+            this.MaximumSize = new System.Drawing.Size(405, 160);
+            this.MinimumSize = new System.Drawing.Size(405, 160);
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "主入口";
@@ -90,5 +102,6 @@
         private System.Windows.Forms.Button CreateTrack;
         private System.Windows.Forms.Button CreateFence;
         private System.Windows.Forms.Button BollToAix;
+        private System.Windows.Forms.Button ToAutoHole;
     }
 }

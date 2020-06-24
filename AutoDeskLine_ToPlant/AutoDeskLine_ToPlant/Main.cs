@@ -47,5 +47,12 @@ namespace AutoDeskLine_ToPlant
             CatiaQuickTool CQT = new CatiaQuickTool();
             CQT.Show();
         }
+
+        private void ToAutoHole_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            CATIA_AutoHole CQT = new CATIA_AutoHole();
+            CQT.Show();
+        }
     }
 }
