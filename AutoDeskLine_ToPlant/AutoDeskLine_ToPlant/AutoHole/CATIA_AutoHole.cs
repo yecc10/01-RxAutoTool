@@ -27,6 +27,7 @@ using DNBPert;
 using CATMat;
 using FittingTypeLib;
 using DNBASY;
+using NPOI.POIFS.Properties;
 
 namespace AutoDeskLine_ToPlant
 {
@@ -276,10 +277,11 @@ namespace AutoDeskLine_ToPlant
             ReadType = 2;
             Selection SelectArc = CatDocument.Selection;
             SelectArc.Clear();
-            Reference RefEdegeA=null,RefEdegeB = null, ReFace = null;
-            for (int i = 1; i <=3; i++)
+            Reference[] RefEdege=new Reference[3];
+            object[] HolePoint = new object[6];
+            for (int i = 1; i <= 3; i++)
             {
-                var Result = SelectArc.SelectElement2(InputObjectType(i <= 2 ?3:2),i<=2?"请选择第"+i+"一个边线": "请选择孔所在面", true);
+                var Result = SelectArc.SelectElement2(InputObjectType(i <= 2 ? 3 : 2), i <= 2 ? "请选择第" + i + "一个边线" : "请选择孔所在面", true);
                 if (Result == "Cancel")
                 {
                     this.WindowState = FormWindowState.Normal;
@@ -298,44 +300,29 @@ namespace AutoDeskLine_ToPlant
                 {
                     case 1:
                         {
-                            RefEdegeA = SelectArc.Item(1).Reference;
+                            RefEdege[0] = SelectArc.Item(1).Reference;
                             SelectArc.Clear();
                             break;
                         }
                     case 2:
                         {
-                            RefEdegeB = SelectArc.Item(1).Reference;
+                            RefEdege[1] = SelectArc.Item(1).Reference;
                             SelectArc.Clear();
                             break;
                         }
                     case 3:
                         {
-                            ReFace = SelectArc.Item(1).Reference;
+                            RefEdege[2] = SelectArc.Item(1).Reference;
+                            SelectArc.Item(1).GetCoordinates(HolePoint);
                             break;
                         }
                     default:
                         break;
                 }
             }
-            Face Cface = (Face)SelectArc.Item(1).Value;
-            var Gname = Cface.get_Name();
-            Product CProduct = (Product)SelectArc.Item(1).LeafProduct;
-            string PartName = CProduct.get_PartNumber();
-            Product FProduct =(Product)CProduct.Parent;
-            //Gname = FProduct.get_Name();
-            //Part CPart=;
-            var str = FProduct.Products.Count;
-            Part CPart = ((PartDocument)FProduct.Products.GetItem(PartName+".CATPart")).Part;
-             HybridShapeFactory PartHyb = (HybridShapeFactory)PartID.HybridShapeFactory;
-            SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatDocument.GetWorkbench("SPAWorkbench");
-            String Name = string.Empty;
-            //Shape GE = (Shape)SelectArc.Item(i).Value;
-            //Name = GE.get_Name();
-            //Pad Spad = (Pad)GE.GetItem("Face1");
-            //Name = Spad.get_Name();
-            VisPropertySet VPS = SelectArc.VisProperties;
-            VPS.SetVisibleColor(255, 0, 0, 0);
-            
+            GetProductByFace GPB = new GetProductByFace();
+            GPB.CreateNwThroughtHole(RefEdege);
         }
+
     }
 }

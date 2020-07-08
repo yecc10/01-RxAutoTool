@@ -181,6 +181,7 @@
     <Compile Include="AutoHole\CATIA_AutoHole.Designer.cs">
       <DependentUpon>CATIA_AutoHole.cs</DependentUpon>
     </Compile>
+    <Compile Include="AutoHole\CUI.cs" />
     <Compile Include="CatiaQuickTool.cs">
       <SubType>Form</SubType>
     </Compile>
