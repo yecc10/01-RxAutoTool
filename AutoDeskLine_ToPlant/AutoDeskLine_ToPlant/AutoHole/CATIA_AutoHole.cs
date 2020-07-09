@@ -33,233 +33,11 @@ namespace AutoDeskLine_ToPlant
 {
     public partial class CATIA_AutoHole : Form
     {
-        INFITF.Application CatApplication;
-        ProductDocument CatDocument;
-        System.Data.DataTable datatable = new System.Data.DataTable();
-        System.Data.DataColumn dataColum;
-        DataRow DataRow;
-        DataView dataview;
-        Part PartID;
-
-        AnyObject[] GetRepeatRef = new AnyObject[99];
-        int RepeatNum = 0;
-
-        /// <summary>
-        /// Value=1->Read Point;Value=2->AnyPoint
-        /// </summary>
-        int ReadType = 0;
         public CATIA_AutoHole()
         {
             InitializeComponent();
+            timer.Enabled = true;
         }
-        private bool InitCatEnv()
-        {
-            try
-            {
-                CatApplication = (INFITF.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Catia.Application");
-            }
-            catch (Exception)
-            {
-                this.WindowState = FormWindowState.Normal;
-                this.StartPosition = FormStartPosition.CenterScreen;
-                MessageBox.Show("未检测到打开的CATIA!,请重新运行CATIA!");
-                return false;
-                //throw;
-            }
-            CatApplication.set_Caption("正在运行瑞祥快速建模工具！");
-            // 获取当前活动ProductDocument
-            try
-            {
-                CatDocument = (ProductDocument)CatApplication.ActiveDocument;
-            }
-            catch (Exception)
-            {
-                CatDocument = (ProductDocument)CatApplication.Documents.Add("Product");
-                try
-                {
-                    CatDocument.Product.set_PartNumber("RxProduct");
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
-                    return false;
-                }
-                //MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
-            }
-            // 添加一个新零件
-            string Name = "RXFastDesignTool";
-            try
-            {
-                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
-            }
-            catch (Exception)
-            {
-                try
-                {
-                    CatDocument.Product.Products.AddNewComponent("Part", Name);
-                }
-                catch (Exception)
-                {
-                    return false;
-                    // throw;
-                }
-                PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
-            }
-            return true;
-        }
-        private Selection GetSelect()
-        {
-            this.WindowState = FormWindowState.Minimized;
-            try
-            {
-                CatApplication = (INFITF.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Catia.Application");
-            }
-            catch (Exception)
-            {
-                this.WindowState = FormWindowState.Normal;
-                this.StartPosition = FormStartPosition.CenterScreen;
-                MessageBox.Show("未检测到打开的CATIA!,请重新运行CATIA!");
-                return null;
-            }
-            CatApplication.set_Caption("正在运行瑞祥快速建模工具！");
-            // 获取当前活动ProductDocument
-            try
-            {
-                CatDocument = (ProductDocument)CatApplication.ActiveDocument;
-            }
-            catch (Exception)
-            {
-                CatDocument = (ProductDocument)CatApplication.Documents.Add("Product");
-                try
-                {
-                    CatDocument.Product.set_PartNumber("RxProduct");
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("未检测到活动Product,正在为您创建，请手动辅助完成！");
-                    return null;
-                }
-                //MessageBox.Show("未检测到活动Product,已自动为您创建对象！");
-            }
-            // 添加一个新零件
-            string Name = "RXFastDesignTool";
-            try
-            {
-                Selection FindPart = CatApplication.ActiveDocument.Selection;
-                FindPart.Search("Name=RXFastDesignTool,all");
-                if (FindPart.Count2 > 0)
-                {
-                    PartID = (Part)FindPart.Item2(1).Value; //仅拾取带个并对第一个进行操作
-                }
-                else
-                {
-                    try
-                    {
-                        CatDocument.Product.Products.AddNewComponent("Part", Name);
-                    }
-                    catch (Exception)
-                    {
-                        return null;
-                        // throw;
-                    }
-                    PartID = ((PartDocument)CatApplication.Documents.Item(Name + ".CATPart")).Part;
-                    OriginElements Tpart = PartID.OriginElements;
-                    AnyObject dxy = Tpart.PlaneXY;
-                    AnyObject dyz = Tpart.PlaneYZ;
-                    AnyObject dzx = Tpart.PlaneZX;
-                    Selection SelectT = CatDocument.Selection;
-                    VisPropertySet VP = SelectT.VisProperties;
-                    SelectT.Add(dxy);
-                    SelectT.Add(dyz);
-                    SelectT.Add(dzx);
-                    VP = (VisPropertySet)VP.Parent;
-                    VP.SetShow(CatVisPropertyShow.catVisPropertyNoShowAttr);
-                    SelectT.Clear();
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-            try
-            {
-                CatDocument.Product.ApplyWorkMode(CatWorkModeType.DESIGN_MODE);
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Change Design Model Faild!");
-            }
-            Selection SelectArc = CatDocument.Selection;
-            SelectArc.Clear();
-            var Result = SelectArc.SelectElement3(InputObjectType(0), "请选择曲面", true, CATMultiSelectionMode.CATMultiSelTriggWhenSelPerf, false);
-            if (Result == "Cancel")
-            {
-                return null;
-            }
-            if (SelectArc.Count < 1)
-            {
-                MessageBox.Show("请先选择对象后再点此命令！");
-                return null;
-            }
-            this.WindowState = FormWindowState.Normal;
-            this.StartPosition = FormStartPosition.CenterScreen;
-            return SelectArc;
-        }
-        /// <summary>
-        /// 设置CATIA 拾取对象类型
-        /// 0：GetAnyObject；1：GetPoint；2:Face；3:Edge；4:Pad；5:sketch；6:Shape；7:Bodies；8:Part；9：Product
-        /// </summary>
-        /// <returns>:</returns>
-        [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)]
-        public object[] InputObjectType(int ReadType)
-        {
-            switch (ReadType)
-            {
-                case 0: //GetAnyObject
-                    {
-                        return new object[] { "AnyObject" };
-                    }
-                case 1: //GetPoint
-                    {
-                        return new object[] { "Point", "Symmetry", "Translate" };
-                    }
-                case 2: //Face
-                    {
-                        return new object[] { "Face" };
-                    }
-                case 3: //Edge
-                    {
-                        return new object[] { "Edge" };
-                    }
-                case 4: //Pad
-                    {
-                        return new object[] { "Pad" };
-                    }
-                case 5: //sketch
-                    {
-                        return new object[] { "sketch" };
-                    }
-                case 6: //Shape
-                    {
-                        return new object[] { "Shape" };
-                    }
-                case 7: //Bodies
-                    {
-                        return new object[] { "Bodies" };
-                    }
-                case 8: //Part
-                    {
-                        return new object[] { "Product" };
-                    }
-                case 9: //Product
-                    {
-                        return new object[] { "Product" };
-                    }
-                default:
-                    return new object[] { "AnyObject" };
-            }
-        }
-
         /// <summary>
         /// 设置单排规制块的空，且自动识别空间距是15/12.5
         /// </summary>
@@ -267,62 +45,67 @@ namespace AutoDeskLine_ToPlant
         /// <param name="e"></param>
         private void DrawHole_A_Click(object sender, EventArgs e)
         {
-            if (CatDocument == null)
+            GetProductByFace GPB = new GetProductByFace();
+            if (GPB.CatActiveDoc == null)
             {
-                InitCatEnv();
+                GPB.InitCatEnv(this);
             }
             this.WindowState = FormWindowState.Minimized;
-            RepeatNum = 0;
-            Array.Clear(GetRepeatRef, 0, GetRepeatRef.Length);
-            ReadType = 2;
-            Selection SelectArc = CatDocument.Selection;
+            Selection SelectArc = GPB.CatActiveDoc.Selection;
             SelectArc.Clear();
-            Reference[] RefEdege=new Reference[3];
+            Reference[] RefEdege = new Reference[3];
             object[] HolePoint = new object[6];
-            for (int i = 1; i <= 3; i++)
+            for (int OP = 0; OP < 999; OP++) //执行重复选择 直到用于取消
             {
-                var Result = SelectArc.SelectElement2(InputObjectType(i <= 2 ? 3 : 2), i <= 2 ? "请选择第" + i + "一个边线" : "请选择孔所在面", true);
-                if (Result == "Cancel")
+                for (int i = 1; i <= 3; i++)
                 {
-                    this.WindowState = FormWindowState.Normal;
-                    this.StartPosition = FormStartPosition.CenterScreen;
-                    this.TopMost = true;
-                    return;
-                }
-                if (SelectArc == null || SelectArc.Count2 == 0)
-                {
-                    this.WindowState = FormWindowState.Normal;
-                    this.StartPosition = FormStartPosition.CenterScreen;
-                    this.TopMost = true;
-                    return;
-                }
-                switch (i)
-                {
-                    case 1:
-                        {
-                            RefEdege[0] = SelectArc.Item(1).Reference;
-                            SelectArc.Clear();
+                    var Result = SelectArc.SelectElement2(GPB.InputObjectType(i <= 2 ? 3 : 2), i <= 2 ? "请选择第" + i + "一个边线" : "请选择孔所在面", true);
+                    if (Result == "Cancel")
+                    {
+                        this.WindowState = FormWindowState.Normal;
+                        this.StartPosition = FormStartPosition.CenterScreen;
+                        this.TopMost = true;
+                        return;
+                    }
+                    if (SelectArc == null || SelectArc.Count2 == 0)
+                    {
+                        this.WindowState = FormWindowState.Normal;
+                        this.StartPosition = FormStartPosition.CenterScreen;
+                        this.TopMost = true;
+                        return;
+                    }
+                    switch (i)
+                    {
+                        case 1:
+                            {
+                                RefEdege[0] = SelectArc.Item(1).Reference;
+                                SelectArc.Clear();
+                                break;
+                            }
+                        case 2:
+                            {
+                                RefEdege[1] = SelectArc.Item(1).Reference;
+                                SelectArc.Clear();
+                                break;
+                            }
+                        case 3:
+                            {
+                                RefEdege[2] = SelectArc.Item(1).Reference;
+                                SelectArc.Item(1).GetCoordinates(HolePoint);
+                                break;
+                            }
+                        default:
                             break;
-                        }
-                    case 2:
-                        {
-                            RefEdege[1] = SelectArc.Item(1).Reference;
-                            SelectArc.Clear();
-                            break;
-                        }
-                    case 3:
-                        {
-                            RefEdege[2] = SelectArc.Item(1).Reference;
-                            SelectArc.Item(1).GetCoordinates(HolePoint);
-                            break;
-                        }
-                    default:
-                        break;
+                    }
                 }
+                GPB.CreateNwThroughtHole(RefEdege, this);
             }
-            GetProductByFace GPB = new GetProductByFace();
-            GPB.CreateNwThroughtHole(RefEdege);
+
         }
 
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            this.Text = "本技术由瑞祥工业数字化_叶朝成提供|SystemTime:" + DateTime.Now;
+        }
     }
 }
