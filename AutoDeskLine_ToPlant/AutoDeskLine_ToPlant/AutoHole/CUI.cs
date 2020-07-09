@@ -42,12 +42,15 @@ namespace AutoDeskLine_ToPlant
             CatDocument = CatDoc;
             CatDocuments = CatDocs;
         }
-        enum RxHoleType { PinHole, SmoothHole, ThreadHole }
+        enum RxHoleType { PinHole, NSmoothHole, ISmoothHole, ThreadHole }//PinHole销孔  NormarlSmoothHole 光孔 Inner SmoothHole 沉头孔  ThreadHole 螺纹孔
+
         /// <summary>
-        /// 新增过孔
+        /// 新增孔
         /// </summary>
-        /// <returns></returns>
-        public void CreateNwThroughtHole(Reference[] UserSelected, Form tform)
+        /// <param name="UserSelected">用户选择的3个参考</param>
+        /// <param name="tform">父级窗体</param>
+        /// <param name="AbortHole">是否对装配零件直接打孔</param>
+        public void CreateNwThroughtHole(Reference[] UserSelected, Form tform, bool AbortHole)
         {
             object[] HolePoint = new object[3];
             Edge ed1 = (Edge)UserSelected[0];
@@ -80,10 +83,11 @@ namespace AutoDeskLine_ToPlant
             GetProductByFace GPB = new GetProductByFace();
             Part Spart = GPB.GetPart((Face)UserSelected[2]);
             ShapeFactory shapeFactory = (ShapeFactory)Spart.ShapeFactory;
-            Hole Nwhole = shapeFactory.AddNewHoleWith2Constraints(Convert.ToDouble(HolePoint[0]), Convert.ToDouble(HolePoint[1]), Convert.ToDouble(HolePoint[2]), UserSelected[0], UserSelected[1], UserSelected[2], 10);//创建过孔
-            RxSetHoleType(Nwhole, 10, Weight / 2, 9, RxHoleType.SmoothHole);
+
+            Hole Nwhole = shapeFactory.AddNewHoleWith2Constraints(Convert.ToDouble(HolePoint[0]), Convert.ToDouble(HolePoint[1]), Convert.ToDouble(HolePoint[2]), UserSelected[0], UserSelected[1], UserSelected[2], 50);//创建过孔
+            RxSetHoleType(Nwhole, 10, Weight / 2, 9, RxHoleType.NSmoothHole);
             Spart.Update();
-            Hole NwPinHole = shapeFactory.AddNewHoleWith2Constraints(Convert.ToDouble(HolePoint[0]) + 5, Convert.ToDouble(HolePoint[1]) + 5, Convert.ToDouble(HolePoint[2]), UserSelected[0], UserSelected[1], UserSelected[2], 10);//创建销孔
+            Hole NwPinHole = shapeFactory.AddNewHoleWith2Constraints(Convert.ToDouble(HolePoint[0]) + 5, Convert.ToDouble(HolePoint[1]) + 5, Convert.ToDouble(HolePoint[2]), UserSelected[0], UserSelected[1], UserSelected[2], 50);//创建销孔
             RxSetHoleType(NwPinHole, 10, Weight / 2 + JianDis, 8, RxHoleType.PinHole);
             Spart.Update();
             if (Length <= 60)
@@ -103,6 +107,76 @@ namespace AutoDeskLine_ToPlant
                 RPinhole.FirstRectangularPatternParameters = CatRectangularPatternParameters.catInstancesandSpacing;
                 RPinhole.SecondRectangularPatternParameters = CatRectangularPatternParameters.catInstancesandSpacing;
                 Spart.Update();
+            }
+            if (AbortHole)
+            {
+                CreateThreadHole(Spart, UserSelected, WeightEdge, LengthEdge, Weight, Length, JianDis);
+            }
+        }
+
+        /// <summary>
+        /// 创建螺纹孔安装面
+        /// </summary>
+        /// <param name="Spart">对象零件</param>
+        /// <param name="UserSelected">用户选择参考对象2边1面</param>
+        /// <param name="WeightEdge">宽边</param>
+        /// <param name="LengthEdge">长边</param>
+        /// <param name="Weight">宽边宽度</param>
+        /// <param name="Length">长边长度</param>
+        /// <param name="JianDis">孔间距</param>
+        public void CreateThreadHole(Part Spart, Reference[] UserSelected, Edge WeightEdge, Edge LengthEdge, double Weight, double Length, double JianDis)
+        {
+            //对与孔装配的零件执行打孔
+            object[] SHolePoint = new object[3];
+            Selection SelectArc = CatActiveDoc.Selection;
+            SelectArc.Clear();
+            var Result = SelectArc.SelectElement2(InputObjectType(2), "请选择子零件孔支持面！", true);
+            if (Result == "Cancel" || SelectArc == null || SelectArc.Count2 == 0)
+            {
+                return;
+            }
+            Reference SonReface = SelectArc.Item(1).Reference;
+            GetProductByFace SGPB = new GetProductByFace();
+            Part SonPart = SGPB.GetPart((Face)SelectArc.Item(1).Value);
+            SelectArc.Item(1).GetCoordinates(SHolePoint);
+            ShapeFactory NextshapeFactory = (ShapeFactory)SonPart.ShapeFactory;
+            try
+            {
+                Hole SonNwhole = NextshapeFactory.AddNewHoleWith2Constraints(Convert.ToDouble(SHolePoint[0]), Convert.ToDouble(SHolePoint[1]), Convert.ToDouble(SHolePoint[2]), UserSelected[0], UserSelected[1], SonReface, 50);//创建过孔
+                try
+                {
+                    RxSetHoleType(SonNwhole, 10, Weight / 2, 9, RxHoleType.NSmoothHole);
+                }
+                catch (Exception)
+                {
+                    RxSetHoleType(SonPart, SonNwhole, 10, Weight / 2, 9, RxHoleType.NSmoothHole, WeightEdge, LengthEdge);
+                }
+                SonPart.Update();
+                Hole SonNwPinHole = NextshapeFactory.AddNewHoleWith2Constraints(Convert.ToDouble(SHolePoint[0]) + 5, Convert.ToDouble(SHolePoint[1]) + 5, Convert.ToDouble(SHolePoint[2]), UserSelected[0], UserSelected[1], SonReface, 50);//创建销孔
+                RxSetHoleType(SonNwPinHole, 10, Weight / 2 + JianDis, 8, RxHoleType.PinHole);
+                SonPart.Update();
+                if (Length <= 60)
+                {
+                    RectPattern RPhole = NextshapeFactory.AddNewRectPattern(SonNwhole, 2, 1, JianDis * 2, 20, 1, 1, LengthEdge, WeightEdge, true, true, 0); //阵列过孔
+                    RPhole.FirstRectangularPatternParameters = CatRectangularPatternParameters.catInstancesandSpacing;
+                    RPhole.SecondRectangularPatternParameters = CatRectangularPatternParameters.catInstancesandSpacing;
+                    Spart.Update();
+                }
+                else
+                {
+                    RectPattern RPhole = NextshapeFactory.AddNewRectPattern(SonNwhole, 2, 1, JianDis * 2, 20, 1, 1, LengthEdge, WeightEdge, true, true, 0); //阵列过孔
+                    RPhole.FirstRectangularPatternParameters = CatRectangularPatternParameters.catInstancesandSpacing;
+                    RPhole.SecondRectangularPatternParameters = CatRectangularPatternParameters.catInstancesandSpacing;
+
+                    RectPattern RPinhole = NextshapeFactory.AddNewRectPattern(SonNwPinHole, 2, 1, JianDis * 2, 20, 1, 1, LengthEdge, WeightEdge, true, true, 0); //阵列过孔
+                    RPinhole.FirstRectangularPatternParameters = CatRectangularPatternParameters.catInstancesandSpacing;
+                    RPinhole.SecondRectangularPatternParameters = CatRectangularPatternParameters.catInstancesandSpacing;
+                    Spart.Update();
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("打孔失败！请确定选择是否有误！");
             }
         }
         /// <summary>
@@ -132,6 +206,47 @@ namespace AutoDeskLine_ToPlant
             BottomLimit.LimitMode = CatLimitMode.catUpThruNextLimit;
             ChangeHoleColor(Nwhole, HoleType);
         }
+        /// <summary>
+        /// 设置无尺寸约束的孔属性
+        /// </summary>
+        /// <param name="Nwhole">孔对象</param>
+        /// <param name="LengthDis">孔距离长边距离</param>
+        /// <param name="WeightDis">孔距离短边距离</param>
+        /// <param name="Diameter">孔直径</param>
+        /// <param name="HoleType">孔类型</param>
+        /// <param name="Comstraints">1:宽边，2：长边</param>
+        private void RxSetHoleType(Part Tpart, Hole Nwhole, double LengthDis, double WeightDis, double Diameter, RxHoleType HoleType, Reference WidthEdge, Reference LengthEdge)
+        {
+            Nwhole.Type = CatHoleType.catSimpleHole;
+            Nwhole.AnchorMode = CatHoleAnchorMode.catExtremPointHoleAnchor;
+            Nwhole.BottomType = CatHoleBottomType.catVHoleBottom;
+            Limit BottomLimit = Nwhole.BottomLimit;
+            BottomLimit.LimitMode = CatLimitMode.catOffsetLimit;
+            Nwhole.Diameter.Value = Diameter;
+            Nwhole.BottomAngle.Value = 120;
+            Nwhole.ThreadingMode = CatHoleThreadingMode.catSmoothHoleThreading;
+            Sketch Hosketch = Nwhole.Sketch;
+            MECMOD.Constraints HoleConstraint = Hosketch.Constraints;
+            string Type = Hosketch.GeometricElements.Item(1).GeometricType.ToString();
+            Reference refPoint = Tpart.CreateReferenceFromObject(Hosketch.GeometricElements.Item(1));
+            if (HoleConstraint.Count < 3)
+            {
+                Constraint holeConstraintL = HoleConstraint.AddBiEltCst(CatConstraintType.catCstTypeStDistance, refPoint, WidthEdge);
+                Constraint holeConstraintW = HoleConstraint.AddBiEltCst(CatConstraintType.catCstTypeDistance, refPoint, LengthEdge);
+                holeConstraintL.Dimension.Value = WeightDis; //孔距离宽边的距离
+                holeConstraintW.Dimension.Value = LengthDis; //孔距离长边的距离
+            }
+            else
+            {
+                HoleConstraint.Item(1).Dimension.Value = WeightDis; //孔距离宽边的距离
+                HoleConstraint.Item(2).Dimension.Value = LengthDis; //孔距离长边的距离
+            }
+
+            //HoleConstraint.Item(2).Dimension.Value = 10;
+            Nwhole.ThreadSide = CatHoleThreadSide.catRightThreadSide;
+            BottomLimit.LimitMode = CatLimitMode.catUpThruNextLimit;
+            ChangeHoleColor(Nwhole, HoleType);
+        }
 
         /// <summary>
         /// 隐藏孔创建的草图并修改孔颜色
@@ -153,7 +268,10 @@ namespace AutoDeskLine_ToPlant
                 case RxHoleType.PinHole: //销孔
                     HoleSet.SetVisibleColor(251, 146, 248, 0);
                     break;
-                case RxHoleType.SmoothHole: //光孔 沉头孔
+                case RxHoleType.NSmoothHole: //光孔
+                    HoleSet.SetVisibleColor(167, 230, 182, 0);
+                    break;
+                case RxHoleType.ISmoothHole: //沉头孔
                     HoleSet.SetVisibleColor(167, 230, 182, 0);
                     break;
                 case RxHoleType.ThreadHole: //螺纹孔
@@ -247,7 +365,7 @@ namespace AutoDeskLine_ToPlant
                     }
                 case 8: //Part
                     {
-                        return new object[] { "Product" };
+                        return new object[] { "Part" };
                     }
                 case 9: //Product
                     {

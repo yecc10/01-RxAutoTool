@@ -40,7 +40,7 @@
             this.PTPTN = new System.Windows.Forms.CheckBox();
             this.PTPN = new System.Windows.Forms.CheckBox();
             this.ContinueWork = new System.Windows.Forms.CheckBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.AbortHole = new System.Windows.Forms.CheckBox();
             this.AutoBolt = new System.Windows.Forms.CheckBox();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.HoleType.SuspendLayout();
@@ -155,15 +155,17 @@
             this.ContinueWork.Text = "持续选择";
             this.ContinueWork.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // AbortHole
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(304, 118);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(84, 16);
-            this.checkBox1.TabIndex = 3;
-            this.checkBox1.Text = "关联孔连打";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.AbortHole.AutoSize = true;
+            this.AbortHole.Checked = true;
+            this.AbortHole.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.AbortHole.Location = new System.Drawing.Point(304, 118);
+            this.AbortHole.Name = "AbortHole";
+            this.AbortHole.Size = new System.Drawing.Size(84, 16);
+            this.AbortHole.TabIndex = 3;
+            this.AbortHole.Text = "关联孔连打";
+            this.AbortHole.UseVisualStyleBackColor = true;
             // 
             // AutoBolt
             // 
@@ -185,7 +187,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(604, 161);
             this.Controls.Add(this.AutoBolt);
-            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.AbortHole);
             this.Controls.Add(this.ContinueWork);
             this.Controls.Add(this.HoleType);
             this.Controls.Add(this.comboBox1);
@@ -214,7 +216,7 @@
         private System.Windows.Forms.CheckBox TPTPN;
         private System.Windows.Forms.CheckBox PTPTN;
         private System.Windows.Forms.CheckBox ContinueWork;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox AbortHole;
         private System.Windows.Forms.CheckBox AutoBolt;
         private System.Windows.Forms.Timer timer;
     }

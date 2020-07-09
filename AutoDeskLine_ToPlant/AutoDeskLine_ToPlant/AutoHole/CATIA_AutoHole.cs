@@ -98,7 +98,7 @@ namespace AutoDeskLine_ToPlant
                             break;
                     }
                 }
-                GPB.CreateNwThroughtHole(RefEdege, this);
+                GPB.CreateNwThroughtHole(RefEdege, this,AbortHole.Checked);
             }
 
         }
