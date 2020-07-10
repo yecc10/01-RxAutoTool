@@ -54,12 +54,13 @@ namespace AutoDeskLine_ToPlant
             Selection SelectArc = GPB.CatActiveDoc.Selection;
             SelectArc.Clear();
             Reference[] RefEdege = new Reference[3];
+            object[] SelecObject = new object[3];
             object[] HolePoint = new object[6];
             for (int OP = 0; OP < 999; OP++) //执行重复选择 直到用于取消
             {
                 for (int i = 1; i <= 3; i++)
                 {
-                    var Result = SelectArc.SelectElement2(GPB.InputObjectType(i <= 2 ? 3 : 2), i <= 2 ? "请选择第" + i + "一个边线" : "请选择孔所在面", true);
+                    var Result = SelectArc.SelectElement2(GPB.InputObjectType(i <= 2 ? 3 : 2), i <= 2 ? "请选择第" + i + "一个边线" : "请选择孔所在面", false);
                     if (Result == "Cancel")
                     {
                         this.WindowState = FormWindowState.Normal;
@@ -79,18 +80,21 @@ namespace AutoDeskLine_ToPlant
                         case 1:
                             {
                                 RefEdege[0] = SelectArc.Item(1).Reference;
+                                SelecObject[0] = SelectArc.Item(1).Value;
                                 SelectArc.Clear();
                                 break;
                             }
                         case 2:
                             {
                                 RefEdege[1] = SelectArc.Item(1).Reference;
+                                SelecObject[1] = SelectArc.Item(1).Value;
                                 SelectArc.Clear();
                                 break;
                             }
                         case 3:
                             {
                                 RefEdege[2] = SelectArc.Item(1).Reference;
+                                SelecObject[2] = SelectArc.Item(1).Value;
                                 SelectArc.Item(1).GetCoordinates(HolePoint);
                                 break;
                             }
@@ -98,7 +102,7 @@ namespace AutoDeskLine_ToPlant
                             break;
                     }
                 }
-                GPB.CreateNwThroughtHole(RefEdege, this,AbortHole.Checked);
+                GPB.CreateNwThroughtHole(RefEdege, this,AbortHole.Checked, SelecObject);
             }
 
         }

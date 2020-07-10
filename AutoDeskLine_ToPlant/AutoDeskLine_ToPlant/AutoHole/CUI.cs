@@ -21,9 +21,6 @@ using HybridShapeTypeLib;
 using System.IO;
 using DNBPert;
 using CATMat;
-using FittingTypeLib;
-using DNBASY;
-using NPOI.POIFS.Properties;
 using System.Windows.Forms;
 
 namespace AutoDeskLine_ToPlant
@@ -50,7 +47,7 @@ namespace AutoDeskLine_ToPlant
         /// <param name="UserSelected">用户选择的3个参考</param>
         /// <param name="tform">父级窗体</param>
         /// <param name="AbortHole">是否对装配零件直接打孔</param>
-        public void CreateNwThroughtHole(Reference[] UserSelected, Form tform, bool AbortHole)
+        public void CreateNwThroughtHole(Reference[] UserSelected, Form tform, bool AbortHole,object[] UserSelectedValue)
         {
             object[] HolePoint = new object[3];
             Edge ed1 = (Edge)UserSelected[0];
@@ -83,7 +80,6 @@ namespace AutoDeskLine_ToPlant
             GetProductByFace GPB = new GetProductByFace();
             Part Spart = GPB.GetPart((Face)UserSelected[2]);
             ShapeFactory shapeFactory = (ShapeFactory)Spart.ShapeFactory;
-
             Hole Nwhole = shapeFactory.AddNewHoleWith2Constraints(Convert.ToDouble(HolePoint[0]), Convert.ToDouble(HolePoint[1]), Convert.ToDouble(HolePoint[2]), UserSelected[0], UserSelected[1], UserSelected[2], 50);//创建过孔
             RxSetHoleType(Nwhole, 10, Weight / 2, 9, RxHoleType.NSmoothHole);
             Spart.Update();
@@ -110,7 +106,7 @@ namespace AutoDeskLine_ToPlant
             }
             if (AbortHole)
             {
-                CreateThreadHole(Spart, UserSelected, WeightEdge, LengthEdge, Weight, Length, JianDis);
+                CreateThreadHole(Spart, UserSelected,UserSelectedValue,WeightEdge, LengthEdge, Weight, Length, JianDis);
             }
         }
 
@@ -124,7 +120,7 @@ namespace AutoDeskLine_ToPlant
         /// <param name="Weight">宽边宽度</param>
         /// <param name="Length">长边长度</param>
         /// <param name="JianDis">孔间距</param>
-        public void CreateThreadHole(Part Spart, Reference[] UserSelected, Edge WeightEdge, Edge LengthEdge, double Weight, double Length, double JianDis)
+        public void CreateThreadHole(Part Spart, Reference[] UserSelected, object[] UserSelectedValue, Edge WeightEdge, Edge LengthEdge, double Weight, double Length, double JianDis)
         {
             //对与孔装配的零件执行打孔
             object[] SHolePoint = new object[3];
@@ -139,10 +135,40 @@ namespace AutoDeskLine_ToPlant
             GetProductByFace SGPB = new GetProductByFace();
             Part SonPart = SGPB.GetPart((Face)SelectArc.Item(1).Value);
             SelectArc.Item(1).GetCoordinates(SHolePoint);
+            SelectArc.Clear();
             ShapeFactory NextshapeFactory = (ShapeFactory)SonPart.ShapeFactory;
+            HybridShapeFactory NextHyShapeFactory = (HybridShapeFactory)SonPart.HybridShapeFactory;
             try
             {
-                Hole SonNwhole = NextshapeFactory.AddNewHoleWith2Constraints(Convert.ToDouble(SHolePoint[0]), Convert.ToDouble(SHolePoint[1]), Convert.ToDouble(SHolePoint[2]), UserSelected[0], UserSelected[1], SonReface, 50);//创建过孔
+                Reference Wref = null;
+                Reference Lref = null;
+                try
+                {
+                    //object[] LinePoint = new object[12];
+                    //object[] LineDirection = new object[12];
+                    //SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatActiveDoc.GetWorkbench("SPAWorkbench");
+                    //Measurable LengthA = TheSPAWorkbench.GetMeasurable((Edge);
+                    //Measurable LengthB = TheSPAWorkbench.GetMeasurable(LengthEdge);
+                    //LengthA.GetMinimumDistancePoints(, LinePoint);
+                    //LengthA.GetDirection(LineDirection);
+                    //NextHyShapeFactory.AddNewLineNormal(SonReface, 10, 10, true);
+                    Edge WeightEdgeT = (Edge)UserSelectedValue[0];
+                    Edge LengthEdgeT = (Edge)UserSelectedValue[0];
+                    string WeightEdgeName = WeightEdgeT.get_Name();
+                    string LengthEdgeTName = LengthEdgeT.get_Name();
+                    Wref = SonPart.CreateReferenceFromName(WeightEdgeName);
+                    Lref = SonPart.CreateReferenceFromName(LengthEdgeTName);
+                    WeightEdgeName = Wref.get_Name();
+                    LengthEdgeTName = Lref.get_Name();
+                    SelectArc.Add(WeightEdgeT);
+                    SelectArc.Add(LengthEdgeT);
+                    SelectArc.PasteLink();
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+                Hole SonNwhole = NextshapeFactory.AddNewHoleWith2Constraints(Convert.ToDouble(SHolePoint[0]), Convert.ToDouble(SHolePoint[1]), Convert.ToDouble(SHolePoint[2]), Wref, Lref, SonReface, 50);//创建过孔
                 try
                 {
                     RxSetHoleType(SonNwhole, 10, Weight / 2, 9, RxHoleType.NSmoothHole);
@@ -176,8 +202,29 @@ namespace AutoDeskLine_ToPlant
             }
             catch (Exception)
             {
+                throw;
                 MessageBox.Show("打孔失败！请确定选择是否有误！");
             }
+        }
+        /// <summary>
+        /// 提取边到新Part
+        /// </summary>
+        /// <param name="Spart">新Part</param>
+        /// <param name="UserSelected">用户选择的参考边</param>
+        /// <returns>创建的新边</returns>
+        public HybridShapeExtract NwExtraEdge(Part Spart, Reference UserSelected)
+        {
+            HybridShapeFactory PartShape = (HybridShapeFactory)Spart.ShapeFactory;
+            HybridShapeExtract extractWeightEdge = PartShape.AddNewExtract(UserSelected);
+            extractWeightEdge.PropagationType = 3;
+            extractWeightEdge.ComplementaryExtract = false; //补充模式
+            extractWeightEdge.IsFederated = false;
+            HybridBodies PartHybodies = Spart.HybridBodies;
+            HybridBody PartHyBody = PartHybodies.Item(1);
+            PartHyBody.AppendHybridShape(extractWeightEdge);
+            Spart.InWorkObject = extractWeightEdge;
+            Spart.Update();
+            return extractWeightEdge;
         }
         /// <summary>
         ///  瑞祥API设置孔属性
@@ -215,7 +262,7 @@ namespace AutoDeskLine_ToPlant
         /// <param name="Diameter">孔直径</param>
         /// <param name="HoleType">孔类型</param>
         /// <param name="Comstraints">1:宽边，2：长边</param>
-        private void RxSetHoleType(Part Tpart, Hole Nwhole, double LengthDis, double WeightDis, double Diameter, RxHoleType HoleType, Reference WidthEdge, Reference LengthEdge)
+        private void RxSetHoleType(Part Tpart, Hole Nwhole, double LengthDis, double WeightDis, double Diameter, RxHoleType HoleType, Edge WidthEdge, Edge LengthEdge)
         {
             Nwhole.Type = CatHoleType.catSimpleHole;
             Nwhole.AnchorMode = CatHoleAnchorMode.catExtremPointHoleAnchor;
@@ -227,14 +274,28 @@ namespace AutoDeskLine_ToPlant
             Nwhole.ThreadingMode = CatHoleThreadingMode.catSmoothHoleThreading;
             Sketch Hosketch = Nwhole.Sketch;
             MECMOD.Constraints HoleConstraint = Hosketch.Constraints;
-            string Type = Hosketch.GeometricElements.Item(1).GeometricType.ToString();
-            Reference refPoint = Tpart.CreateReferenceFromObject(Hosketch.GeometricElements.Item(1));
+            int Cont = Hosketch.GeometricElements.Count;
+            string Type = Hosketch.GeometricElements.Item(2).get_Name();
+            Point2D HoleCenterPoint = (Point2D)Hosketch.GeometricElements.Item(2);
+            Reference refPoint = Tpart.CreateReferenceFromObject(HoleCenterPoint);
             if (HoleConstraint.Count < 3)
             {
-                Constraint holeConstraintL = HoleConstraint.AddBiEltCst(CatConstraintType.catCstTypeStDistance, refPoint, WidthEdge);
-                Constraint holeConstraintW = HoleConstraint.AddBiEltCst(CatConstraintType.catCstTypeDistance, refPoint, LengthEdge);
+                Tpart.InWorkObject = Hosketch;
+                Factory2D factory2D = Hosketch.OpenEdition();
+                GeometricElements geWidthEdge = factory2D.CreateProjections(WidthEdge);
+                GeometricElements geLengthEdge = factory2D.CreateProjections(LengthEdge);
+                Geometry2D geoWidthEdge = (Geometry2D)geWidthEdge.Item("标记.1");
+                Geometry2D geoLengthEdge = (Geometry2D)geLengthEdge.Item("标记.1");
+                geoWidthEdge.Construction = true;
+                geoLengthEdge.Construction = true;
+                Reference EpWidth = Tpart.CreateReferenceFromObject(geoWidthEdge);
+                Reference EpLength = Tpart.CreateReferenceFromObject(geoLengthEdge);
+                //geo1.Construction = true;
+                Constraint holeConstraintL = HoleConstraint.AddBiEltCst(CatConstraintType.catCstTypeDistance, refPoint, EpWidth);
+                Constraint holeConstraintW = HoleConstraint.AddBiEltCst(CatConstraintType.catCstTypeDistance, refPoint, EpLength);
                 holeConstraintL.Dimension.Value = WeightDis; //孔距离宽边的距离
                 holeConstraintW.Dimension.Value = LengthDis; //孔距离长边的距离
+                Hosketch.CloseEdition();
             }
             else
             {
@@ -370,6 +431,14 @@ namespace AutoDeskLine_ToPlant
                 case 9: //Product
                     {
                         return new object[] { "Product" };
+                    }
+                case 10: //Line
+                    {
+                        return new object[] { "Line" };
+                    }
+                case 11: //line2d
+                    {
+                        return new object[] { "Line2D" };
                     }
                 default:
                     return new object[] { "AnyObject" };
