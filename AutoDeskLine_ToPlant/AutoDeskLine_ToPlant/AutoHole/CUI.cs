@@ -47,7 +47,7 @@ namespace AutoDeskLine_ToPlant
         /// <param name="UserSelected">用户选择的3个参考</param>
         /// <param name="tform">父级窗体</param>
         /// <param name="AbortHole">是否对装配零件直接打孔</param>
-        public void CreateNwThroughtHole(Reference[] UserSelected, Form tform, bool AbortHole,object[] UserSelectedValue)
+        public void CreateNwThroughtHole(Reference[] UserSelected, Form tform, bool AbortHole, object[] UserSelectedValue)
         {
             object[] HolePoint = new object[3];
             Edge ed1 = (Edge)UserSelected[0];
@@ -106,7 +106,7 @@ namespace AutoDeskLine_ToPlant
             }
             if (AbortHole)
             {
-                CreateThreadHole(Spart, UserSelected,UserSelectedValue,WeightEdge, LengthEdge, Weight, Length, JianDis);
+                CreateThreadHole(Spart, UserSelected, UserSelectedValue, WeightEdge, LengthEdge, Weight, Length, JianDis);
             }
         }
 
@@ -138,31 +138,33 @@ namespace AutoDeskLine_ToPlant
             SelectArc.Clear();
             ShapeFactory NextshapeFactory = (ShapeFactory)SonPart.ShapeFactory;
             HybridShapeFactory NextHyShapeFactory = (HybridShapeFactory)SonPart.HybridShapeFactory;
+            InstanceFactory NextInf = (InstanceFactory)SonPart.GetCustomerFactory("InstanceFactory");
+            NextInf.AddInstance(WeightEdge);
             try
             {
                 Reference Wref = null;
                 Reference Lref = null;
                 try
                 {
-                    //object[] LinePoint = new object[12];
-                    //object[] LineDirection = new object[12];
-                    //SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatActiveDoc.GetWorkbench("SPAWorkbench");
-                    //Measurable LengthA = TheSPAWorkbench.GetMeasurable((Edge);
-                    //Measurable LengthB = TheSPAWorkbench.GetMeasurable(LengthEdge);
+                    object[] LinePoint = new object[12];
+                    object[] LineDirection = new object[12];
+                    SPAWorkbench TheSPAWorkbench = (SPAWorkbench)CatActiveDoc.GetWorkbench("SPAWorkbench");
+                    Measurable LengthA = TheSPAWorkbench.GetMeasurable(WeightEdge);
+                    Measurable LengthB = TheSPAWorkbench.GetMeasurable(LengthEdge);
                     //LengthA.GetMinimumDistancePoints(, LinePoint);
                     //LengthA.GetDirection(LineDirection);
                     //NextHyShapeFactory.AddNewLineNormal(SonReface, 10, 10, true);
                     Edge WeightEdgeT = (Edge)UserSelectedValue[0];
-                    Edge LengthEdgeT = (Edge)UserSelectedValue[0];
+                    Edge LengthEdgeT = (Edge)UserSelectedValue[1];
                     string WeightEdgeName = WeightEdgeT.get_Name();
                     string LengthEdgeTName = LengthEdgeT.get_Name();
-                    Wref = SonPart.CreateReferenceFromName(WeightEdgeName);
-                    Lref = SonPart.CreateReferenceFromName(LengthEdgeTName);
+                    Wref = SonPart.CreateReferenceFromName(null);
+                    Lref = SonPart.CreateReferenceFromName(null);
                     WeightEdgeName = Wref.get_Name();
                     LengthEdgeTName = Lref.get_Name();
                     SelectArc.Add(WeightEdgeT);
                     SelectArc.Add(LengthEdgeT);
-                    SelectArc.PasteLink();
+                    SelectArc.Copy();
                 }
                 catch (Exception e)
                 {
